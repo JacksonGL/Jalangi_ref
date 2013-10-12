@@ -18,7 +18,7 @@
 
 "use strict";
 
-J$ = {};
+window.J$ = {};
 
 try{
 (function(sandbox) {
