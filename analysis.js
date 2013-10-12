@@ -224,6 +224,7 @@
                     } else {
                         return new ExecutionIndex();
                     }
+                    return new ExecutionIndex();
                 }
                 //-------------------------------- End Execution indexing --------------------------------
 
@@ -681,7 +682,7 @@
                     }
                     return result_c;
                 }
-                
+
                 if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
                     var single = require('./'+process.env.JALANGI_ANALYSIS);
 
@@ -784,7 +785,7 @@
                 //-------------------------------- End constants ---------------------------------
 
 
-                
+
 
                 var lastVal;
                 var switchLeft;
