@@ -15,7 +15,7 @@
  */
 
 // Author: Koushik Sen
-// Trivial Modification by Liang Gong
+// Refactored for Firefox Extension by Liang Gong
 
 if(window.J$ != null && window.J$ != undefined){
     console.log('J$ already exist');
@@ -1491,6 +1491,174 @@ if(window.J$ != null && window.J$ != undefined){
             }
         }
 
+
+        //------------------------------- Stats for the paper -----------------------
+        var skippedReads = 0;
+        var skippedGetFields = 0;
+        var unoptimizedLogs = 0;
+        var optimizedLogs = 0;
+
+//-------------------------------- Constants ---------------------------------
+
+        var EVAL_ORG = eval;
+
+        var PREFIX1 = "J$";
+        var SPECIAL_PROP = "*"+PREFIX1+"*";
+        var SPECIAL_PROP2 = "*"+PREFIX1+"I*";
+        var SPECIAL_PROP3 = "*"+PREFIX1+"C*";
+        var DEBUG = false;
+        var WARN = false;
+        var SERIOUS_WARN = false;
+        var MAX_BUF_SIZE = 4096;
+        var TRACE_FILE_NAME = 'jalangi_trace';
+
+        var T_NULL = 0,
+            T_NUMBER = 1,
+            T_BOOLEAN = 2,
+            T_STRING = 3,
+            T_OBJECT = 4,
+            T_FUNCTION = 5,
+            T_UNDEFINED = 6,
+            T_ARRAY = 7;
+
+        var F_TYPE = 0,
+            F_VALUE = 1,
+            F_IID = 2,
+            F_FUNNAME = 4,
+            F_SEQ = 3;
+
+//    var N_LOG_LOAD = 0,
+//    var N_LOG_FUN_CALL = 1,
+//      N_LOG_METHOD_CALL = 2,
+        var  N_LOG_FUNCTION_ENTER = 4,
+//      N_LOG_FUNCTION_RETURN = 5,
+            N_LOG_SCRIPT_ENTER = 6,
+//      N_LOG_SCRIPT_EXIT = 7,
+            N_LOG_GETFIELD = 8,
+//      N_LOG_GLOBAL = 9,
+            N_LOG_ARRAY_LIT = 10,
+            N_LOG_OBJECT_LIT = 11,
+            N_LOG_FUNCTION_LIT = 12,
+            N_LOG_RETURN = 13,
+            N_LOG_REGEXP_LIT = 14,
+//      N_LOG_LOCAL = 15,
+//      N_LOG_OBJECT_NEW = 16,
+            N_LOG_READ = 17,
+//      N_LOG_FUNCTION_ENTER_NORMAL = 18,
+            N_LOG_HASH = 19,
+            N_LOG_SPECIAL = 20,
+            N_LOG_STRING_LIT = 21,
+            N_LOG_NUMBER_LIT = 22,
+            N_LOG_BOOLEAN_LIT = 23,
+            N_LOG_UNDEFINED_LIT = 24,
+            N_LOG_NULL_LIT = 25;
+
+        var MODE_RECORD = 1,
+            MODE_REPLAY = 2,
+            MODE_NO_RR_IGNORE_UNINSTRUMENTED = 3,
+            MODE_NO_RR = 4;
+
+        //-------------------------------- End constants ---------------------------------
+
+
+        var mode = (function(str) {
+            switch(str) {
+                case "record" :
+                    return MODE_RECORD;
+                case "replay":
+                    return MODE_REPLAY;
+                case "analysis":
+                    return MODE_NO_RR_IGNORE_UNINSTRUMENTED;
+                case "concrete":
+                    return MODE_NO_RR;
+                default:
+                    return MODE_RECORD;
+            }
+        }((typeof window === "undefined")?process.env.JALANGI_MODE:window.JALANGI_MODE));
+        var ANALYSIS = ((typeof window === "undefined")?process.env.JALANGI_ANALYSIS:window.JALANGI_ANALYSIS);
+        var isBrowserReplay = (typeof window !== 'undefined') && mode ===MODE_REPLAY;
+
+        var executionIndex = new ExecutionIndex();
+
+        var sEngine;
+        var branchCoverageInfo;// = require('./BranchCoverageInfo');
+        if (ANALYSIS && ANALYSIS.indexOf("Engine")>=0) {
+//        var getSymbolicFunctionToInvoke = require('./SymbolicFunctions');
+            var SymbolicEngine = require('./'+ANALYSIS);
+            sEngine = new SymbolicEngine(executionIndex);
+        }
+
+
+        var rrEngine;
+        if (mode=== MODE_RECORD || mode === MODE_REPLAY) {
+            rrEngine = new RecordReplayEngine();
+        }
+
+
+        var log = (function(){
+            var list;
+
+            return {
+                reset: function() {
+                    list = [];
+                },
+
+                log: function(str) {
+                    if (list)
+                        list.push(str);
+                },
+
+                getLog: function() {
+                    return list;
+                }
+            }
+        })();
+
+        var isInstrumentedCaller = false;
+        var returnVal;
+        var scriptCount = 0;
+        var lastVal;
+        var switchLeft;
+        var switchKeyStack = [];
+
+
+        sandbox.U = U; // Unary operation
+        sandbox.B = B; // Binary operation
+        sandbox.C = C; // Condition
+        sandbox.C1 = C1; // Switch key
+        sandbox.C2 = C2; // case label C1 === C2
+        sandbox.addAxiom = addAxiom; // Add axiom
+        sandbox.getConcrete = getConcrete;  // Get concrete value
+        sandbox._ = last;  // Last value passed to C
+
+        sandbox.H = H; // hash in for-in
+        sandbox.I = I; // Ignore argument
+        sandbox.G = G; // getField
+        sandbox.P = P; // putField
+        sandbox.R = R; // Read
+        sandbox.W = W; // Write
+        sandbox.N = N; // Init
+        sandbox.T = T; // object/function/regexp/array Literal
+        sandbox.F = F; // Function call
+        sandbox.M = M; // Method call
+        sandbox.A = A; // Modify and assign +=, -= ...
+        sandbox.Fe = Fe; // Function enter
+        sandbox.Fr = Fr; // Function return
+        sandbox.Se = Se; // Script enter
+        sandbox.Sr = Sr; // Script return
+        sandbox.Rt = Rt; // returned value
+        sandbox.Ra = Ra;
+
+        sandbox.replay = rrEngine?rrEngine.RR_replay:undefined;
+        sandbox.onflush = rrEngine?rrEngine.onflush:function(){};
+        sandbox.record = rrEngine?rrEngine.record:function(){};
+        sandbox.command = rrEngine?rrEngine.command:function(){};
+        sandbox.sEngine = sEngine;
+        sandbox.endExecution = endExecution;
+        sandbox.addRecord = rrEngine?rrEngine.addRecord:undefined;
+
+        sandbox.log = log;
+
         if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
             var single = require('./'+process.env.JALANGI_ANALYSIS);
 
@@ -1524,172 +1692,7 @@ if(window.J$ != null && window.J$ != undefined){
             sandbox.endExecution = single.endExecution;
         } else {
 
-//------------------------------- Stats for the paper -----------------------
-            var skippedReads = 0;
-            var skippedGetFields = 0;
-            var unoptimizedLogs = 0;
-            var optimizedLogs = 0;
 
-//-------------------------------- Constants ---------------------------------
-
-            var EVAL_ORG = eval;
-
-            var PREFIX1 = "J$";
-            var SPECIAL_PROP = "*"+PREFIX1+"*";
-            var SPECIAL_PROP2 = "*"+PREFIX1+"I*";
-            var SPECIAL_PROP3 = "*"+PREFIX1+"C*";
-            var DEBUG = false;
-            var WARN = false;
-            var SERIOUS_WARN = false;
-            var MAX_BUF_SIZE = 4096;
-            var TRACE_FILE_NAME = 'jalangi_trace';
-
-            var T_NULL = 0,
-                T_NUMBER = 1,
-                T_BOOLEAN = 2,
-                T_STRING = 3,
-                T_OBJECT = 4,
-                T_FUNCTION = 5,
-                T_UNDEFINED = 6,
-                T_ARRAY = 7;
-
-            var F_TYPE = 0,
-                F_VALUE = 1,
-                F_IID = 2,
-                F_FUNNAME = 4,
-                F_SEQ = 3;
-
-//    var N_LOG_LOAD = 0,
-//    var N_LOG_FUN_CALL = 1,
-//      N_LOG_METHOD_CALL = 2,
-            var  N_LOG_FUNCTION_ENTER = 4,
-//      N_LOG_FUNCTION_RETURN = 5,
-                N_LOG_SCRIPT_ENTER = 6,
-//      N_LOG_SCRIPT_EXIT = 7,
-                N_LOG_GETFIELD = 8,
-//      N_LOG_GLOBAL = 9,
-                N_LOG_ARRAY_LIT = 10,
-                N_LOG_OBJECT_LIT = 11,
-                N_LOG_FUNCTION_LIT = 12,
-                N_LOG_RETURN = 13,
-                N_LOG_REGEXP_LIT = 14,
-//      N_LOG_LOCAL = 15,
-//      N_LOG_OBJECT_NEW = 16,
-                N_LOG_READ = 17,
-//      N_LOG_FUNCTION_ENTER_NORMAL = 18,
-                N_LOG_HASH = 19,
-                N_LOG_SPECIAL = 20,
-                N_LOG_STRING_LIT = 21,
-                N_LOG_NUMBER_LIT = 22,
-                N_LOG_BOOLEAN_LIT = 23,
-                N_LOG_UNDEFINED_LIT = 24,
-                N_LOG_NULL_LIT = 25;
-
-            var MODE_RECORD = 1,
-                MODE_REPLAY = 2,
-                MODE_NO_RR_IGNORE_UNINSTRUMENTED = 3,
-                MODE_NO_RR = 4;
-
-            //-------------------------------- End constants ---------------------------------
-
-
-            var mode = (function(str) {
-                switch(str) {
-                    case "record" :
-                        return MODE_RECORD;
-                    case "replay":
-                        return MODE_REPLAY;
-                    case "analysis":
-                        return MODE_NO_RR_IGNORE_UNINSTRUMENTED;
-                    case "concrete":
-                        return MODE_NO_RR;
-                    default:
-                        return MODE_RECORD;
-                }
-            }((typeof window === "undefined")?process.env.JALANGI_MODE:window.JALANGI_MODE));
-            var ANALYSIS = ((typeof window === "undefined")?process.env.JALANGI_ANALYSIS:window.JALANGI_ANALYSIS);
-            var isBrowserReplay = (typeof window !== 'undefined') && mode ===MODE_REPLAY;
-
-            var executionIndex = new ExecutionIndex();
-
-            var sEngine;
-            var branchCoverageInfo;// = require('./BranchCoverageInfo');
-            if (ANALYSIS && ANALYSIS.indexOf("Engine")>=0) {
-//        var getSymbolicFunctionToInvoke = require('./SymbolicFunctions');
-                var SymbolicEngine = require('./'+ANALYSIS);
-                sEngine = new SymbolicEngine(executionIndex);
-            }
-
-
-            var rrEngine;
-            if (mode=== MODE_RECORD || mode === MODE_REPLAY) {
-                rrEngine = new RecordReplayEngine();
-            }
-
-
-            var log = (function(){
-                var list;
-
-                return {
-                    reset: function() {
-                        list = [];
-                    },
-
-                    log: function(str) {
-                        if (list)
-                            list.push(str);
-                    },
-
-                    getLog: function() {
-                        return list;
-                    }
-                }
-            })();
-
-            var isInstrumentedCaller = false;
-            var returnVal;
-            var scriptCount = 0;
-            var lastVal;
-            var switchLeft;
-            var switchKeyStack = [];
-
-
-            sandbox.U = U; // Unary operation
-            sandbox.B = B; // Binary operation
-            sandbox.C = C; // Condition
-            sandbox.C1 = C1; // Switch key
-            sandbox.C2 = C2; // case label C1 === C2
-            sandbox.addAxiom = addAxiom; // Add axiom
-            sandbox.getConcrete = getConcrete;  // Get concrete value
-            sandbox._ = last;  // Last value passed to C
-
-            sandbox.H = H; // hash in for-in
-            sandbox.I = I; // Ignore argument
-            sandbox.G = G; // getField
-            sandbox.P = P; // putField
-            sandbox.R = R; // Read
-            sandbox.W = W; // Write
-            sandbox.N = N; // Init
-            sandbox.T = T; // object/function/regexp/array Literal
-            sandbox.F = F; // Function call
-            sandbox.M = M; // Method call
-            sandbox.A = A; // Modify and assign +=, -= ...
-            sandbox.Fe = Fe; // Function enter
-            sandbox.Fr = Fr; // Function return
-            sandbox.Se = Se; // Script enter
-            sandbox.Sr = Sr; // Script return
-            sandbox.Rt = Rt; // returned value
-            sandbox.Ra = Ra;
-
-            sandbox.replay = rrEngine?rrEngine.RR_replay:undefined;
-            sandbox.onflush = rrEngine?rrEngine.onflush:function(){};
-            sandbox.record = rrEngine?rrEngine.record:function(){};
-            sandbox.command = rrEngine?rrEngine.command:function(){};
-            sandbox.sEngine = sEngine;
-            sandbox.endExecution = endExecution;
-            sandbox.addRecord = rrEngine?rrEngine.addRecord:undefined;
-
-            sandbox.log = log;
 
 
 
