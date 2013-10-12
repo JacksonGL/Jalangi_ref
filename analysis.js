@@ -1137,16 +1137,6 @@
             };
 
             function TraceInfo () {
-                var traceArray = [];
-                var traceIndex = 0;
-                var currentIndex = 0;
-                var frontierIndex = 0;
-                var MAX_SIZE = 1024;
-                var traceFh;
-                var done = false;
-                var curRecord = null;
-
-
 
                 parent.addRecord = function(line) {
                     var record = JSON.parse(line);
@@ -1246,6 +1236,15 @@
                     }
                     return traceIndex-1;
                 }
+
+                var traceArray = [];
+                var traceIndex = 0;
+                var currentIndex = 0;
+                var frontierIndex = 0;
+                var MAX_SIZE = 1024;
+                var traceFh;
+                var done = false;
+                var curRecord = null;
 
             }
 
