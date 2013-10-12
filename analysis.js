@@ -237,8 +237,8 @@ try{
         var a = [];
         for (var i = 0; i < args.length; i++)
             a[i] = 'args[' + i + ']';
-        var eval = EVAL_ORG;
-        return eval('new Constructor(' + a.join() + ')');
+        var eval2 = EVAL_ORG;
+        return eval2('new Constructor(' + a.join() + ')');
     }
 
     function callAsNativeConstructor (Constructor, args) {
