@@ -21,7 +21,7 @@
 //    console.log('J$ already exist');
 //} else {
     window.J$ = {};
-
+    window.JALANGI_MODE = 'record';
     (function(sandbox) {
 
         //-------------------------------------- Symbolic functions -----------------------------------------------------------
@@ -227,7 +227,7 @@
                 this.executionIndexCall = executionIndexCall;
                 this.executionIndexReturn = executionIndexReturn;
                 this.executionIndexInc = executionIndexInc;
-                this.executionIndexGetIndex = executionIndexGetIndex;
+                this.executionIndexGetIndex = executionIndexGetIndex; return this;
             } else {
                 return new ExecutionIndex();
             }
@@ -1477,7 +1477,7 @@
             }
 
             init();
-
+            return this;
 
         }
 
@@ -1703,7 +1703,6 @@
 
         }
     }(J$));
-//}
 
 
 
