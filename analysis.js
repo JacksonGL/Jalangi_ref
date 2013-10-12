@@ -17,7 +17,7 @@
 // Author: Koushik Sen
 // Trivial Modification by Liang Gong
 
-if(J$ != null && J$ != undefined){
+if(window.J$ != null && window.J$ != undefined){
     console.log('J$ already exist');
 } else {
     window.J$ = {};
