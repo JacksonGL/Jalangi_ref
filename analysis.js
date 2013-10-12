@@ -15,6 +15,11 @@
  */
 
 // Author: Koushik Sen
+// Trivial Modification by Liang Gong
+
+if(window.J$ != null && window.J$ != undefined){
+    return ;
+}
 
 window.J$ = {};
 
@@ -1486,7 +1491,7 @@ window.J$ = {};
             sEngine.endExecution();
         }
     }
-    
+
     if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
         var single = require('./'+process.env.JALANGI_ANALYSIS);
 
@@ -1519,7 +1524,7 @@ window.J$ = {};
         sandbox.addAxiom = single.addAxiom;
         sandbox.endExecution = single.endExecution;
     } else {
-       
+
 //------------------------------- Stats for the paper -----------------------
         var skippedReads = 0;
         var skippedGetFields = 0;
