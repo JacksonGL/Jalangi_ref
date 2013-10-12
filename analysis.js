@@ -1135,7 +1135,7 @@
                 ret[F_VALUE] = prefix;
                 logValue(0, ret, N_LOG_SPECIAL);
             };
-            console.log('here 1');
+
             function TraceInfo () {
                 console.log('here 2');
                 parent.addRecord = function(line) {
@@ -1655,7 +1655,7 @@
         sandbox.command = rrEngine?rrEngine.command:function(){};
         sandbox.sEngine = sEngine;
         sandbox.endExecution = endExecution;
-        sandbox.addRecord = rrEngine?rrEngine.addRecord:undefined;
+        //sandbox.addRecord = rrEngine?rrEngine.addRecord:undefined;
 
         sandbox.log = log;
 
