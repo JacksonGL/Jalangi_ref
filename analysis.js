@@ -185,6 +185,7 @@
 
         //-------------------------------- Execution indexing --------------------------------
         function ExecutionIndex() {
+            
             var counters = {};
             var countersStack = [counters];
 
@@ -227,7 +228,7 @@
                 this.executionIndexCall = executionIndexCall;
                 this.executionIndexReturn = executionIndexReturn;
                 this.executionIndexInc = executionIndexInc;
-                this.executionIndexGetIndex = executionIndexGetIndex; return this;
+                this.executionIndexGetIndex = executionIndexGetIndex;
             } else {
                 return new ExecutionIndex();
             }
@@ -765,274 +766,15 @@
 //----------------------------------- Record Replay Engine ---------------------------------
 
         function RecordReplayEngine() {
-
+            
             if (!(this instanceof RecordReplayEngine)) {
                 return new RecordReplayEngine();
             }
 
 
-
-            function printableValue(val) {
-                var value, typen = getNumericType(val), ret = [];
-                if (typen === T_NUMBER || typen === T_BOOLEAN || typen === T_STRING) {
-                    value = val;
-                } else if (typen === T_UNDEFINED) {
-                    value = 0;
-                } else {
-                    if (val === null) {
-                        value = 0;
-                    } else {
-                        if (!HOP(val, SPECIAL_PROP)) {
-                            val[SPECIAL_PROP] = {};
-                            val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
-                            objectId = objectId + 2;
-                        }
-                        if (HOP(val,SPECIAL_PROP) && typeof val[SPECIAL_PROP][SPECIAL_PROP] === 'number') {
-                            value = val[SPECIAL_PROP][SPECIAL_PROP];
-                        } else {
-                            value = undefined;
-                        }
-                    }
-                }
-                ret[F_TYPE] = typen;
-                ret[F_VALUE] = value;
-                return ret;
-            }
-
-            function getNumericType(val) {
-                var type = typeof val;
-                var typen;
-                switch(type) {
-                    case "number":
-                        typen = T_NUMBER;
-                        break;
-                    case "boolean":
-                        typen = T_BOOLEAN;
-                        break;
-                    case "string":
-                        typen = T_STRING;
-                        break;
-                    case "object":
-                        if (val===null) {
-                            typen = T_NULL;
-                        } else if( Object.prototype.toString.call( val ) === '[object Array]' ) {
-                            typen = T_ARRAY;
-                        } else {
-                            typen = T_OBJECT;
-                        }
-                        break;
-                    case "function":
-                        typen = T_FUNCTION;
-                        break;
-                    case "undefined":
-                        typen = T_UNDEFINED;
-                        break;
-                }
-                return typen;
-            }
-
-
-
-
-                updateRecordedObject = function(obj) {
-                    var val = getConcrete(obj);
-                    if (val !== obj && val !== undefined && val !== null && HOP(val, SPECIAL_PROP)) {
-                        var id = val[SPECIAL_PROP][SPECIAL_PROP];
-                        objectMap[id] = obj;
-                    }
-                }
-
-                setLiteralId = function(val) {
-                    var id;
-                    var oldVal = val;
-                    val = getConcrete(oldVal);
-                    if (!HOP(val,SPECIAL_PROP)) {
-                        val[SPECIAL_PROP] = {};
-                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
-                        literalId = literalId + 2;
-                        for (var offset in val) {
-                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset)) {
-                                val[SPECIAL_PROP][offset] = val[offset];
-                            }
-                        }
-                    }
-                    if (mode === MODE_REPLAY) {
-                        objectMap[id] = oldVal;
-                    }
-                }
-
-                function getActualValue(recordedValue, recordedType) {
-                    if (recordedType === T_UNDEFINED) {
-                        return undefined;
-                    } else if (recordedType === T_NULL) {
-                        return null;
-                    } else {
-                        return recordedValue;
-                    }
-                }
-
-                return function(recordedArray, replayValue, iid) {
-                    var oldReplayValue = replayValue, tmp;;
-                    replayValue = getConcrete(replayValue);
-                    var recordedValue = recordedArray[F_VALUE], recordedType = recordedArray[F_TYPE];
-
-                    if (recordedType === T_UNDEFINED ||
-                        recordedType === T_NULL ||
-                        recordedType === T_NUMBER ||
-                        recordedType === T_STRING ||
-                        recordedType === T_BOOLEAN) {
-                        if((tmp = getActualValue(recordedValue,recordedType)) !== replayValue) {
-                            return tmp;
-                        } else {
-                            return oldReplayValue;
-                        }
-                    } else {
-                        //var id = objectMapIndex[recordedValue];
-                        var obj = objectMap[recordedValue];
-                        var type = getNumericType(replayValue);
-
-                        if (obj===undefined) {
-                            if (type === recordedType && !HOP(replayValue,SPECIAL_PROP)) {
-                                obj = replayValue;
-                            } else {
-                                if (recordedType === T_OBJECT) {
-                                    obj = {};
-                                } else if (recordedType === T_ARRAY){
-                                    obj = [];
-                                } else {
-                                    obj = function(){};
-                                }
-                            }
-                            obj[SPECIAL_PROP] = {};
-                            obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
-                            objectMap[recordedValue] = ((obj === replayValue)? oldReplayValue : obj);
-                        }
-                        return (obj === replayValue)? oldReplayValue : obj;
-                    }
-                }
-            }());
-
-
-
-
-            (function(){
-                
-
-                function getFileHanlde() {
-                    if (traceWfh === undefined) {
-                        traceWfh = fs.openSync(TRACE_FILE_NAME, 'w');
-                    }
-                    return traceWfh;
-                }
-
-                logToFile = function(line) {
-                    buffer.push(line);
-                    bufferSize += line.length;
-                    if (bufferSize > MAX_BUF_SIZE) {
-                        flush();
-                    }
-                }
-
-                flush = function() {
-                    var msg;
-                    if (typeof window === 'undefined') {
-                        var length = buffer.length;
-                        for (var i=0; i < length; i++) {
-                            fs.writeSync(getFileHanlde(),buffer[i]);
-                        }
-                    } else {
-                        msg = buffer.join('');
-                        if (msg.length >1) {
-                            remoteLog(msg);
-                        }
-                    }
-                    bufferSize = 0;
-                    buffer = [];
-                }
-
-
-                
-
-                function openSocketIfNotOpen() {
-                    if (!socket) {
-                        try{
-                            console.log('here!!!!!!!!!!!!!!');
-                            //console.log("Opening connection");
-                            //socket = new WebSocket('ws://127.0.0.1:8080', 'log-protocol');
-                            //socket.onopen = tryRemoteLog;
-                            //socket.onmessage = tryRemoteLog2;
-                        }catch(e){
-                            console.log(e);
-                        }
-                    }
-                }
-
-                function tryRemoteLog2() {
-                    trying = false;
-                    remoteBuffer.shift();
-                    if (remoteBuffer.length === 0) {
-                        if (cb) {
-                            cb();
-                            cb = undefined;
-                        }
-                    }
-                    tryRemoteLog();
-                }
-
-                onflush = function(callback) {
-                    if (remoteBuffer.length === 0) {
-                        if (callback) {
-                            callback();
-                        }
-                    } else {
-                        cb = callback;
-                        tryRemoteLog();
-                    }
-                }
-
-                function tryRemoteLog() {
-                    isOpen = true;
-                    if (!trying && remoteBuffer.length > 0) {
-                        trying = true;
-                        socket.send(remoteBuffer[0]);
-                    }
-                }
-
-                remoteLog = function(message) {
-                    remoteBuffer.push(message);
-                    openSocketIfNotOpen();
-                    if (isOpen) {
-                        tryRemoteLog();
-                    }
-                }
-
-                var bufferSize = 0;
-                var buffer = [];
-                var traceWfh;
-                var fs = (typeof window === "undefined")?require('fs'):undefined;
-
-                var trying = false;
-                var cb;
-                var remoteBuffer = [];
-                var socket, isOpen = false;
-            }());
-
-            
-
-            function record(prefix) {
-                var ret = [];
-                ret[F_TYPE] = getNumericType(prefix);
-                ret[F_VALUE] = prefix;
-                logValue(0, ret, N_LOG_SPECIAL);
-            };
-
-
             function command (rec) {
                 remoteLog(rec);
             };
-
-
-
             function logValue(iid,ret,funName) {
                 ret[F_IID] = iid;
                 ret[F_FUNNAME] = funName;
@@ -1047,9 +789,6 @@
                     throw new Error("Path deviation at record = ["+ret + "] iid = "+iid+ " index = " +traceInfo.getPreviousIndex());
                 }
             }
-
-
-
             this.RR_evalBegin = function() {
                 evalFrames.push(frame);
                 frame = frameStack[0];
@@ -1329,9 +1068,85 @@
                 }
             }
 
-            
+            function printableValue(val) {
+                var value, typen = getNumericType(val), ret = [];
+                if (typen === T_NUMBER || typen === T_BOOLEAN || typen === T_STRING) {
+                    value = val;
+                } else if (typen === T_UNDEFINED) {
+                    value = 0;
+                } else {
+                    if (val === null) {
+                        value = 0;
+                    } else {
+                        if (!HOP(val, SPECIAL_PROP)) {
+                            val[SPECIAL_PROP] = {};
+                            val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
+                            objectId = objectId + 2;
+                        }
+                        if (HOP(val,SPECIAL_PROP) && typeof val[SPECIAL_PROP][SPECIAL_PROP] === 'number') {
+                            value = val[SPECIAL_PROP][SPECIAL_PROP];
+                        } else {
+                            value = undefined;
+                        }
+                    }
+                }
+                ret[F_TYPE] = typen;
+                ret[F_VALUE] = value;
+                return ret;
+            }
+
+            function getNumericType(val) {
+                var type = typeof val;
+                var typen;
+                switch(type) {
+                    case "number":
+                        typen = T_NUMBER;
+                        break;
+                    case "boolean":
+                        typen = T_BOOLEAN;
+                        break;
+                    case "string":
+                        typen = T_STRING;
+                        break;
+                    case "object":
+                        if (val===null) {
+                            typen = T_NULL;
+                        } else if( Object.prototype.toString.call( val ) === '[object Array]' ) {
+                            typen = T_ARRAY;
+                        } else {
+                            typen = T_OBJECT;
+                        }
+                        break;
+                    case "function":
+                        typen = T_FUNCTION;
+                        break;
+                    case "undefined":
+                        typen = T_UNDEFINED;
+                        break;
+                }
+                return typen;
+            }
+
+
+
+            function record(prefix) {
+                var ret = [];
+                ret[F_TYPE] = getNumericType(prefix);
+                ret[F_VALUE] = prefix;
+                logValue(0, ret, N_LOG_SPECIAL);
+            };
 
             function TraceInfo () {
+                var traceArray = [];
+                var traceIndex = 0;
+                var currentIndex = 0;
+                var frontierIndex = 0;
+                var MAX_SIZE = 1024;
+                var traceFh;
+                var done = false;
+                var curRecord = null;
+
+
 
                 parent.addRecord = function(line) {
                     var record = JSON.parse(line);
@@ -1432,15 +1247,6 @@
                     return traceIndex-1;
                 }
 
-                var traceArray = [];
-                var traceIndex = 0;
-                var currentIndex = 0;
-                var frontierIndex = 0;
-                var MAX_SIZE = 1024;
-                var traceFh;
-                var done = false;
-                var curRecord = null;
-
             }
 
             function init() {
@@ -1454,7 +1260,7 @@
                 }
             }
 
-            var parent = this;
+
             var traceInfo;
             var seqNo = 0;
 
@@ -1479,17 +1285,195 @@
              array is 7
              */
             var objectId = 1;
+
             var syncValue = (function(){
                 var objectMap = [];
                 //var objectMapIndex = [];
-                var logToFile, flush, remoteLog, onflush;
+
+
+                updateRecordedObject = function(obj) {
+                    var val = getConcrete(obj);
+                    if (val !== obj && val !== undefined && val !== null && HOP(val, SPECIAL_PROP)) {
+                        var id = val[SPECIAL_PROP][SPECIAL_PROP];
+                        objectMap[id] = obj;
+                    }
+                }
+
+                setLiteralId = function(val) {
+                    var id;
+                    var oldVal = val;
+                    val = getConcrete(oldVal);
+                    if (!HOP(val,SPECIAL_PROP)) {
+                        val[SPECIAL_PROP] = {};
+                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                        literalId = literalId + 2;
+                        for (var offset in val) {
+                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset)) {
+                                val[SPECIAL_PROP][offset] = val[offset];
+                            }
+                        }
+                    }
+                    if (mode === MODE_REPLAY) {
+                        objectMap[id] = oldVal;
+                    }
+                }
+
+                function getActualValue(recordedValue, recordedType) {
+                    if (recordedType === T_UNDEFINED) {
+                        return undefined;
+                    } else if (recordedType === T_NULL) {
+                        return null;
+                    } else {
+                        return recordedValue;
+                    }
+                }
+
+                return function(recordedArray, replayValue, iid) {
+                    var oldReplayValue = replayValue, tmp;;
+                    replayValue = getConcrete(replayValue);
+                    var recordedValue = recordedArray[F_VALUE], recordedType = recordedArray[F_TYPE];
+
+                    if (recordedType === T_UNDEFINED ||
+                        recordedType === T_NULL ||
+                        recordedType === T_NUMBER ||
+                        recordedType === T_STRING ||
+                        recordedType === T_BOOLEAN) {
+                        if((tmp = getActualValue(recordedValue,recordedType)) !== replayValue) {
+                            return tmp;
+                        } else {
+                            return oldReplayValue;
+                        }
+                    } else {
+                        //var id = objectMapIndex[recordedValue];
+                        var obj = objectMap[recordedValue];
+                        var type = getNumericType(replayValue);
+
+                        if (obj===undefined) {
+                            if (type === recordedType && !HOP(replayValue,SPECIAL_PROP)) {
+                                obj = replayValue;
+                            } else {
+                                if (recordedType === T_OBJECT) {
+                                    obj = {};
+                                } else if (recordedType === T_ARRAY){
+                                    obj = [];
+                                } else {
+                                    obj = function(){};
+                                }
+                            }
+                            obj[SPECIAL_PROP] = {};
+                            obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
+                            objectMap[recordedValue] = ((obj === replayValue)? oldReplayValue : obj);
+                        }
+                        return (obj === replayValue)? oldReplayValue : obj;
+                    }
+                }
+            }());
+
+
+            var logToFile, flush, remoteLog, onflush;
+
+            (function(){
+                var bufferSize = 0;
+                var buffer = [];
+                var traceWfh;
+                var fs = (typeof window === "undefined")?require('fs'):undefined;
+
+                function getFileHanlde() {
+                    if (traceWfh === undefined) {
+                        traceWfh = fs.openSync(TRACE_FILE_NAME, 'w');
+                    }
+                    return traceWfh;
+                }
+
+                logToFile = function(line) {
+                    buffer.push(line);
+                    bufferSize += line.length;
+                    if (bufferSize > MAX_BUF_SIZE) {
+                        flush();
+                    }
+                }
+
+                flush = function() {
+                    var msg;
+                    if (typeof window === 'undefined') {
+                        var length = buffer.length;
+                        for (var i=0; i < length; i++) {
+                            fs.writeSync(getFileHanlde(),buffer[i]);
+                        }
+                    } else {
+                        msg = buffer.join('');
+                        if (msg.length >1) {
+                            remoteLog(msg);
+                        }
+                    }
+                    bufferSize = 0;
+                    buffer = [];
+                }
+
+
+                var trying = false;
+                var cb;
+                var remoteBuffer = [];
+                var socket, isOpen = false;
+
+                function openSocketIfNotOpen() {
+                    if (!socket) {
+                        console.log("Opening connection");
+                        socket = new WebSocket('ws://127.0.0.1:8080', 'log-protocol');
+                        socket.onopen = tryRemoteLog;
+                        socket.onmessage = tryRemoteLog2;
+                    }
+                }
+
+                function tryRemoteLog2() {
+                    trying = false;
+                    remoteBuffer.shift();
+                    if (remoteBuffer.length === 0) {
+                        if (cb) {
+                            cb();
+                            cb = undefined;
+                        }
+                    }
+                    tryRemoteLog();
+                }
+
+                onflush = function(callback) {
+                    if (remoteBuffer.length === 0) {
+                        if (callback) {
+                            callback();
+                        }
+                    } else {
+                        cb = callback;
+                        tryRemoteLog();
+                    }
+                }
+
+                function tryRemoteLog() {
+                    isOpen = true;
+                    if (!trying && remoteBuffer.length > 0) {
+                        trying = true;
+                        socket.send(remoteBuffer[0]);
+                    }
+                }
+
+                remoteLog = function(message) {
+                    remoteBuffer.push(message);
+                    openSocketIfNotOpen();
+                    if (isOpen) {
+                        tryRemoteLog();
+                    }
+                }
+            }());
+
             this.onflush = onflush;
             this.record = record;
             this.command = command;
             this.RR_updateRecordedObject = updateRecordedObject;
 
+            var parent = this;
+
             init();
-            return this;
+
 
         }
 
@@ -1715,6 +1699,7 @@
 
         }
     }(J$));
+//}
 
 
 
