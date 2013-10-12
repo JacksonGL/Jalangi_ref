@@ -20,6 +20,7 @@
 
 J$ = {};
 
+try{
 (function(sandbox) {
     //-------------------------------------- Symbolic functions -----------------------------------------------------------
 
@@ -1725,3 +1726,6 @@ J$ = {};
 
 
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
+}catch(e){
+    console.log('!!!!!!!!!!!!!' + e);
+}
