@@ -987,10 +987,14 @@ if(window.J$ != null && window.J$ != undefined){
 
                 function openSocketIfNotOpen() {
                     if (!socket) {
-                        console.log("Opening connection");
-                        socket = new WebSocket('ws://127.0.0.1:8080', 'log-protocol');
-                        socket.onopen = tryRemoteLog;
-                        socket.onmessage = tryRemoteLog2;
+                        try{
+                            console.log("Opening connection");
+                            socket = new WebSocket('ws://127.0.0.1:8080', 'log-protocol');
+                            socket.onopen = tryRemoteLog;
+                            socket.onmessage = tryRemoteLog2;
+                        }catch(e){
+                            console.log(e);
+                        }
                     }
                 }
 
