@@ -770,30 +770,7 @@
                 return new RecordReplayEngine();
             }
 
-            var traceInfo;
-            var seqNo = 0;
 
-            var frame = {};
-            var frameStack = [frame];
-
-            var evalFrames = [];
-
-            var literalId = 2;
-            var setLiteralId;
-            var updateRecordedObject;
-
-            /*
-             type enumerations are
-             null is 0
-             number is 1
-             boolean is 2
-             string is 3
-             object is 4
-             function is 5
-             undefined is 6
-             array is 7
-             */
-            var objectId = 1;
 
             function printableValue(val) {
                 var value, typen = getNumericType(val), ret = [];
@@ -855,9 +832,6 @@
             }
 
 
-            var syncValue = (function(){
-                var objectMap = [];
-                //var objectMapIndex = [];
 
 
                 updateRecordedObject = function(obj) {
@@ -939,13 +913,10 @@
             }());
 
 
-            var logToFile, flush, remoteLog, onflush;
+
 
             (function(){
-                var bufferSize = 0;
-                var buffer = [];
-                var traceWfh;
-                var fs = (typeof window === "undefined")?require('fs'):undefined;
+                
 
                 function getFileHanlde() {
                     if (traceWfh === undefined) {
@@ -980,10 +951,7 @@
                 }
 
 
-                var trying = false;
-                var cb;
-                var remoteBuffer = [];
-                var socket, isOpen = false;
+                
 
                 function openSocketIfNotOpen() {
                     if (!socket) {
@@ -1037,9 +1005,19 @@
                         tryRemoteLog();
                     }
                 }
+
+                var bufferSize = 0;
+                var buffer = [];
+                var traceWfh;
+                var fs = (typeof window === "undefined")?require('fs'):undefined;
+
+                var trying = false;
+                var cb;
+                var remoteBuffer = [];
+                var socket, isOpen = false;
             }());
 
-            this.onflush = onflush;
+            
 
             function record(prefix) {
                 var ret = [];
@@ -1047,12 +1025,13 @@
                 ret[F_VALUE] = prefix;
                 logValue(0, ret, N_LOG_SPECIAL);
             };
-            this.record = record;
+
 
             function command (rec) {
                 remoteLog(rec);
             };
-            this.command = command;
+
+
 
             function logValue(iid,ret,funName) {
                 ret[F_IID] = iid;
@@ -1069,7 +1048,7 @@
                 }
             }
 
-            this.RR_updateRecordedObject = updateRecordedObject;
+
 
             this.RR_evalBegin = function() {
                 evalFrames.push(frame);
@@ -1350,19 +1329,9 @@
                 }
             }
 
-            var parent = this;
+            
 
             function TraceInfo () {
-                var traceArray = [];
-                var traceIndex = 0;
-                var currentIndex = 0;
-                var frontierIndex = 0;
-                var MAX_SIZE = 1024;
-                var traceFh;
-                var done = false;
-                var curRecord = null;
-
-
 
                 parent.addRecord = function(line) {
                     var record = JSON.parse(line);
@@ -1463,6 +1432,15 @@
                     return traceIndex-1;
                 }
 
+                var traceArray = [];
+                var traceIndex = 0;
+                var currentIndex = 0;
+                var frontierIndex = 0;
+                var MAX_SIZE = 1024;
+                var traceFh;
+                var done = false;
+                var curRecord = null;
+
             }
 
             function init() {
@@ -1475,6 +1453,40 @@
                     command('reset');
                 }
             }
+
+            var parent = this;
+            var traceInfo;
+            var seqNo = 0;
+
+            var frame = {};
+            var frameStack = [frame];
+
+            var evalFrames = [];
+
+            var literalId = 2;
+            var setLiteralId;
+            var updateRecordedObject;
+
+            /*
+             type enumerations are
+             null is 0
+             number is 1
+             boolean is 2
+             string is 3
+             object is 4
+             function is 5
+             undefined is 6
+             array is 7
+             */
+            var objectId = 1;
+            var syncValue = (function(){
+                var objectMap = [];
+                //var objectMapIndex = [];
+                var logToFile, flush, remoteLog, onflush;
+            this.onflush = onflush;
+            this.record = record;
+            this.command = command;
+            this.RR_updateRecordedObject = updateRecordedObject;
 
             init();
             return this;
