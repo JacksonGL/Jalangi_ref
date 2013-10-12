@@ -1260,7 +1260,7 @@
                 }
             }
 
-
+            var parent = this;
             var traceInfo;
             var seqNo = 0;
 
@@ -1470,7 +1470,7 @@
             this.command = command;
             this.RR_updateRecordedObject = updateRecordedObject;
 
-            var parent = this;
+            
 
             init();
 
