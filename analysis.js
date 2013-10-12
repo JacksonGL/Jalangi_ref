@@ -228,7 +228,7 @@
                 this.executionIndexCall = executionIndexCall;
                 this.executionIndexReturn = executionIndexReturn;
                 this.executionIndexInc = executionIndexInc;
-                this.executionIndexGetIndex = executionIndexGetIndex;
+                this.executionIndexGetIndex = executionIndexGetIndex; return this;
             } else {
                 return new ExecutionIndex();
             }
@@ -1470,10 +1470,10 @@
             this.command = command;
             this.RR_updateRecordedObject = updateRecordedObject;
 
-            
+
 
             init();
-
+            return this;
 
         }
 
