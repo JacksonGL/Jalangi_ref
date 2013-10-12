@@ -1135,9 +1135,9 @@
                 ret[F_VALUE] = prefix;
                 logValue(0, ret, N_LOG_SPECIAL);
             };
-
+            console.log('here 1');
             function TraceInfo () {
-
+                console.log('here 2');
                 parent.addRecord = function(line) {
                     var record = JSON.parse(line);
                     traceArray.push(record);
