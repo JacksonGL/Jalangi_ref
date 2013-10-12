@@ -241,8 +241,8 @@
             var a = [];
             for (var i = 0; i < args.length; i++)
                 a[i] = 'args[' + i + ']';
-            var eval2 = EVAL_ORG;
-            return eval2('new Constructor(' + a.join() + ')');
+            var eval = EVAL_ORG;
+            return eval('new Constructor(' + a.join() + ')');
         }
 
         function callAsNativeConstructor (Constructor, args) {
@@ -328,7 +328,7 @@
                     if (isConstructor) {
                         val = callAsConstructor(g, args);
                     } else {
-                        val = g.apply(base, args);
+                        val = g.apply(base, args); //[11:53:11.730] TypeError: g is undefined @ https://raw.github.com/JacksonGL/Jalangi_ref/master/analysis.js:331
                     }
                 }  else {
                     if (rrEngine) {
@@ -502,7 +502,7 @@
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
                 return undefined;
             }
-
+            //[11:44:11.579] TypeError: base_c is undefined @ https://raw.github.com/JacksonGL/Jalangi_ref/master/analysis.js:510
             var base_c = getConcrete(base);
             if (sEngine && sEngine.getFieldPre) {
                 sEngine.getFieldPre(iid, base, offset);
