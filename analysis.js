@@ -1109,6 +1109,7 @@ try{
         }());
 
         if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
+            console.log('NO !!!!!!!!!!!!!!!!!!!!');
             var single = require('./'+process.env.JALANGI_ANALYSIS);
 
             sandbox.U = single.U; // Unary operation
@@ -1680,6 +1681,7 @@ try{
         sandbox.R = R; // Read
         sandbox.W = W; // Write
         sandbox.N = N; // Init
+        console.log('here!!!!!!!!!!!!!!!!!!!!' + T);
         sandbox.T = T; // object/function/regexp/array Literal
         sandbox.F = F; // Function call
         sandbox.M = M; // Method call
