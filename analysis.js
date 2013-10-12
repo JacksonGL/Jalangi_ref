@@ -1141,7 +1141,7 @@ try{
             sandbox.addAxiom = single.addAxiom;
             sandbox.endExecution = single.endExecution;
         } else {
-
+            console.log('in the else!');
             //------------------------------- Stats for the paper -----------------------
             var skippedReads = 0;
             var skippedGetFields = 0;
@@ -1681,7 +1681,6 @@ try{
         sandbox.R = R; // Read
         sandbox.W = W; // Write
         sandbox.N = N; // Init
-        console.log('here!!!!!!!!!!!!!!!!!!!!' + T);
         sandbox.T = T; // object/function/regexp/array Literal
         sandbox.F = F; // Function call
         sandbox.M = M; // Method call
@@ -1707,7 +1706,7 @@ try{
 
     }
 }(J$));
-
+console.log('I am here!');
 
 //@TODO: test with apply and call
 //@TODO: associate iid with source line and column
