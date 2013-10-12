@@ -17,9 +17,9 @@
 // Author: Koushik Sen
 // Refactored for Firefox Extension by Liang Gong
 
-if(window.J$ != null && window.J$ != undefined){
-    console.log('J$ already exist');
-} else {
+//if(window.J$ != null && window.J$ != undefined){
+//    console.log('J$ already exist');
+//} else {
     window.J$ = {};
 
     (function(sandbox) {
@@ -1703,7 +1703,7 @@ if(window.J$ != null && window.J$ != undefined){
 
         }
     }(J$));
-}
+//}
 
 
 

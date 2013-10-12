@@ -16,12 +16,12 @@
 
 // Author: Koushik Sen
 
-if(window.J$ != null && window.J$ != undefined){
-    console.log('J$ already exist');
-} else {
+//if(window.J$ != null && window.J$ != undefined){
+//    console.log('J$ already exist');
+//} else {
 
     if (typeof J$ === 'undefined') {
-        J$ = {};
+        window.J$ = {};
     }
 
     if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
@@ -126,4 +126,4 @@ if(window.J$ != null && window.J$ != undefined){
     }(J$));
 
     }
-}
+//}
