@@ -20,10 +20,13 @@
 //if(window.J$ != null && window.J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
+
+    window.J$ = {};
+    window.JALANGI_MODE = 'record';
+    var window.J$.analyzer = null;
     
-var analyzer = null;
 try{
-    analyzer = {
+    window.J$.analyzer = {
         F: function(iid, f, isConstructor) {
             
         },
@@ -64,7 +67,7 @@ try{
             //return val;
         },
         R: function(iid, name, val) {
-            console.log('[read] name: ' + name);
+            //console.log('[read] name: ' + name);
             //return val;
         },
         W: function(iid, name, val, lhs) {
@@ -79,7 +82,9 @@ try{
             
         },
         G: function(iid, base, offset, norr) {
-            
+            if(base=='window'){
+                console.log(base + '.' + offset);
+            }
             //return val;
         },
         P: function(iid, base, offset, val) {
@@ -110,8 +115,8 @@ try{
 }catch(e){
     console.log(e);
 }
-    window.J$ = {};
-    window.JALANGI_MODE = 'record';
+
+    
 
     (function(sandbox) {
 
@@ -453,8 +458,8 @@ try{
         //var globalInstrumentationInfo;
 
         function F(iid, f, isConstructor) {
-            if(analyzer){
-                analyzer.F(iid, f, isConstructor);
+            if(window.J$.analyzer){
+                window.J$.analyzer.F(iid, f, isConstructor);
             }
 
             return function() {
@@ -464,8 +469,8 @@ try{
         }
 
         function M(iid, base, offset, isConstructor) {
-            if(analyzer){
-                analyzer.M(iid, base, offset, isConstructor);
+            if(window.J$.analyzer){
+                window.J$.analyzer.M(iid, base, offset, isConstructor);
             }
 
             return function() {
@@ -475,8 +480,8 @@ try{
         }
 
         function Fe(iid, val, dis) {
-            if(analyzer){
-                analyzer.Fe(iid, val, dis);
+            if(window.J$.analyzer){
+                window.J$.analyzer.Fe(iid, val, dis);
             }
 
             executionIndex.executionIndexCall();
@@ -487,8 +492,8 @@ try{
         }
 
         function Fr(iid) {
-            if(analyzer){
-                analyzer.Fr(iid);
+            if(window.J$.analyzer){
+                window.J$.analyzer.Fr(iid);
             }
 
             executionIndex.executionIndexReturn();
@@ -499,16 +504,16 @@ try{
 
 
         function Rt(iid, val) {
-            if(analyzer){
-                analyzer.Rt(iid, val);
+            if(window.J$.analyzer){
+                window.J$.analyzer.Rt(iid, val);
             }
 
             return returnVal = val;
         }
 
         function Ra() {
-            if(analyzer){
-                analyzer.Ra();
+            if(window.J$.analyzer){
+                window.J$.analyzer.Ra();
             }
 
             var ret = returnVal;
@@ -518,8 +523,8 @@ try{
 
 
         function Se(iid,val) {
-            if(analyzer){
-                analyzer.Se(iid,val);
+            if(window.J$.analyzer){
+                window.J$.analyzer.Se(iid,val);
             }
 
             scriptCount++;
@@ -529,8 +534,8 @@ try{
         }
 
         function Sr(iid) {
-            if(analyzer){
-                analyzer.Sr(iid);
+            if(window.J$.analyzer){
+                window.J$.analyzer.Sr(iid);
             }
 
             scriptCount--;
@@ -543,16 +548,16 @@ try{
         }
 
         function I(val) {
-            if(analyzer){
-                analyzer.I(val);
+            if(window.J$.analyzer){
+                window.J$.analyzer.I(val);
             }
 
             return val;
         }
 
         function T(iid, val, type) {
-            if(analyzer){
-                analyzer.T(iid, val, type);
+            if(window.J$.analyzer){
+                window.J$.analyzer.T(iid, val, type);
             }
 
             if (sEngine && sEngine.literalPre) {
@@ -576,8 +581,8 @@ try{
         }
 
         function H(iid, val) {
-            if(analyzer){
-                analyzer.H(iid, val);
+            if(window.J$.analyzer){
+                window.J$.analyzer.H(iid, val);
             }
 
             if (rrEngine) {
@@ -587,8 +592,8 @@ try{
         }
 
         function R(iid, name, val) {
-            if(analyzer){
-                analyzer.R(iid, name, val);
+            if(window.J$.analyzer){
+                window.J$.analyzer.R(iid, name, val);
             }
 
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
@@ -609,8 +614,8 @@ try{
         }
 
         function W(iid, name, val, lhs) {
-            if(analyzer){
-                analyzer.W(iid, name, val, lhs);
+            if(window.J$.analyzer){
+                window.J$.analyzer.W(iid, name, val, lhs);
             }
 
             if (sEngine && sEngine.writePre) {
@@ -626,8 +631,8 @@ try{
         }
 
         function N(iid, name, val, isArgumentSync) {
-            if(analyzer){
-                analyzer.N(iid, name, val, isArgumentSync);
+            if(window.J$.analyzer){
+                window.J$.analyzer.N(iid, name, val, isArgumentSync);
             }
 
             if (rrEngine) {
@@ -638,8 +643,8 @@ try{
 
 
         function A(iid,base,offset,op) {
-            if(analyzer){
-                analyzer.A(iid,base,offset,op);
+            if(window.J$.analyzer){
+                window.J$.analyzer.A(iid,base,offset,op);
             }
 
             var oprnd1 = G(iid,base, offset);
@@ -650,8 +655,8 @@ try{
         }
 
         function G(iid, base, offset, norr) {
-            if(analyzer){
-                analyzer.G(iid, base, offset, norr);
+            if(window.J$.analyzer){
+                window.J$.analyzer.G(iid, base, offset, norr);
             }
 
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
@@ -682,8 +687,8 @@ try{
         }
 
         function P(iid, base, offset, val) {
-            if(analyzer){
-                analyzer.P(iid, base, offset, val);
+            if(window.J$.analyzer){
+                window.J$.analyzer.P(iid, base, offset, val);
             }
 
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
@@ -708,8 +713,8 @@ try{
         }
 
         function B(iid, op, left, right) {
-            if(analyzer){
-                analyzer.B(iid, op, left, right);
+            if(window.J$.analyzer){
+                window.J$.analyzer.B(iid, op, left, right);
             }
 
             var left_c, right_c, result_c;
@@ -813,8 +818,8 @@ try{
 
 
         function U(iid, op, left) {
-            if(analyzer){
-                analyzer.U(iid, op, left);
+            if(window.J$.analyzer){
+                window.J$.analyzer.U(iid, op, left);
             }
 
             var left_c, result_c;
@@ -869,8 +874,8 @@ try{
         };
 
         function C1(iid, left) {
-            if(analyzer){
-                analyzer.C1(iid, left);
+            if(window.J$.analyzer){
+                window.J$.analyzer.C1(iid, left);
             }
 
             var left_c;
@@ -881,8 +886,8 @@ try{
         };
 
         function C2(iid, left) {
-            if(analyzer){
-                analyzer.C2(iid, left);
+            if(window.J$.analyzer){
+                window.J$.analyzer.C2(iid, left);
             }
 
             var left_c, ret;
@@ -910,8 +915,8 @@ try{
         };
 
         function C(iid, left) {
-            if(analyzer){
-                analyzer.C(iid, left);
+            if(window.J$.analyzer){
+                window.J$.analyzer.C(iid, left);
             }
 
             var left_c, ret;
