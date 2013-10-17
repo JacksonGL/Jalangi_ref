@@ -20,6 +20,117 @@
 //if(window.J$ != null && window.J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
+
+    var analyzer = {
+        function F(iid, f, isConstructor) {
+            
+        }
+
+        function M(iid, base, offset, isConstructor) {
+            
+        }
+
+        function Fe(iid, val, dis) {
+            
+            //returnVal = undefined;
+        }
+
+        function Fr(iid) {
+            
+        }
+
+
+        function Rt(iid, val) {
+            //return returnVal = val;
+        }
+
+        function Ra() {
+            //var ret = returnVal;
+            //returnVal = undefined;
+            //return ret;
+        }
+
+
+        function Se(iid,val) {
+            
+        }
+
+        function Sr(iid) {
+            
+        }
+
+        function I(val) {
+            //return val;
+        }
+
+        function T(iid, val, type) {
+            
+
+            //return val;
+        }
+
+        function H(iid, val) {
+            
+            //return val;
+        }
+
+        function R(iid, name, val) {
+            console.log('[read] name: ' + name);
+            //return val;
+        }
+
+        function W(iid, name, val, lhs) {
+            
+            //return val;
+        }
+
+        function N(iid, name, val, isArgumentSync) {
+            
+            //return val;
+        }
+
+
+        function A(iid,base,offset,op) {
+            
+        }
+
+        function G(iid, base, offset, norr) {
+            
+            //return val;
+        }
+
+        function P(iid, base, offset, val) {
+            
+
+            //return val;
+        }
+
+        function B(iid, op, left, right) {
+            //return result_c;
+        }
+
+
+        function U(iid, op, left) {
+            
+            //return result_c;
+        }
+
+        function C1(iid, left) {
+            //var left_c;
+            //return left_c;
+        };
+
+        function C2(iid, left) {
+            //var left_c, ret;
+            //return left_c;
+        };
+
+        function C(iid, left) {
+            //var left_c, ret;
+            //return left_c;
+        }
+    };
+
     window.J$ = {};
     window.JALANGI_MODE = 'record';
 
@@ -363,6 +474,10 @@
         //var globalInstrumentationInfo;
 
         function F(iid, f, isConstructor) {
+            if(analyzer){
+                analyzer.F(iid, f, isConstructor);
+            }
+
             return function() {
                 var base = this;
                 return invokeFun(iid, base, f, arguments, isConstructor);
@@ -370,6 +485,10 @@
         }
 
         function M(iid, base, offset, isConstructor) {
+            if(analyzer){
+                analyzer.M(iid, base, offset, isConstructor);
+            }
+
             return function() {
                 var f = G(iid, base, offset);
                 return invokeFun(iid, base, f, arguments, isConstructor);
@@ -377,6 +496,10 @@
         }
 
         function Fe(iid, val, dis) {
+            if(analyzer){
+                analyzer.Fe(iid, val, dis);
+            }
+
             executionIndex.executionIndexCall();
             if (rrEngine) {
                 rrEngine.RR_Fe(iid, val, dis);
@@ -385,6 +508,10 @@
         }
 
         function Fr(iid) {
+            if(analyzer){
+                analyzer.Fr(iid);
+            }
+
             executionIndex.executionIndexReturn();
             if (rrEngine) {
                 rrEngine.RR_Fr(iid);
@@ -393,10 +520,18 @@
 
 
         function Rt(iid, val) {
+            if(analyzer){
+                analyzer.Rt(iid, val);
+            }
+
             return returnVal = val;
         }
 
         function Ra() {
+            if(analyzer){
+                analyzer.Ra();
+            }
+
             var ret = returnVal;
             returnVal = undefined;
             return ret;
@@ -404,6 +539,10 @@
 
 
         function Se(iid,val) {
+            if(analyzer){
+                analyzer.Se(iid,val);
+            }
+
             scriptCount++;
             if (rrEngine) {
                 rrEngine.RR_Se(iid,val);
@@ -411,6 +550,10 @@
         }
 
         function Sr(iid) {
+            if(analyzer){
+                analyzer.Sr(iid);
+            }
+
             scriptCount--;
             if (rrEngine) {
                 rrEngine.RR_Sr(iid);
@@ -421,10 +564,18 @@
         }
 
         function I(val) {
+            if(analyzer){
+                analyzer.I(val);
+            }
+
             return val;
         }
 
         function T(iid, val, type) {
+            if(analyzer){
+                analyzer.T(iid, val, type);
+            }
+
             if (sEngine && sEngine.literalPre) {
                 sEngine.literalPre(iid, val);
             }
@@ -446,6 +597,10 @@
         }
 
         function H(iid, val) {
+            if(analyzer){
+                analyzer.H(iid, val);
+            }
+
             if (rrEngine) {
                 val = rrEngine.RR_H(iid,val);
             }
@@ -453,6 +608,10 @@
         }
 
         function R(iid, name, val) {
+            if(analyzer){
+                analyzer.R(iid, name, val);
+            }
+
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
                 sEngine.readPre(iid, name, val);
@@ -471,6 +630,10 @@
         }
 
         function W(iid, name, val, lhs) {
+            if(analyzer){
+                analyzer.W(iid, name, val, lhs);
+            }
+
             if (sEngine && sEngine.writePre) {
                 sEngine.writePre(iid, name, val);
             }
@@ -484,6 +647,10 @@
         }
 
         function N(iid, name, val, isArgumentSync) {
+            if(analyzer){
+                analyzer.N(iid, name, val, isArgumentSync);
+            }
+
             if (rrEngine) {
                 rrEngine.RR_N(iid, name, val, isArgumentSync);
             }
@@ -492,6 +659,10 @@
 
 
         function A(iid,base,offset,op) {
+            if(analyzer){
+                analyzer.A(iid,base,offset,op);
+            }
+
             var oprnd1 = G(iid,base, offset);
             return function(oprnd2) {
                 var val = B(iid, op, oprnd1, oprnd2);
@@ -500,6 +671,10 @@
         }
 
         function G(iid, base, offset, norr) {
+            if(analyzer){
+                analyzer.G(iid, base, offset, norr);
+            }
+
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
                 return undefined;
             }
@@ -528,6 +703,10 @@
         }
 
         function P(iid, base, offset, val) {
+            if(analyzer){
+                analyzer.P(iid, base, offset, val);
+            }
+
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
                 return undefined;
             }
@@ -550,6 +729,10 @@
         }
 
         function B(iid, op, left, right) {
+            if(analyzer){
+                analyzer.B(iid, op, left, right);
+            }
+
             var left_c, right_c, result_c;
 
             if (sEngine && sEngine.binaryPre) {
@@ -651,6 +834,10 @@
 
 
         function U(iid, op, left) {
+            if(analyzer){
+                analyzer.U(iid, op, left);
+            }
+
             var left_c, result_c;
 
             if (sEngine && sEngine.unaryPre) {
@@ -703,6 +890,10 @@
         };
 
         function C1(iid, left) {
+            if(analyzer){
+                analyzer.C1(iid, left);
+            }
+
             var left_c;
 
             left_c = getConcrete(left);
@@ -711,6 +902,10 @@
         };
 
         function C2(iid, left) {
+            if(analyzer){
+                analyzer.C2(iid, left);
+            }
+
             var left_c, ret;
             executionIndex.executionIndexInc(iid);
 
@@ -736,6 +931,10 @@
         };
 
         function C(iid, left) {
+            if(analyzer){
+                analyzer.C(iid, left);
+            }
+
             var left_c, ret;
             executionIndex.executionIndexInc(iid);
             if (sEngine && sEngine.conditionalPre) {
