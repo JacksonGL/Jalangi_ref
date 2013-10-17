@@ -25,107 +25,82 @@ try{
     analyzer = {
         F: function(iid, f, isConstructor) {
             
-        }
-
+        },
         M: function(iid, base, offset, isConstructor) {
             
-        }
-
+        },
         Fe: function(iid, val, dis) {
             
             //returnVal = undefined;
-        }
-
+        },
         Fr: function(iid) {
             
-        }
-
-
+        },
         Rt: function(iid, val) {
             //return returnVal = val;
-        }
-
+        },
         Ra: function() {
             //var ret = returnVal;
             //returnVal = undefined;
             //return ret;
-        }
-
-
+        },
         Se: function(iid,val) {
             
-        }
-
+        },
         Sr: function(iid) {
             
-        }
-
+        },
         I: function(val) {
             //return val;
-        }
-
+        },
         T: function(iid, val, type) {
             
 
             //return val;
-        }
-
+        },
         H: function(iid, val) {
             
             //return val;
-        }
-
+        },
         R: function(iid, name, val) {
             console.log('[read] name: ' + name);
             //return val;
-        }
-
+        },
         W: function(iid, name, val, lhs) {
             
             //return val;
-        }
-
+        },
         N: function(iid, name, val, isArgumentSync) {
             
             //return val;
-        }
-
-
+        },
         A: function(iid,base,offset,op) {
             
-        }
-
+        },
         G: function(iid, base, offset, norr) {
             
             //return val;
-        }
-
+        },
         P: function(iid, base, offset, val) {
             
 
             //return val;
-        }
-
+        },
         B: function(iid, op, left, right) {
             //return result_c;
-        }
-
-
+        },
         U: function(iid, op, left) {
             
             //return result_c;
-        }
-
+        },
         C1: function(iid, left) {
             //var left_c;
             //return left_c;
-        }
-
+        },
         C2: function(iid, left) {
             //var left_c, ret;
             //return left_c;
-        }
-
+        },
         C: function(iid, left) {
             //var left_c, ret;
             //return left_c;
