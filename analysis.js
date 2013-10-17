@@ -20,6 +20,7 @@
 //if(window.J$ != null && window.J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
+    
 var analyzer = null;
 try{
     analyzer = {
