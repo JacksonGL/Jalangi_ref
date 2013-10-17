@@ -67,6 +67,10 @@ try{
             //return val;
         },
         R: function(iid, name, val) {
+            //console.log('typeof name: ' + typeof name + ' | typeof val' + typeof val);
+            if(name=='window'){
+                console.log('reading window');
+            }
             //console.log('[read] name: ' + name);
             //return val;
         },
@@ -655,6 +659,7 @@ try{
         }
 
         function G(iid, base, offset, norr) {
+            console.log('get');
             if(window.J$.analyzer){
                 window.J$.analyzer.G(iid, base, offset, norr);
             }
