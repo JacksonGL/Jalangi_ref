@@ -17,10 +17,11 @@
 // Author: Koushik Sen
 // Refactored for Firefox Extension by Liang Gong
 
+var engine = null;
 
-var analysisEngine = {
+(function(module){
 
-    function analysisEngine(executionIndex) {
+    function UndefinedNullTrackingEngine(executionIndex) {
         var PREFIX1 = "J$";
         var TRACE_FILE_NAME = "jalangi_trace";
         var TAINT_SUMMARY = "jalangi_taint";
@@ -29,8 +30,8 @@ var analysisEngine = {
         var usedMap = {};
         var Id = 1;
 
-        if (!(this instanceof analysisEngine)) {
-            return new analysisEngine(executionIndex);
+        if (!(this instanceof UndefinedNullTrackingEngine)) {
+            return new UndefinedNullTrackingEngine(executionIndex);
         }
 
 
@@ -65,15 +66,15 @@ var analysisEngine = {
         var getIIDInfo = require('./../../utils/IIDInfo');
         var getLineNo = require('./../../utils/IIDInfoUtil');
 
-        
+
         /*
-        function checkNullOrUndef(val) {
-            var c = getConcrete(val);
-            if (c === null || c === undefined) {
-                console.log(getSymbolic(val));
-            }
-        }
-        */
+         function checkNullOrUndef(val) {
+         var c = getConcrete(val);
+         if (c === null || c === undefined) {
+         console.log(getSymbolic(val));
+         }
+         }
+         */
 
         function annotateNullOrUndef(val, iid, str) {
             if (val === null || val === undefined) {
@@ -83,10 +84,10 @@ var analysisEngine = {
         }
 
         function annotateNullOrUndef_putField(base, offset, val, iid, str) {
-            if (val === null || val === undefined) { 
+            if (val === null || val === undefined) {
                 //this branch will not be executed
                 //because all the val must go through read | getField | literal first
-                throw 'analysisEngine.annotateNullOrUndef_putField() branch 1 executed';
+                throw 'UndefinedNullTrackingEngine.annotateNullOrUndef_putField() branch 1 executed';
 
                 var sym_v = (str?str:"")+val+" init @ "+getLineNo(iid);
                 sym_v += '\r\n\t' + "'" + val + "'" + " -> " + (typeof base) + '.' + offset + " @ "+getLineNo(iid);
@@ -151,9 +152,8 @@ var analysisEngine = {
             return annotateNullOrUndef_invokeFun(val, iid);
         }
 
-        
+
         this.getFieldPre = function(iid, base, offset) {
-            console.log('getting field');
             var base_c = getConcrete(base);
             if (base_c === null || base_c === undefined) {
                 console.log('---------diagnostic---------');
@@ -197,12 +197,13 @@ var analysisEngine = {
         }
 
         this.read = function(iid, name, val) {
+            console.log('read');
             if (val === null || val === undefined) {
                 return new ConcolicValue(val, val+" -> " + name + " init @ "+getLineNo(iid));
             } else if (val instanceof ConcolicValue) {
                 val_c = getConcrete(val);
                 //if (val_c === null || val_c === undefined) {
-                    return new ConcolicValue(val_c, getSymbolic(val) + "\r\n\t'" + val_c + "' read from " + name + " @ "+getLineNo(iid));
+                return new ConcolicValue(val_c, getSymbolic(val) + "\r\n\t'" + val_c + "' read from " + name + " @ "+getLineNo(iid));
                 //}
             }
             return val;
@@ -214,7 +215,7 @@ var analysisEngine = {
             if (val === null || val === undefined) {
                 //this branch will not be executed
                 //because all the val must go through read | getField | literal first
-                throw 'analysisEngine.write() branch 1 executed';
+                throw 'UndefinedNullTrackingEngine.write() branch 1 executed';
                 var sym_v = val+" init @ "+getLineNo(iid);
                 sym_v += '\r\n\t' + "'"+ val +"'" +" assign -> " + name + " @ "+getLineNo(iid);
                 return new ConcolicValue(val, sym_v);
@@ -229,13 +230,14 @@ var analysisEngine = {
 
         /**/
     }
-
-
+    module = UndefinedNullTrackingEngine;
+}(engine));
 
 //if(window.J$ != null && window.J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
-    window.J$ = {};
+    window.J$ = engine;
+                //{};
     window.JALANGI_MODE = 'analysis'
                             //'record';
     (function(sandbox) {
