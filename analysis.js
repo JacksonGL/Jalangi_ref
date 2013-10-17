@@ -82,9 +82,9 @@ try{
             
         },
         G: function(iid, base, offset, norr) {
-            if(base=='window'){
-                console.log(base + '.' + offset);
-            }
+            //if(base=='window'){
+                console.log('typeof base: ' + typeof base + ' | typeof offset' + typeof offset);
+            //}
             //return val;
         },
         P: function(iid, base, offset, val) {
