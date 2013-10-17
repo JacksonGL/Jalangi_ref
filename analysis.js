@@ -20,8 +20,9 @@
 //if(window.J$ != null && window.J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
-
-    var analyzer = {
+var analyzer = null;
+try{
+    analyzer = {
         function F(iid, f, isConstructor) {
             
         }
@@ -130,7 +131,9 @@
             //return left_c;
         }
     };
-
+}catch(e){
+    console.log(e);
+}
     window.J$ = {};
     window.JALANGI_MODE = 'record';
 
