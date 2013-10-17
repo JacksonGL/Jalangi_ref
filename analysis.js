@@ -23,8 +23,8 @@
 
     window.J$ = {};
     window.JALANGI_MODE = 'record';
-    var window.J$.analyzer = null;
-    
+    window.J$.analyzer = null;
+
 try{
     window.J$.analyzer = {
         F: function(iid, f, isConstructor) {
