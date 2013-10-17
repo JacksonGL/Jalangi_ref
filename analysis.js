@@ -23,110 +23,110 @@
 var analyzer = null;
 try{
     analyzer = {
-        function F(iid, f, isConstructor) {
+        F: function(iid, f, isConstructor) {
             
         }
 
-        function M(iid, base, offset, isConstructor) {
+        M: function(iid, base, offset, isConstructor) {
             
         }
 
-        function Fe(iid, val, dis) {
+        Fe: function(iid, val, dis) {
             
             //returnVal = undefined;
         }
 
-        function Fr(iid) {
+        Fr: function(iid) {
             
         }
 
 
-        function Rt(iid, val) {
+        Rt: function(iid, val) {
             //return returnVal = val;
         }
 
-        function Ra() {
+        Ra: function() {
             //var ret = returnVal;
             //returnVal = undefined;
             //return ret;
         }
 
 
-        function Se(iid,val) {
+        Se: function(iid,val) {
             
         }
 
-        function Sr(iid) {
+        Sr: function(iid) {
             
         }
 
-        function I(val) {
+        I: function(val) {
             //return val;
         }
 
-        function T(iid, val, type) {
+        T: function(iid, val, type) {
             
 
             //return val;
         }
 
-        function H(iid, val) {
+        H: function(iid, val) {
             
             //return val;
         }
 
-        function R(iid, name, val) {
+        R: function(iid, name, val) {
             console.log('[read] name: ' + name);
             //return val;
         }
 
-        function W(iid, name, val, lhs) {
+        W: function(iid, name, val, lhs) {
             
             //return val;
         }
 
-        function N(iid, name, val, isArgumentSync) {
+        N: function(iid, name, val, isArgumentSync) {
             
             //return val;
         }
 
 
-        function A(iid,base,offset,op) {
+        A: function(iid,base,offset,op) {
             
         }
 
-        function G(iid, base, offset, norr) {
+        G: function(iid, base, offset, norr) {
             
             //return val;
         }
 
-        function P(iid, base, offset, val) {
+        P: function(iid, base, offset, val) {
             
 
             //return val;
         }
 
-        function B(iid, op, left, right) {
+        B: function(iid, op, left, right) {
             //return result_c;
         }
 
 
-        function U(iid, op, left) {
+        U: function(iid, op, left) {
             
             //return result_c;
         }
 
-        function C1(iid, left) {
+        C1: function(iid, left) {
             //var left_c;
             //return left_c;
-        };
+        }
 
-        function C2(iid, left) {
+        C2: function(iid, left) {
             //var left_c, ret;
             //return left_c;
-        };
+        }
 
-        function C(iid, left) {
+        C: function(iid, left) {
             //var left_c, ret;
             //return left_c;
         }
