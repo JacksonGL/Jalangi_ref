@@ -452,9 +452,8 @@
             return val;
         }
 
-
         function R(iid, name, val) {
-            console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
+            //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
                 sEngine.readPre(iid, name, val);
             }
