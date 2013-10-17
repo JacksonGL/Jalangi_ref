@@ -233,6 +233,8 @@ try{
     module.exports = UndefinedNullTrackingEngine;
 }(engine));
 
+engine = engine.exports();
+
 }catch(e){
     console.log(e);
 }
