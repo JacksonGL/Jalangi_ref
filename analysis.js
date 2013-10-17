@@ -17,11 +17,227 @@
 // Author: Koushik Sen
 // Refactored for Firefox Extension by Liang Gong
 
+
+var analysisEngine = {
+
+    function analysisEngine(executionIndex) {
+        var PREFIX1 = "J$";
+        var TRACE_FILE_NAME = "jalangi_trace";
+        var TAINT_SUMMARY = "jalangi_taint";
+        var ConcolicValue = require('./../../ConcolicValue');
+        var coverageSet = {};
+        var usedMap = {};
+        var Id = 1;
+
+        if (!(this instanceof analysisEngine)) {
+            return new analysisEngine(executionIndex);
+        }
+
+
+        //what is hop? Has Own Property
+        function HOP(obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop);
+        }
+
+        var getConcrete = this.getConcrete = ConcolicValue.getConcrete;
+        var getSymbolic = this.getSymbolic = ConcolicValue.getSymbolic;
+
+
+        //extended by JacksonGL
+        ConcolicValue.setConcrete = function (val, val_conc) {
+            if (val instanceof ConcolicValue) {
+                val.concrete = val_conc;
+            } else {
+                throw 'ConcolicValue.setConcrete(val, val_conc): val is not instanceof ConcolicValue';
+            }
+        }
+
+        ConcolicValue.setSymbolic = function (val, val_sym) {
+            if (val instanceof ConcolicValue) {
+                val.symbolic = val_sym;
+            } else {
+                throw 'ConcolicValue.setSymbolic(val, val_conc): val is not instanceof ConcolicValue';
+            }
+        }
+
+        var setConcrete = this.setConcrete = ConcolicValue.setConcrete;
+        var setSymbolic = this.setSymbolic = ConcolicValue.setSymbolic;
+        var getIIDInfo = require('./../../utils/IIDInfo');
+        var getLineNo = require('./../../utils/IIDInfoUtil');
+
+        
+        /*
+        function checkNullOrUndef(val) {
+            var c = getConcrete(val);
+            if (c === null || c === undefined) {
+                console.log(getSymbolic(val));
+            }
+        }
+        */
+
+        function annotateNullOrUndef(val, iid, str) {
+            if (val === null || val === undefined) {
+                return new ConcolicValue(val, (str?str:"") + "'" + val + "' literal introduced @ "+getLineNo(iid));
+            }
+            return val;
+        }
+
+        function annotateNullOrUndef_putField(base, offset, val, iid, str) {
+            if (val === null || val === undefined) { 
+                //this branch will not be executed
+                //because all the val must go through read | getField | literal first
+                throw 'analysisEngine.annotateNullOrUndef_putField() branch 1 executed';
+
+                var sym_v = (str?str:"")+val+" init @ "+getLineNo(iid);
+                sym_v += '\r\n\t' + "'" + val + "'" + " -> " + (typeof base) + '.' + offset + " @ "+getLineNo(iid);
+                return new ConcolicValue(val, sym_v);
+            } else if(val instanceof ConcolicValue) {
+                var sym_v = getSymbolic(val);
+                var con_v = getConcrete(val);
+                sym_v += '\r\n\t' + "'" + con_v + "'" + "-> " + (typeof base) + '.' + offset + " @ "+getLineNo(iid);
+                sym_v = (str?str:"") + sym_v;
+                setSymbolic(val, sym_v);
+                return val;
+            }
+            return val;
+        }
+
+        function annotateNullOrUndef_getField(base, offset, val, iid, str_before, str_after) {
+            if (val === null || val === undefined) {
+                var sym_v = (str_before?str_before:"")+val+" init @ "+getLineNo(iid) + (str_after?str_after:"");
+                sym_v += '\r\n\t' + "'" + val + "'" + " from: " + (typeof base) + '.' + offset + " @ "+getLineNo(iid);
+                return new ConcolicValue(val, sym_v);
+            } else if(val instanceof ConcolicValue) {
+                var sym_v = getSymbolic(val);
+                var con_v = getConcrete(val);
+                sym_v += '\r\n\t' + "'" + con_v + "'" + " from: " + (typeof base) + '.' + offset + " @ "+getLineNo(iid);
+                return new ConcolicValue(con_v, (str_before?str_before:"")+sym_v + (str_after?str_after:""));
+            }
+            return val;
+        }
+
+        function annotateNullOrUndef_invokeFun(val, iid, str) {
+            if (val === null || val === undefined) {
+                return new ConcolicValue(val, (str?str:"")+val+" init @ "+getLineNo(iid));
+            } else if(val instanceof ConcolicValue) {
+                var sym_v = getSymbolic(val);
+                var con_v = getConcrete(val);
+                sym_v += '\r\n\t' + (typeof con_v) +" invoked @ "+getLineNo(iid);
+                return new ConcolicValue(con_v, (str?str:"")+sym_v);
+            }
+            return val;
+        }
+
+        this.literal = function(iid, val) {
+            var type;
+            if (((type = typeof val)==="object" || type === "function") && val !== null) {
+                return new ConcolicValue(val, type + " literal introduced init @ "+getLineNo(iid));
+            }
+            return annotateNullOrUndef(val, iid);
+        }
+
+        this.invokeFunPre = function(iid, f, base, args, isConstructor) {
+            var f_c = getConcrete(f);
+            if (f_c === null || f_c === undefined) {
+                console.log('---------diagnostic---------');
+                console.log('[Sympton Loc]: ' + getIIDInfo(iid));
+                console.log('[Sympton]: invoke nonexisting function: [base].fun_name = \'' + f_c + '\': \r\n');
+                console.log('[Root Cause]:\r\n' + getSymbolic(f));
+                console.log('---------==========---------');
+            }
+        }
+
+        this.invokeFun = function(iid, f, base, args, val, isConstructor) {
+            return annotateNullOrUndef_invokeFun(val, iid);
+        }
+
+        
+        this.getFieldPre = function(iid, base, offset) {
+            console.log('getting field');
+            var base_c = getConcrete(base);
+            if (base_c === null || base_c === undefined) {
+                console.log('---------diagnostic---------');
+                console.log('[Sympton Loc]: ' + getIIDInfo(iid));
+                console.log('[Sympton]: getField from [base].' + offset + ' where [base] is \'' + base_c + '\': \r\n');
+                console.log('[Root Cause]:\r\n' + getSymbolic(base));
+                console.log('---------==========---------');
+            }
+        }
+
+        this.getField = function(iid, base, offset, val) {
+            var s = getSymbolic(base);
+            var offset_c = offset;
+            if(offset instanceof ConcolicValue){
+                offset_c = getConcrete(offset);
+            }
+            if (s) {
+                var str_before = ' { ' + s + '\r\n } ' + "\r\n\t  has field '"+ offset+"' =  '" + getConcrete(base[offset_c]) + "' from following trace: \r\n";
+                str_before += ' { \r\n';
+                var str_after = '\r\n } '
+            }
+            return annotateNullOrUndef_getField(base, offset, val, iid, str_before, str_after);
+        }
+
+        //does not take effect
+        this.putFieldPre = function(iid, base, offset, val) {
+            var base_c = getConcrete(base);
+            if (base_c === null || base_c === undefined) {
+                console.log('---------diagnostic---------');
+                console.log('[Sympton Loc]: ' + getIIDInfo(iid));
+                console.log('[Sympton]: putField to [base].' + offset + ' where [base] is \'' + base_c + '\': \r\n');
+                console.log('[Root Cause]:\r\n' + getSymbolic(base));
+                console.log('---------==========---------');
+            }
+        }
+
+        //in putField() there is no return value (for getField(), it could be a new val)
+        //in putFiled(), you can not create a new symbolic value, you probably can just modify an existing one.
+        this.putField = function(iid, base, offset, val) {
+            annotateNullOrUndef_putField(base, offset, val, iid);
+        }
+
+        this.read = function(iid, name, val) {
+            if (val === null || val === undefined) {
+                return new ConcolicValue(val, val+" -> " + name + " init @ "+getLineNo(iid));
+            } else if (val instanceof ConcolicValue) {
+                val_c = getConcrete(val);
+                //if (val_c === null || val_c === undefined) {
+                    return new ConcolicValue(val_c, getSymbolic(val) + "\r\n\t'" + val_c + "' read from " + name + " @ "+getLineNo(iid));
+                //}
+            }
+            return val;
+        }
+
+        //in wirte() there is no return value (for read(), it could be a new val)
+        //in write(), you can not create a new symbolic value, you probably can just modify an existing one.
+        this.write = function(iid, name, val) {
+            if (val === null || val === undefined) {
+                //this branch will not be executed
+                //because all the val must go through read | getField | literal first
+                throw 'analysisEngine.write() branch 1 executed';
+                var sym_v = val+" init @ "+getLineNo(iid);
+                sym_v += '\r\n\t' + "'"+ val +"'" +" assign -> " + name + " @ "+getLineNo(iid);
+                return new ConcolicValue(val, sym_v);
+            } else if(val instanceof ConcolicValue) {
+
+                var sym_v = getSymbolic(val);
+                var con_v = getConcrete(val);
+                sym_v += '\r\n\t' + "'" + con_v + "'" + "-> " + name + " @ "+getLineNo(iid);
+                setSymbolic(val, sym_v);
+            }
+        }
+
+        /**/
+    }
+
+
+
 //if(window.J$ != null && window.J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
     window.J$ = {};
-    window.JALANGI_MODE = 'record';
+    window.JALANGI_MODE = 'analysis'
+                            //'record';
     (function(sandbox) {
 
         //-------------------------------------- Symbolic functions -----------------------------------------------------------
@@ -1722,3 +1938,5 @@
 
 
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
+
+
