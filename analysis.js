@@ -112,10 +112,10 @@ try{
             //if(name=='window'){
                 if(val && typeof val == 'object'){
                     if(val.toString() == '[object Window]'){
-                        console.log('reading window');
+                        //console.log('reading window');
                         setShadow(val, 'window');
                     } else if (val.toString() == '[object HTMLDocument]') {
-                        console.log('reading document');
+                        //console.log('reading document');
                         setShadow(val, 'document');
                     }
                 }
@@ -163,8 +163,12 @@ try{
                     setShadow(base, 'document');
                 }
             } else if(getShadow(base) == 'document'){
-                console.log('document.' + offset);
+                //console.log('document.' + offset);
+
             }
+            console.log(typeof val);
+            //getElementsByClassName()
+            //[object CSS2Properties]
 
             return val;
         },
