@@ -25,6 +25,20 @@
     window.JALANGI_MODE = 'record';
     window.J$.analyzer = null;
 
+function setShadow(obj, sValue){
+    if(obj && typeof obj != 'number'){
+        obj['J$-shadow'] = sValue;
+    }
+}
+
+function getShadow(obj){
+    if(obj && typeof obj != 'number'){
+        return obj['J$-shadow'];
+    } else {
+        return undefined;
+    }
+}
+
 try{
     window.J$.analyzer = {
         // F: function call
@@ -88,13 +102,6 @@ try{
         // val is the read value
         pre_R: function(iid, name, val) {
             //console.log('typeof name: ' + typeof name + ' | typeof val' + typeof val);
-            if(name=='window'){
-                if(val && typeof val == 'object'){
-                    if(val.toString() == '[object Window]'){
-                        console.log('reading window');
-                    }
-                }
-            }
         },
         // R: read
         // function called after R
@@ -102,19 +109,33 @@ try{
         // return value will be the new read value
         post_R: function(iid, name, val) {
             //console.log('typeof name: ' + typeof name + ' | typeof val' + typeof val);
-            if(name=='window'){
+            //if(name=='window'){
                 if(val && typeof val == 'object'){
                     if(val.toString() == '[object Window]'){
                         console.log('reading window');
-                        val['J$-shadow'] = 'window';
+                        setShadow(val, 'window');
+                    } else if (val.toString() == '[object HTMLDocument]') {
+                        console.log('reading document');
+                        setShadow(val, 'document');
                     }
                 }
-            }
+            //}
             return val;
         },
-        W: function(iid, name, val, lhs) {
+        // W: write
+        // function called before W
+        // val is the value to write
+        pre_W: function(iid, name, val, lhs) {
             
             //return val;
+        },
+        // W: write
+        // function called after W
+        // val is the value to write
+        // return value will be the new written value
+        post_W: function(iid, name, val, lhs) {
+
+            return val;
         },
         N: function(iid, name, val, isArgumentSync) {
             
@@ -123,19 +144,46 @@ try{
         A: function(iid,base,offset,op) {
             
         },
-        G: function(iid, base, offset, norr) {
-            //if(base=='window'){
-            //console.log('typeof base: ' + typeof base + ' | typeof offset' + typeof offset);
-            //}
-            //return val;
-            if(base['J$-shadow'] == 'window'){
-                console.log('window.' + offset);
+        // G: get field
+        // function called before G
+        // base is the object from which the field will get
+        // offset is either a number or a string indexing the field to get
+        pre_G: function(iid, base, offset, norr) {
+
+        },
+        // G: get field
+        // function called after G
+        // base is the object from which the field will get
+        // offset is either a number or a string indexing the field to get
+        // val is the value gets from base.[offset]
+        // return value will affect the retrieved value in the instrumented code
+        post_G: function(iid, base, offset, val, norr) {
+            if(getShadow(base) == 'window'){
+                if(offset == 'document') {
+                    setShadow(base, 'document');
+                }
+            } else if(getShadow(base) == 'document'){
+                console.log('document.' + offset);
             }
         },
-        P: function(iid, base, offset, val) {
+        // P: put field
+        // function called before P
+        // base is the object to which the field will put
+        // offset is either a number or a string indexing the field to get
+        // val is the value puts to base.[offset]
+        pre_P: function(iid, base, offset, val) {
             
-
             //return val;
+        },
+        // P: put field
+        // function called after P
+        // base is the object to which the field will put
+        // offset is either a number or a string indexing the field to get
+        // val is the value puts to base.[offset]
+        // return value will affect the retrieved value in the instrumented code
+        post_P: function(iid, base, offset, val) {
+            
+            return val;
         },
         B: function(iid, op, left, right) {
             //return result_c;
@@ -678,7 +726,7 @@ try{
 
         function W(iid, name, val, lhs) {
             if(window.J$.analyzer){
-                window.J$.analyzer.W(iid, name, val, lhs);
+                window.J$.analyzer.pre_W(iid, name, val, lhs);
             }
 
             if (sEngine && sEngine.writePre) {
@@ -690,6 +738,11 @@ try{
             if (sEngine && sEngine.write) {
                 sEngine.write(iid, name, val);
             }
+
+            if(window.J$.analyzer){
+                val = window.J$.analyzer.post_W(iid, name, val, lhs);
+            }
+
             return val;
         }
 
@@ -719,7 +772,7 @@ try{
 
         function G(iid, base, offset, norr) {
             if(window.J$.analyzer){
-                window.J$.analyzer.G(iid, base, offset, norr);
+                window.J$.analyzer.pre_G(iid, base, offset, norr);
             }
 
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
@@ -746,12 +799,16 @@ try{
                 }
             }
             printValueForTesting(1, iid,val);
+
+            if(window.J$.analyzer){
+                val = window.J$.analyzer.post_G(iid, base, offset, val, norr);
+            }
             return val;
         }
 
         function P(iid, base, offset, val) {
             if(window.J$.analyzer){
-                window.J$.analyzer.P(iid, base, offset, val);
+                window.J$.analyzer.pre_P(iid, base, offset, val);
             }
 
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
@@ -770,6 +827,10 @@ try{
             }
             if (sEngine && sEngine.putField) {
                 sEngine.putField(iid, base, offset, val);
+            }
+
+            if(window.J$.analyzer){
+                val = window.J$.analyzer.pre_P(iid, base, offset, val);
             }
 
             return val;
