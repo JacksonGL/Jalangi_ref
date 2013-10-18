@@ -106,7 +106,7 @@ try{
                 if(val && typeof val == 'object'){
                     if(val.toString() == '[object Window]'){
                         console.log('reading window');
-                        val[J$-shadow] = 'window';
+                        val['J$-shadow'] = 'window';
                     }
                 }
             }
@@ -128,7 +128,7 @@ try{
             //console.log('typeof base: ' + typeof base + ' | typeof offset' + typeof offset);
             //}
             //return val;
-            if(base[J$-shadow] == 'window'){
+            if(base['J$-shadow'] == 'window'){
                 console.log('window.' + offset);
             }
         },
