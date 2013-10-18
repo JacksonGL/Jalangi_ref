@@ -165,6 +165,8 @@ try{
             } else if(getShadow(base) == 'document'){
                 console.log('document.' + offset);
             }
+
+            return val;
         },
         // P: put field
         // function called before P
