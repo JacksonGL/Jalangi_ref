@@ -117,6 +117,8 @@ try{
                     } else if (val.toString() == '[object HTMLDocument]') {
                         //console.log('reading document');
                         setShadow(val, 'document');
+                    } else if (val.toString() == '[object CSS2Properties]') {
+                        setShadow(val, 'style');
                     }
                 }
             //}
@@ -162,13 +164,16 @@ try{
                 if(offset == 'document') {
                     setShadow(base, 'document');
                 }
-            } else if(getShadow(base) == 'document'){
+            } else if(getShadow(base) == 'document') {
                 //console.log('document.' + offset);
-
+                if(typeof val == 'function'){
+                    console.log('document.' + offset)
+                }
+            } else if(getShadow(base) == 'style') {
+                //console.log('style.' + offset);
             }
-            console.log(typeof val);
             //getElementsByClassName()
-            //[object CSS2Properties]
+            //
 
             return val;
         },
