@@ -27,10 +27,27 @@
 
 try{
     window.J$.analyzer = {
-        F: function(iid, f, isConstructor) {
+        // F: function call
+        // function called before F
+        // modify retFunction will modify the concret return value
+        pre_F: function(iid, f, isConstructor) {
             
         },
-        M: function(iid, base, offset, isConstructor) {
+        // F: function call
+        // function called after F
+        // modify retFunction will modify the concret return value
+        post_F: function(iid, f, isConstructor, retFunction) {
+            
+        },
+        // M: method call
+        // function called before M
+        pre_M: function(iid, base, offset, isConstructor) {
+
+        },
+        // M: method call
+        // function called after M
+        // modify retFunction will modify the concret return value
+        post_M: function(iid, base, offset, isConstructor, retFunction) {
             
         },
         Fe: function(iid, val, dis) {
@@ -66,13 +83,27 @@ try{
             
             //return val;
         },
-        R: function(iid, name, val) {
+        // R: read
+        // function called before R
+        // val is the read value
+        pre_R: function(iid, name, val) {
             //console.log('typeof name: ' + typeof name + ' | typeof val' + typeof val);
             if(name=='window'){
-                console.log('reading window');
+                if(val && typeof val == 'object'){
+                    if(val.toString() == '[object Window]'){
+                        console.log('reading window');
+                    }
+                }
             }
-            //console.log('[read] name: ' + name);
-            //return val;
+        },
+        // R: read
+        // function called after R
+        // val is the read value
+        // return value will be the new read value
+        post_R: function(iid, name, val) {
+            //console.log('typeof name: ' + typeof name + ' | typeof val' + typeof val);
+            
+            return val;
         },
         W: function(iid, name, val, lhs) {
             
@@ -463,24 +494,36 @@ try{
 
         function F(iid, f, isConstructor) {
             if(window.J$.analyzer){
-                window.J$.analyzer.F(iid, f, isConstructor);
+                window.J$.analyzer.pre_F(iid, f, isConstructor);
             }
 
-            return function() {
+            var ret = function() {
                 var base = this;
                 return invokeFun(iid, base, f, arguments, isConstructor);
             }
+
+            if(window.J$.analyzer){
+                window.J$.analyzer.post_F(iid, f, isConstructor, ret);
+            }
+
+            return ret
         }
 
         function M(iid, base, offset, isConstructor) {
             if(window.J$.analyzer){
-                window.J$.analyzer.M(iid, base, offset, isConstructor);
+                window.J$.analyzer.pre_M(iid, base, offset, isConstructor);
             }
 
-            return function() {
+            var ret = function() {
                 var f = G(iid, base, offset);
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
+
+            if(window.J$.analyzer){
+                window.J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
+            }
+
+            return ret
         }
 
         function Fe(iid, val, dis) {
@@ -597,7 +640,7 @@ try{
 
         function R(iid, name, val) {
             if(window.J$.analyzer){
-                window.J$.analyzer.R(iid, name, val);
+                window.J$.analyzer.pre_R(iid, name, val);
             }
 
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
@@ -614,6 +657,12 @@ try{
                 }
             }
             printValueForTesting(3, iid, val);
+
+
+            if(window.J$.analyzer){
+                val = window.J$.analyzer.post_R(iid, name, val);
+            }
+
             return val;
         }
 
@@ -659,7 +708,6 @@ try{
         }
 
         function G(iid, base, offset, norr) {
-            console.log('get');
             if(window.J$.analyzer){
                 window.J$.analyzer.G(iid, base, offset, norr);
             }
