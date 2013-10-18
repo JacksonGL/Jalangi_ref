@@ -102,7 +102,14 @@ try{
         // return value will be the new read value
         post_R: function(iid, name, val) {
             //console.log('typeof name: ' + typeof name + ' | typeof val' + typeof val);
-            
+            if(name=='window'){
+                if(val && typeof val == 'object'){
+                    if(val.toString() == '[object Window]'){
+                        console.log('reading window');
+                        val[J$-shadow] = 'window';
+                    }
+                }
+            }
             return val;
         },
         W: function(iid, name, val, lhs) {
@@ -118,9 +125,12 @@ try{
         },
         G: function(iid, base, offset, norr) {
             //if(base=='window'){
-               console.log('typeof base: ' + typeof base + ' | typeof offset' + typeof offset);
+            //console.log('typeof base: ' + typeof base + ' | typeof offset' + typeof offset);
             //}
             //return val;
+            if(base[J$-shadow] == 'window'){
+                console.log('window.' + offset);
+            }
         },
         P: function(iid, base, offset, val) {
             
