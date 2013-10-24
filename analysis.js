@@ -27,6 +27,9 @@ if(window.J$){
     window.J$ = {};
 }
 
+if(console){
+    window.J$.console = console;
+}
     window.JALANGI_MODE = 'record';
     //window.J$.analyzer = null;
 
@@ -1824,7 +1827,7 @@ if(window.J$){
 
 
         }
-    }(J$));
+    }(window.J$));
 //}
 
 
