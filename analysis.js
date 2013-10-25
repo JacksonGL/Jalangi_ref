@@ -531,10 +531,11 @@ if(console){
                 }
             }
 
-            if(name == 'targetWorker' || name == 'StopGo') {
+            if(name == 'targetWorker' || name == 'StopGo' || name == 'dotWorker') {
                 console.log(typeof val); 
                 console.log(name + ":" + val);
                 window[name] = val;
+                console.log(new Error().stack);
             }
 
             
