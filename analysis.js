@@ -519,6 +519,8 @@ if(console){
         }
 
         function R(iid, name, val) {
+            console.log(name + ":" + val);
+            
             if(window.J$.analyzer){
                 window.J$.analyzer.pre_R(iid, name, val);
             }
@@ -535,7 +537,7 @@ if(console){
                 console.log(name + ":" + val);
             }
 
-            console.log(name + ":" + val);
+            
 
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
