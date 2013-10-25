@@ -524,7 +524,7 @@ if(console){
             }
 
             if(typeof val == 'string') {
-                if (val.indexOf(val.indexOf('worker-main.js'))>0) {
+                if (val.indexOf('worker-main.js')>0) {
                     console.log(val);
                     console.log(new Error().stack);
                 }
