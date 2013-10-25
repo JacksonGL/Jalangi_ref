@@ -551,6 +551,15 @@ if(console){
                 window.J$.analyzer.pre_W(iid, name, val, lhs);
             }
 
+            // just in case in front end some code like: window = {};
+            // this will make J$ unavailable in the global namespace
+            if (window && name == 'window') {
+                if (val != window) {
+                    console.log('this piece of code is trying to change the window object with ' + val);
+                    val.J$ = window.J$;
+                }
+            }
+
             if (sEngine && sEngine.writePre) {
                 sEngine.writePre(iid, name, val);
             }
@@ -563,14 +572,6 @@ if(console){
 
             if(window.J$.analyzer){
                 val = window.J$.analyzer.post_W(iid, name, val, lhs);
-            }
-
-            // just in case in front end some code like: window = {};
-            // this will make J$ unavailable in the global namespace
-            if (window && name == 'window') {
-                if (val != window) {
-                    val.J$ = window.J$;
-                }
             }
 
             return val;
