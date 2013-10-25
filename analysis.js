@@ -531,10 +531,10 @@ if(console){
                 }
             }
 
-            if(name == 'targetWorker') {
+            if(name == 'targetWorker' || name == 'StopGo') {
                 console.log(typeof val); 
                 console.log(name + ":" + val);
-                window.targetWorker = val;
+                window[name] = val;
             }
 
             
