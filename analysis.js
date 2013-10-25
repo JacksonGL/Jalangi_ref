@@ -565,6 +565,14 @@ if(console){
                 val = window.J$.analyzer.post_W(iid, name, val, lhs);
             }
 
+            // just in case in front end some code like: window = {};
+            // this will make J$ unavailable in the global namespace
+            if (window && name == 'window') {
+                if (val != window) {
+                    val.J$ = window.J$;
+                }
+            }
+
             return val;
         }
 
