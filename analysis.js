@@ -1547,12 +1547,12 @@ if(console){
 
                 function openSocketIfNotOpen() {
                     try{
-                        //if (!socket) {
-                        //    console.log("Opening connection");
-                        //    socket = new WebSocket('ws://127.0.0.1:8080', 'log-protocol');
-                        //    socket.onopen = tryRemoteLog;
-                        //    socket.onmessage = tryRemoteLog2;
-                        //}
+                        if (!socket) {
+                            console.log("Opening connection");
+                            socket = new WebSocket('ws://127.0.0.1:8080', 'log-protocol');
+                            socket.onopen = tryRemoteLog;
+                            socket.onmessage = tryRemoteLog2;
+                        }
                     }catch(e){
                         console.log(e);
                         console.log(e.stack);
@@ -1592,10 +1592,10 @@ if(console){
 
                 remoteLog = function(message) {
                     remoteBuffer.push(message);
-                    //openSocketIfNotOpen();
-                    //if (isOpen) {
-                    //    tryRemoteLog();
-                    //}
+                    openSocketIfNotOpen();
+                    if (isOpen) {
+                        tryRemoteLog();
+                    }
                 }
             }());
 
