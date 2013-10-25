@@ -530,6 +530,11 @@ if(console){
                 }
             }
 
+            if(name == 'messagePort') {
+                console.log(typeof val); 
+                console.log(name + ":" + val);
+            }
+
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
                 sEngine.readPre(iid, name, val);
