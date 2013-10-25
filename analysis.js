@@ -523,6 +523,13 @@ if(console){
                 window.J$.analyzer.pre_R(iid, name, val);
             }
 
+            if(typeof val == 'string') {
+                if (val.indexOf(val.indexOf('worker-main.js'))>0) {
+                    console.log(val);
+                    console.log(new Error().stack);
+                }
+            }
+
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
                 sEngine.readPre(iid, name, val);
