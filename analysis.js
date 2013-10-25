@@ -519,8 +519,7 @@ if(console){
         }
 
         function R(iid, name, val) {
-            console.log(name + ":" + val);
-            
+
             if(window.J$.analyzer){
                 window.J$.analyzer.pre_R(iid, name, val);
             }
@@ -532,9 +531,10 @@ if(console){
                 }
             }
 
-            if(name == 'messagePort') {
+            if(name == 'targetWorker') {
                 console.log(typeof val); 
                 console.log(name + ":" + val);
+                window.targetWorker = val;
             }
 
             
