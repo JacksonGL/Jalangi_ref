@@ -21,26 +21,27 @@
 //    console.log('J$ already exist');
 //} else {
 
-if(((typeof window) == 'undefined')){
-    window = {};
-}
+    var isWorker = false;
+    if(((typeof window) == 'undefined')){
+        window = {};
+        if ((typeof navigator) != 'undefined') {
+            isWorker = true
+        }
+    }
 
-if(((typeof console) == 'undefined')){
-    console = {};
-    console.log = function(str) {
-        // do nothing
-    };
-}
+    if(((typeof console) == 'undefined')){
+        console = {};
+        console.log = function(str) {
+            // do nothing
+        };
+    }
 
-if(window.J$){
+    if (typeof J$ === 'undefined') {
+        if(isWorker) {
+            self.J$ = {};
+        }
+    }
 
-} else {
-    window.J$ = {};
-}
-
-if(console){
-    window.J$.console = console;
-}
     window.JALANGI_MODE = 'record';
     //window.J$.analyzer = null;
 

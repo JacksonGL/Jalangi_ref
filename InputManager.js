@@ -20,8 +20,12 @@
 //    console.log('J$ already exist');
 //} else {
 
+var isWorker = false;
 if(((typeof window) == 'undefined')){
     window = {};
+    if ((typeof navigator) != 'undefined') {
+        isWorker = true
+    }
 }
 
 if(((typeof console) == 'undefined')){
@@ -31,7 +35,9 @@ if(((typeof console) == 'undefined')){
     };
 }
     if (typeof J$ === 'undefined') {
-        window.J$ = {};
+        if(isWorker) {
+            self.J$ = {};
+        }
     }
 
     if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
