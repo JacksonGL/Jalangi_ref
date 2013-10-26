@@ -133,7 +133,7 @@ if(((typeof console) == 'undefined')){
         if (sandbox.addAxiom === undefined) {
             sandbox.addAxiom = function() {};
         }
-    }(J$));
+    }(window.J$));
 
     }
 //}
