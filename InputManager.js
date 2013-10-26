@@ -20,6 +20,10 @@
 //    console.log('J$ already exist');
 //} else {
 
+if(!window){
+    window = {};
+}
+
     if (typeof J$ === 'undefined') {
         window.J$ = {};
     }
