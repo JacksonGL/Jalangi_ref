@@ -393,7 +393,7 @@
             }
 
             if(J$.analyzer){
-                J$.analyzer.post_F(iid, f, isConstructor, ret);
+                ret = J$.analyzer.post_F(iid, f, isConstructor, ret);
             }
 
             return ret
@@ -410,7 +410,7 @@
             };
 
             if(J$.analyzer){
-                J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
+                ret = J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
             }
 
             return ret
@@ -672,7 +672,7 @@
             }
 
             if(J$.analyzer){
-                val = J$.analyzer.pre_P(iid, base, offset, val);
+                val = J$.analyzer.post_P(iid, base, offset, val);
             }
 
             return val;
