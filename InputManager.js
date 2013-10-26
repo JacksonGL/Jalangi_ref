@@ -24,6 +24,12 @@ if(!window){
     window = {};
 }
 
+if(!console){
+    console = {};
+    console.log = function(str) {
+        // do nothing
+    };
+}
     if (typeof J$ === 'undefined') {
         window.J$ = {};
     }

@@ -25,6 +25,13 @@ if(!window){
     window = {};
 }
 
+if(!console){
+    console = {};
+    console.log = function(str) {
+        // do nothing
+    };
+}
+
 if(window.J$){
 
 } else {
