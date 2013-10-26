@@ -37,6 +37,8 @@ if(((typeof console) == 'undefined')){
     if (typeof J$ === 'undefined') {
         if(isWorker) {
             self.J$ = {};
+        } else {
+            window.J$ = {};
         }
     }
 

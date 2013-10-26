@@ -39,6 +39,8 @@
     if (typeof J$ === 'undefined') {
         if(isWorker) {
             self.J$ = {};
+        } else {
+            window.J$ = {};
         }
     }
 
