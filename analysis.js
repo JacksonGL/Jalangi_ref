@@ -21,11 +21,11 @@
 //    console.log('J$ already exist');
 //} else {
 
-if(!window){
+if(((typeof window) == 'undefined')){
     window = {};
 }
 
-if(!console){
+if(((typeof console) == 'undefined')){
     console = {};
     console.log = function(str) {
         // do nothing
