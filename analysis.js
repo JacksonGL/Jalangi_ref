@@ -37,9 +37,7 @@
     }
 
     if (typeof J$ === 'undefined') {
-        if(isWorker) {
-            self.J$ = {};
-        }
+        self.J$ = {};
     }
 
     window.JALANGI_MODE = 'record';

@@ -35,9 +35,7 @@ if(((typeof console) == 'undefined')){
     };
 }
     if (typeof J$ === 'undefined') {
-        if(isWorker) {
-            self.J$ = {};
-        }
+        self.J$ = {};
     }
 
     if (typeof process !== 'undefined' && process.env.JALANGI_MODE === 'symbolic') {
