@@ -17,7 +17,7 @@
 // Author: Koushik Sen
 // Refactored for Firefox Extension by Liang Gong
 
-//if(window.J$ != null && window.J$ != undefined){
+//if(J$ != null && J$ != undefined){
 //    console.log('J$ already exist');
 //} else {
 
@@ -39,13 +39,11 @@
     if (typeof J$ === 'undefined') {
         if(isWorker) {
             self.J$ = {};
-        } else {
-            window.J$ = {};
         }
     }
 
     window.JALANGI_MODE = 'record';
-    //window.J$.analyzer = null;
+    //J$.analyzer = null;
 
     (function(sandbox) {
 
@@ -387,8 +385,8 @@
         //var globalInstrumentationInfo;
 
         function F(iid, f, isConstructor) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.pre_F(iid, f, isConstructor);
+            if(J$.analyzer){
+                J$.analyzer.pre_F(iid, f, isConstructor);
             }
 
             var ret = function() {
@@ -396,16 +394,16 @@
                 return invokeFun(iid, base, f, arguments, isConstructor);
             }
 
-            if(window.J$.analyzer){
-                window.J$.analyzer.post_F(iid, f, isConstructor, ret);
+            if(J$.analyzer){
+                J$.analyzer.post_F(iid, f, isConstructor, ret);
             }
 
             return ret
         }
 
         function M(iid, base, offset, isConstructor) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.pre_M(iid, base, offset, isConstructor);
+            if(J$.analyzer){
+                J$.analyzer.pre_M(iid, base, offset, isConstructor);
             }
 
             var ret = function() {
@@ -413,16 +411,16 @@
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
 
-            if(window.J$.analyzer){
-                window.J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
+            if(J$.analyzer){
+                J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
             }
 
             return ret
         }
 
         function Fe(iid, val, dis) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.Fe(iid, val, dis);
+            if(J$.analyzer){
+                J$.analyzer.Fe(iid, val, dis);
             }
 
             executionIndex.executionIndexCall();
@@ -433,8 +431,8 @@
         }
 
         function Fr(iid) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.Fr(iid);
+            if(J$.analyzer){
+                J$.analyzer.Fr(iid);
             }
 
             executionIndex.executionIndexReturn();
@@ -445,16 +443,16 @@
 
 
         function Rt(iid, val) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.Rt(iid, val);
+            if(J$.analyzer){
+                J$.analyzer.Rt(iid, val);
             }
 
             return returnVal = val;
         }
 
         function Ra() {
-            if(window.J$.analyzer){
-                window.J$.analyzer.Ra();
+            if(J$.analyzer){
+                J$.analyzer.Ra();
             }
 
             var ret = returnVal;
@@ -464,8 +462,8 @@
 
 
         function Se(iid,val) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.Se(iid,val);
+            if(J$.analyzer){
+                J$.analyzer.Se(iid,val);
             }
 
             scriptCount++;
@@ -475,8 +473,8 @@
         }
 
         function Sr(iid) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.Sr(iid);
+            if(J$.analyzer){
+                J$.analyzer.Sr(iid);
             }
 
             scriptCount--;
@@ -489,16 +487,16 @@
         }
 
         function I(val) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.I(val);
+            if(J$.analyzer){
+                J$.analyzer.I(val);
             }
 
             return val;
         }
 
         function T(iid, val, type) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.T(iid, val, type);
+            if(J$.analyzer){
+                J$.analyzer.T(iid, val, type);
             }
 
             if (sEngine && sEngine.literalPre) {
@@ -522,8 +520,8 @@
         }
 
         function H(iid, val) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.H(iid, val);
+            if(J$.analyzer){
+                J$.analyzer.H(iid, val);
             }
 
             if (rrEngine) {
@@ -534,8 +532,8 @@
 
         function R(iid, name, val) {
 
-            if(window.J$.analyzer){
-                window.J$.analyzer.pre_R(iid, name, val);
+            if(J$.analyzer){
+                J$.analyzer.pre_R(iid, name, val);
             }
 
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
@@ -554,24 +552,24 @@
             printValueForTesting(3, iid, val);
 
 
-            if(window.J$.analyzer){
-                val = window.J$.analyzer.post_R(iid, name, val);
+            if(J$.analyzer){
+                val = J$.analyzer.post_R(iid, name, val);
             }
 
             return val;
         }
 
         function W(iid, name, val, lhs) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.pre_W(iid, name, val, lhs);
+            if(J$.analyzer){
+                J$.analyzer.pre_W(iid, name, val, lhs);
             }
 
             // just in case in front end some code like: window = {};
             // this will make J$ unavailable in the global namespace
-            if (window && name == 'window') {
+            if (window && name == 'window' && !isWorker) {
                 if (val != window) {
                     console.log('this piece of code is trying to change the window object with ' + val);
-                    val.J$ = window.J$;
+                    val.J$ = J$;
                 }
             }
 
@@ -585,16 +583,16 @@
                 sEngine.write(iid, name, val);
             }
 
-            if(window.J$.analyzer){
-                val = window.J$.analyzer.post_W(iid, name, val, lhs);
+            if(J$.analyzer){
+                val = J$.analyzer.post_W(iid, name, val, lhs);
             }
 
             return val;
         }
 
         function N(iid, name, val, isArgumentSync) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.N(iid, name, val, isArgumentSync);
+            if(J$.analyzer){
+                J$.analyzer.N(iid, name, val, isArgumentSync);
             }
 
             if (rrEngine) {
@@ -605,8 +603,8 @@
 
 
         function A(iid,base,offset,op) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.A(iid,base,offset,op);
+            if(J$.analyzer){
+                J$.analyzer.A(iid,base,offset,op);
             }
 
             var oprnd1 = G(iid,base, offset);
@@ -617,8 +615,8 @@
         }
 
         function G(iid, base, offset, norr) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.pre_G(iid, base, offset, norr);
+            if(J$.analyzer){
+                J$.analyzer.pre_G(iid, base, offset, norr);
             }
 
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
@@ -646,15 +644,15 @@
             }
             printValueForTesting(1, iid,val);
 
-            if(window.J$.analyzer){
-                val = window.J$.analyzer.post_G(iid, base, offset, val, norr);
+            if(J$.analyzer){
+                val = J$.analyzer.post_G(iid, base, offset, val, norr);
             }
             return val;
         }
 
         function P(iid, base, offset, val) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.pre_P(iid, base, offset, val);
+            if(J$.analyzer){
+                J$.analyzer.pre_P(iid, base, offset, val);
             }
 
             if (offset===SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
@@ -675,16 +673,16 @@
                 sEngine.putField(iid, base, offset, val);
             }
 
-            if(window.J$.analyzer){
-                val = window.J$.analyzer.pre_P(iid, base, offset, val);
+            if(J$.analyzer){
+                val = J$.analyzer.pre_P(iid, base, offset, val);
             }
 
             return val;
         }
 
         function B(iid, op, left, right) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.B(iid, op, left, right);
+            if(J$.analyzer){
+                J$.analyzer.B(iid, op, left, right);
             }
 
             var left_c, right_c, result_c;
@@ -788,8 +786,8 @@
 
 
         function U(iid, op, left) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.U(iid, op, left);
+            if(J$.analyzer){
+                J$.analyzer.U(iid, op, left);
             }
 
             var left_c, result_c;
@@ -844,8 +842,8 @@
         };
 
         function C1(iid, left) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.C1(iid, left);
+            if(J$.analyzer){
+                J$.analyzer.C1(iid, left);
             }
 
             var left_c;
@@ -856,8 +854,8 @@
         };
 
         function C2(iid, left) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.C2(iid, left);
+            if(J$.analyzer){
+                J$.analyzer.C2(iid, left);
             }
 
             var left_c, ret;
@@ -885,8 +883,8 @@
         };
 
         function C(iid, left) {
-            if(window.J$.analyzer){
-                window.J$.analyzer.C(iid, left);
+            if(J$.analyzer){
+                J$.analyzer.C(iid, left);
             }
 
             var left_c, ret;
