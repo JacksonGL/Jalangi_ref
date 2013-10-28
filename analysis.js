@@ -1229,9 +1229,11 @@
                         value = 0;
                     } else {
                         if (!HOP(val, SPECIAL_PROP)) {
-                            console.log('val:' + val +' does not have SPECIAL_PROP');
                             val[SPECIAL_PROP] = {};
-                            console.log('special prop: ' + typeof val[SPECIAL_PROP]);
+                            if (typeof val[SPECIAL_PROP] == 'undefined'){
+                                console.log(val);
+                            }
+                            
                             val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
                             objectId = objectId + 2;
                         }
