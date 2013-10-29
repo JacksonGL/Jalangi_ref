@@ -22,6 +22,7 @@
 //} else {
 
     var isWorker = false;
+    var disable_RR = true; // temporarily disable record replay engine;
     if(((typeof window) == 'undefined')){
         window = {};
         if ((typeof navigator) != 'undefined') {
@@ -1757,7 +1758,11 @@
 
         var rrEngine;
         if (mode=== MODE_RECORD || mode === MODE_REPLAY) {
-            rrEngine = new RecordReplayEngine();
+            if(disable_RR == true){
+                
+            } else {
+                rrEngine = new RecordReplayEngine();
+            }
         }
 
 
