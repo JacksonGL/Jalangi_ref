@@ -1231,11 +1231,13 @@
                         if (!HOP(val, SPECIAL_PROP)) {
                             val[SPECIAL_PROP] = {};
                             if (typeof val[SPECIAL_PROP] == 'undefined'){
+                                console.log('the following object cannot put *J$* field dynamically:');
                                 console.log(val);
+                            } else {
+                                val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
+                                objectId = objectId + 2;
                             }
                             
-                            val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
-                            objectId = objectId + 2;
                         }
                         if (HOP(val,SPECIAL_PROP) && typeof val[SPECIAL_PROP][SPECIAL_PROP] === 'number') {
                             value = val[SPECIAL_PROP][SPECIAL_PROP];
