@@ -1460,10 +1460,12 @@
                     val = getConcrete(oldVal);
                     if (!HOP(val,SPECIAL_PROP)) {
                         val[SPECIAL_PROP] = {};
-                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                        if(typeof val[SPECIAL_PROP] != 'undefined'){
+                            val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                        }
                         literalId = literalId + 2;
                         for (var offset in val) {
-                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset)) {
+                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset) && typeof val[SPECIAL_PROP] != 'undefined') {
                                 val[SPECIAL_PROP][offset] = val[offset];
                             }
                         }
@@ -1516,7 +1518,10 @@
                                 }
                             }
                             obj[SPECIAL_PROP] = {};
-                            obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
+                            if(typeof obj[SPECIAL_PROP] != 'undefined'){
+                                obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
+                            }
+                            
                             objectMap[recordedValue] = ((obj === replayValue)? oldReplayValue : obj);
                         }
                         return (obj === replayValue)? oldReplayValue : obj;
