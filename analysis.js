@@ -48,6 +48,45 @@
 
         //-------------------------------------- Symbolic functions -----------------------------------------------------------
 
+        if (typeof require === 'function') { // not sure if it works in firefox addon
+            /**
+             * Removes a module from the cache
+             */
+            require.uncache = function (moduleName) {
+                // Run over the cache looking for the files
+                // loaded by the specified module name
+                require.searchCache(moduleName, function (mod) {
+                    delete require.cache[mod.id];
+                });
+            };
+
+            /**
+             * Runs over the cache to search for all the cached
+             * files
+             */
+            require.searchCache = function (moduleName, callback) {
+                // Resolve the module identified by the specified name
+                var mod = require.resolve(moduleName);
+
+                // Check if the module has been resolved and found within
+                // the cache
+                if (mod && ((mod = require.cache[mod]) !== undefined)) {
+                    // Recursively go over the results
+                    (function run(mod) {
+                        // Go over each of the module's children and
+                        // run over it
+                        mod.children.forEach(function (child) {
+                            run(child);
+                        });
+
+                        // Call the specified callback providing the
+                        // found module
+                        callback(mod);
+                    })(mod);
+                }
+            };
+        }
+
         function create_fun(f) {
             return function() {
                 var len = arguments.length;
@@ -68,8 +107,9 @@
                 f === J$.addAxiom ||
                 f === J$.readInput) {
                 return [f, true];
-            } else if (f === Function.prototype.apply ||
-                f === Function.prototype.call ||
+            } else if (//f === Function.prototype.apply ||
+                //f === Function.prototype.call ||
+                f === Object.defineProperty ||
                 f === console.log ||
                 f === RegExp.prototype.test ||
                 f === String.prototype.indexOf ||
@@ -197,9 +237,12 @@
             var type = typeof val;
             if (type !== 'object' && type !== 'function') {
                 console.log(loc+":"+iid+":"+type+":"+val);
-            }
-            if (val===null) {
+            } else if (val===null) {
                 console.log(loc+":"+iid+":"+type+":"+val);
+            } else if (HOP(val,SPECIAL_PROP) && HOP(val[SPECIAL_PROP],SPECIAL_PROP)) {
+                console.log(loc+":"+iid+":"+type+":"+val[SPECIAL_PROP][SPECIAL_PROP]);
+            } else {
+                console.log(loc+":"+iid+":"+type+":object");
             }
         }
         //---------------------------- End utility functions -------------------------------
@@ -294,7 +337,7 @@
                 return callAsNativeConstructor(Constructor,args);
             } else {
                 var Temp = function(){}, inst, ret;
-                Temp.prototype = Constructor.prototype;
+                Temp.prototype = getConcrete(Constructor.prototype);
                 inst = new Temp;
                 ret = Constructor.apply(inst, args);
                 return Object(ret) === ret ? ret : inst;
@@ -318,9 +361,12 @@
 
 
         function invokeFun(iid, base, f, args, isConstructor) {
-            var g, invoke, val, ic, tmp_rrEngine;
+            var g, invoke, val, ic, tmp_rrEngine, tmpIsConstructorCall;
 
             var f_c = getConcrete(f);
+
+            tmpIsConstructorCall = isConstructorCall;
+            isConstructorCall = isConstructor;
 
             if (sEngine && sEngine.invokeFunPre) {
                 tmp_rrEngine = rrEngine;
@@ -361,6 +407,7 @@
             } finally {
                 popSwitchKey();
                 isInstrumentedCaller = false;
+                isConstructorCall = tmpIsConstructorCall;
             }
 
             if (!ic && arr[1]) {
@@ -663,7 +710,11 @@
                 sEngine.putFieldPre(iid, base, offset, val);
             }
 
-            base_c[getConcrete(offset)] = val;
+            if (typeof base_c==='function' && getConcrete(offset)==='prototype') {
+                base_c[getConcrete(offset)] = getConcrete(val);
+            } else {
+                base_c[getConcrete(offset)] = val;
+            }
 
             if (rrEngine) {
                 rrEngine.RR_P(iid, base, offset, val);
@@ -967,7 +1018,7 @@
                         seqNo++;
                         return val;
                     } else {
-                        base_c[SPECIAL_PROP][offset] = val;
+//                        base_c[SPECIAL_PROP][offset] = val;
                         return this.RR_L(iid, val, N_LOG_GETFIELD);
                     }
                 } else if (mode === MODE_REPLAY) {
@@ -977,8 +1028,8 @@
                         return val;
                     } else {
                         val = this.RR_L(iid, val, N_LOG_GETFIELD);
-                        base_c = getConcrete(base);
-                        base_c[offset] = val;
+//                        base_c = getConcrete(base);
+//                        base_c[offset] = val;
                         return val;
                     }
                 } else {
@@ -1025,13 +1076,15 @@
             }
 
             this.RR_R = function(iid, name, val) {
-                var ret, trackedVal, trackedFrame;
+                var ret, trackedVal, trackedFrame, tmp;
 
                 trackedFrame = getFrameContainingVar(name);
                 trackedVal = trackedFrame[name];
 
                 if (mode === MODE_RECORD) {
-                    if (trackedVal === val || (val !== val && trackedVal !== trackedVal)) {
+                    if (trackedVal === val ||
+                        (val !== val && trackedVal !== trackedVal) ||
+                        (name === "this" && isInstrumentedCaller && !isConstructorCall)) {
                         seqNo++;
                         ret = val;
                     } else {
@@ -1042,7 +1095,11 @@
                     if (traceInfo.getCurrent() === undefined) {
                         traceInfo.next();
                         skippedReads++;
-                        ret = trackedVal;
+                        if (name === "this" && isInstrumentedCaller && !isConstructorCall) {
+                            ret = val;
+                        } else {
+                            ret = trackedVal;
+                        }
                     } else {
                         ret = trackedFrame[name] = this.RR_L(iid, val, N_LOG_READ);
                     }
@@ -1163,6 +1220,7 @@
             this.RR_T = function (iid,val,fun) {
                 if ((mode === MODE_RECORD || mode === MODE_REPLAY) &&
                     (fun === N_LOG_ARRAY_LIT || fun === N_LOG_FUNCTION_LIT || fun === N_LOG_OBJECT_LIT || fun === N_LOG_REGEXP_LIT)){
+//                    console.log("iid:"+iid)  // uncomment for divergence
                     setLiteralId(val);
                     if (fun === N_LOG_FUNCTION_LIT) {
                         val[SPECIAL_PROP3] = frame;
@@ -1210,7 +1268,9 @@
                                 return;
                             } else {
                                 var pth = require('path');
-                                require(pth.resolve(path));
+                                var filep = pth.resolve(path);
+                                require(filep);
+                                require.uncache(filep);
                             }
                         } else {
                             return;
@@ -1236,6 +1296,7 @@
                                 console.log(val);
                             } else {
                                 val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
+                                //console.log("oid:"+objectId);
                                 objectId = objectId + 2;
                             }
                             
@@ -1465,6 +1526,7 @@
                             val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
                         }
                         literalId = literalId + 2;
+//                        console.log("id:"+id); // uncomment for divergence
                         for (var offset in val) {
                             if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset) && typeof val[SPECIAL_PROP] != 'undefined') {
                                 val[SPECIAL_PROP][offset] = val[offset];
@@ -1785,7 +1847,7 @@
             }
         })();
 
-        var isInstrumentedCaller = false;
+        var isInstrumentedCaller = false, isConstructorCall = false;
         var returnVal;
         var scriptCount = 0;
         var lastVal;
