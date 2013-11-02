@@ -22,7 +22,7 @@
 //} else {
 
     var isWorker = false;
-    var disable_RR = true; // temporarily disable record replay engine;
+    var disable_RR = false; // temporarily disable record replay engine;
     if(((typeof window) == 'undefined')){
         window = {};
         if ((typeof navigator) != 'undefined') {
@@ -1346,7 +1346,7 @@
             }
 
 
-
+            // this function is never used
             function record(prefix) {
                 var ret = [];
                 ret[F_TYPE] = getNumericType(prefix);
