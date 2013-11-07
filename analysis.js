@@ -350,7 +350,7 @@
                 rrEngine.RR_evalBegin();
             }
             try {
-                return f.call(base,sandbox.instrumentCode(args[0],true));
+                return f.call(base,sandbox.instrumentCode(getConcrete(args[0]),true));
             } finally {
                 if (rrEngine) {
                     rrEngine.RR_evalEnd();
@@ -431,7 +431,7 @@
         //var globalInstrumentationInfo;
 
         function F(iid, f, isConstructor) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.pre_F){
                 J$.analyzer.pre_F(iid, f, isConstructor);
             }
 
@@ -440,7 +440,7 @@
                 return invokeFun(iid, base, f, arguments, isConstructor);
             }
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.post_F){
                 ret = J$.analyzer.post_F(iid, f, isConstructor, ret);
             }
 
@@ -448,7 +448,7 @@
         }
 
         function M(iid, base, offset, isConstructor) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.pre_M){
                 J$.analyzer.pre_M(iid, base, offset, isConstructor);
             }
 
@@ -457,7 +457,7 @@
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.post_M){
                 ret = J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
             }
 
@@ -465,7 +465,7 @@
         }
 
         function Fe(iid, val, dis) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.Fe){
                 J$.analyzer.Fe(iid, val, dis);
             }
 
@@ -477,7 +477,7 @@
         }
 
         function Fr(iid) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.Fr){
                 J$.analyzer.Fr(iid);
             }
 
@@ -489,7 +489,7 @@
 
 
         function Rt(iid, val) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.Rt){
                 J$.analyzer.Rt(iid, val);
             }
 
@@ -497,7 +497,7 @@
         }
 
         function Ra() {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.Ra){
                 J$.analyzer.Ra();
             }
 
@@ -508,7 +508,7 @@
 
 
         function Se(iid,val) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.Se){
                 J$.analyzer.Se(iid,val);
             }
 
@@ -519,7 +519,7 @@
         }
 
         function Sr(iid) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.Sr){
                 J$.analyzer.Sr(iid);
             }
 
@@ -533,7 +533,7 @@
         }
 
         function I(val) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.I){
                 J$.analyzer.I(val);
             }
 
@@ -541,7 +541,7 @@
         }
 
         function T(iid, val, type) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.T){
                 J$.analyzer.T(iid, val, type);
             }
 
@@ -566,7 +566,7 @@
         }
 
         function H(iid, val) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.H){
                 J$.analyzer.H(iid, val);
             }
 
@@ -578,7 +578,7 @@
 
         function R(iid, name, val) {
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.pre_R){
                 J$.analyzer.pre_R(iid, name, val);
             }
 
@@ -598,7 +598,7 @@
             printValueForTesting(3, iid, val);
 
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.post_R){
                 val = J$.analyzer.post_R(iid, name, val);
             }
 
@@ -606,7 +606,7 @@
         }
 
         function W(iid, name, val, lhs) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.pre_W){
                 J$.analyzer.pre_W(iid, name, val, lhs);
             }
 
@@ -629,7 +629,7 @@
                 sEngine.write(iid, name, val);
             }
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.post_W){
                 val = J$.analyzer.post_W(iid, name, val, lhs);
             }
 
@@ -637,7 +637,7 @@
         }
 
         function N(iid, name, val, isArgumentSync) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.N){
                 J$.analyzer.N(iid, name, val, isArgumentSync);
             }
 
@@ -649,7 +649,7 @@
 
 
         function A(iid,base,offset,op) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.A){
                 J$.analyzer.A(iid,base,offset,op);
             }
 
@@ -661,7 +661,7 @@
         }
 
         function G(iid, base, offset, norr) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.pre_G){
                 J$.analyzer.pre_G(iid, base, offset, norr);
             }
 
@@ -690,14 +690,14 @@
             }
             printValueForTesting(1, iid,val);
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.post_G){
                 val = J$.analyzer.post_G(iid, base, offset, val, norr);
             }
             return val;
         }
 
         function P(iid, base, offset, val) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.pre_P){
                 J$.analyzer.pre_P(iid, base, offset, val);
             }
 
@@ -723,7 +723,7 @@
                 sEngine.putField(iid, base, offset, val);
             }
 
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.post_P){
                 val = J$.analyzer.post_P(iid, base, offset, val);
             }
 
@@ -731,7 +731,7 @@
         }
 
         function B(iid, op, left, right) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.B){
                 J$.analyzer.B(iid, op, left, right);
             }
 
@@ -836,7 +836,7 @@
 
 
         function U(iid, op, left) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.U){
                 J$.analyzer.U(iid, op, left);
             }
 
@@ -892,7 +892,7 @@
         };
 
         function C1(iid, left) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.C1){
                 J$.analyzer.C1(iid, left);
             }
 
@@ -904,7 +904,7 @@
         };
 
         function C2(iid, left) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.C2){
                 J$.analyzer.C2(iid, left);
             }
 
@@ -933,7 +933,7 @@
         };
 
         function C(iid, left) {
-            if(J$.analyzer){
+            if(J$.analyzer && J$.analyzer.C){
                 J$.analyzer.C(iid, left);
             }
 
