@@ -22,7 +22,7 @@
 //} else {
 
     var isWorker = false;
-    var disable_RR = false; // temporarily disable record replay engine;
+    var disable_RR = true; // temporarily disable record replay engine;
     if(((typeof window) == 'undefined')){
         window = {};
         if ((typeof navigator) != 'undefined') {
@@ -732,8 +732,8 @@
         }
 
         function B(iid, op, left, right) {
-            if(J$.analyzer && J$.analyzer.B){
-                J$.analyzer.B(iid, op, left, right);
+            if(J$.analyzer && J$.analyzer.pre_B){
+                J$.analyzer.pre_B(iid, op, left, right);
             }
 
             var left_c, right_c, result_c;
@@ -832,6 +832,11 @@
                     rrEngine.RR_updateRecordedObject(result_c);
                 }
             }
+
+            if(J$.analyzer && J$.analyzer.post_B){
+                J$.analyzer.post_B(iid, op, left, right, result_c);
+            }
+
             return result_c;
         }
 
@@ -2106,7 +2111,15 @@
             }
             return val;
         },
-        B: function (iid, op, left, right) {
+        pre_B: function (iid, op, left, right) {
+            //return result_c;
+        },
+        post_B: function (iid, op, left, right, val) {
+
+            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
+                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+            }
+            return val;
             //return result_c;
         },
         U: function (iid, op, left) {
