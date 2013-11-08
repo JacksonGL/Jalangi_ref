@@ -2035,6 +2035,7 @@
         post_R: function (iid, name, val) {
             if(typeof val == 'number' && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+                this.info();
             }
             return val;
 
@@ -2053,6 +2054,7 @@
         post_W: function (iid, name, val, lhs) {
             if(typeof val == 'number' && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+                this.info();
             }
             return val;
         },
@@ -2065,6 +2067,7 @@
         A: function (iid, base, offset, op) {
             if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
             }
         },
         // G: get field
@@ -2072,12 +2075,13 @@
         // base is the object from which the field will get
         // offset is either a number or a string indexing the field to get
         pre_G: function (iid, base, offset, norr) {
-            if((iid == 306509 || iid == 306517)  && (isNaN(base[offset]))) {
-                console.log('pre get [iid: ' + iid +']:' + base[offset] + ':' + (typeof base[offset]));
-            }
+            //if((iid == 306509 || iid == 306517)  && (isNaN(base[offset]))) {
+            //    console.log('pre get [iid: ' + iid +']:' + base[offset] + ':' + (typeof base[offset]));
+            //}
             try{
                 if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                     console.log('pre get: [NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                    this.info(base);
                 }
             }catch(e){
                 console.log(e);
@@ -2096,6 +2100,7 @@
             try{
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
             }
             }catch(e){
                 console.log(e);
@@ -2110,6 +2115,7 @@
         pre_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
             }
             //return val;
         },
@@ -2122,10 +2128,7 @@
         post_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                console.groupCollapsed();
-                console.info(console.trace());
-                console.dir(base);
-                console.groupEnd();
+                this.info(base);
             }
             return val;
         },
@@ -2159,6 +2162,14 @@
         C: function (iid, left) {
             //var left_c, ret;
             //return left_c;
+        },
+        info: function (obj){
+            console.groupCollapsed();
+            console.info(console.trace());
+            if(obj){
+                console.dir(obj);
+            }
+            console.groupEnd();
         }
     };
 
