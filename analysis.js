@@ -2136,14 +2136,13 @@
             //return result_c;
         },
         post_B: function (iid, op, left, right, val) {
-            //if((iid==28094 || iid==28090 || iid== 28086) && isNaN(val) == true){
-            //    console.log('[NaN B iid: ' + iid +']:' + val);
-            //}
-            
-            //if((typeof val == 'number') && isNaN(val) == true){
-            //    console.log('[NaN B iid: ' + iid +']:' + val);
-            //    console.log('left: ' + left + ' | right: ' + right);
-            //}
+            if(typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
+                console.warn('[strange binary op | iid: ' + iid +']:' + val);
+                console.group();
+                console.warn('left: ' + left + '[' + typeof left +']' + ' right: ' + right + '[' + typeof right +']');
+                this.info();
+                console.groupEnd();
+            }
             return val;
             //return result_c;
         },
