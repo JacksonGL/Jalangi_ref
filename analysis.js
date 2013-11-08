@@ -2122,7 +2122,8 @@
         post_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                console.log(console.trace);
+                console.log(console.trace());
+                console.dir(base);
             }
             return val;
         },
