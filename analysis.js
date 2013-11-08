@@ -2163,7 +2163,7 @@
             //var left_c, ret;
             //return left_c;
         },
-        info: function (obj){
+        info: function (obj) {
             console.groupCollapsed();
             console.info(console.trace());
             if(obj){
@@ -2171,15 +2171,13 @@
             }
             console.groupEnd();
         },
-        isMeaningless(val){
+        isMeaningless: function (val) {
             if(typeof val == 'undefined'){
                 return true;
             } else if(typeof val == 'number' && isNaN(val)){
                 return true;
             }
-
-            return false;
-                
+            return false;   
         }
     };
 
