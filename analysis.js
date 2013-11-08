@@ -2136,7 +2136,7 @@
             //return result_c;
         },
         post_B: function (iid, op, left, right, val) {
-            if(((typeof left == 'undefined' || typeof left == 'undefined') && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
+            if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
                 || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
                 console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
                 console.group();
@@ -2167,9 +2167,19 @@
             console.groupCollapsed();
             console.info(console.trace());
             if(obj){
-                console.dir(obj);
+                //console.dir(obj);
             }
             console.groupEnd();
+        },
+        isMeaningless(val){
+            if(typeof val == 'undefined'){
+                return true;
+            } else if(typeof val == 'number' && isNaN(val)){
+                return true;
+            }
+
+            return false;
+                
         }
     };
 
