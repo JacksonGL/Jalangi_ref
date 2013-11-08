@@ -2101,7 +2101,7 @@
         // val is the value puts to base.[offset]
         // return value will affect the retrieved value in the instrumented code
         post_P: function (iid, base, offset, val) {
-            if(typeof base != 'undefined' && base != null && (val == 'number') && isNaN(val) == true){
+            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
             }
             return val;
