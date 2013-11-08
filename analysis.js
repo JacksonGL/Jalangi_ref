@@ -2121,9 +2121,9 @@
         // return value will affect the retrieved value in the instrumented code
         post_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
                 console.groupCollapsed();
-                console.log(console.trace());
+                console.info(console.trace());
                 console.dir(base);
                 console.groupEnd();
             }
