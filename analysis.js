@@ -2140,7 +2140,7 @@
                 || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
                 console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
                 console.group();
-                console.warn('left: ' + left + '[' + typeof left +']' + ' right: ' + right + '[' + typeof right +']');
+                console.warn('left: ' + left + '[' + typeof left +']' + 'op:' + op + ' right: ' + right + '[' + typeof right +']');
                 this.info();
                 console.groupEnd();
             }
