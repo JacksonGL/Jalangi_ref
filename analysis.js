@@ -2136,8 +2136,9 @@
             //return result_c;
         },
         post_B: function (iid, op, left, right, val) {
-            if(typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
-                console.warn('[strange binary op | iid: ' + iid +']:' + val);
+            if(((typeof left == 'undefined' || typeof left == 'undefined') && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
+                || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
+                console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
                 console.group();
                 console.warn('left: ' + left + '[' + typeof left +']' + ' right: ' + right + '[' + typeof right +']');
                 this.info();
