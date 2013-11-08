@@ -2096,7 +2096,9 @@
         // offset is either a number or a string indexing the field to get
         // val is the value puts to base.[offset]
         pre_P: function (iid, base, offset, val) {
-
+            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
+                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+            }
             //return val;
         },
         // P: put field
