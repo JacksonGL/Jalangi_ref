@@ -2081,6 +2081,9 @@
         // val is the value gets from base.[offset]
         // return value will affect the retrieved value in the instrumented code
         post_G: function (iid, base, offset, val, norr) {
+            if(iid == 306509 || iid == 306517){
+                console.log('[iid: ' + iid +']:' + val + ':' + (typeof val));
+            }
             try{
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
@@ -2117,9 +2120,11 @@
             //return result_c;
         },
         post_B: function (iid, op, left, right, val) {
-
-            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+            //if((iid==28094 || iid==28090 || iid== 28086) && isNaN(val) == true){
+            //    console.log('[NaN B iid: ' + iid +']:' + val);
+            //}
+            if((typeof val == 'number') && isNaN(val) == true){
+                console.log('[NaN B iid: ' + iid +']:' + val);
             }
             return val;
             //return result_c;
