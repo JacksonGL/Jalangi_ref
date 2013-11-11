@@ -2145,13 +2145,13 @@ J$.cache = [];
                 console.groupEnd();
             } else if (typeof left == 'number' && typeof right == 'number') {
                 if(J$.cache[iid] && J$.cache[iid]!=404){
-                    if (cache[iid].left == left && cache[iid].right == right && cache[iid].op == op) {
-                        cache[iid].count += 1;
+                    if (J$.cache[iid].left == left && J$.cache[iid].right == right && J$.cache[iid].op == op) {
+                        J$.cache[iid].count += 1;
                     } else {
-                        cache[iid] = 404;
+                        J$.cache[iid] = 404;
                     }
                 } else {
-                    cache[iid] = {left: left, right: right, op: op, count: 1};
+                    J$.cache[iid] = {left: left, right: right, op: op, count: 1};
                 }
             }
             return val;
