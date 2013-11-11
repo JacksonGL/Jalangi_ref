@@ -2154,7 +2154,7 @@ J$.printCache = function() {
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 this.info();
                 console.groupEnd();
-            } else {
+            } else if (op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||'){
                 var sig = (typeof left + op + typeof right);
                 outter:
                 if(J$.cache[iid]){
