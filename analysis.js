@@ -1962,7 +1962,7 @@
 
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
-
+J$.cache = [];
 
 // check NaN
     J$.analyzer = {
@@ -2143,7 +2143,17 @@
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 this.info();
                 console.groupEnd();
-            } 
+            } else if (typeof left == 'number' && typeof right == 'number') {
+                if(J$.cache[iid] && J$.cache[iid]!=404){
+                    if (cache[iid].left == left && cache[iid].right == right && cache[iid].op == op) {
+                        cache[iid].count += 1;
+                    } else {
+                        cache[iid] = 404;
+                    }
+                } else {
+                    cache[iid] = {left: left, right: right, op: op, count: 1};
+                }
+            }
             return val;
             //return result_c;
         },
