@@ -344,14 +344,13 @@
             }
         }
 
+
         function invokeEval(base, f, args) {
             if (rrEngine) {
                 rrEngine.RR_evalBegin();
             }
             try {
-                //return f.call(base,sandbox.instrumentCode(getConcrete(args[0]),true));
-                //return f(sandbox.instrumentCode(getConcrete(args[0]),true));
-                return f(getConcrete(args[0]));
+                return f.call(base,getConcrete(args[0]));
             } finally {
                 if (rrEngine) {
                     rrEngine.RR_evalEnd();
@@ -578,7 +577,7 @@
             return val;
         }
 
-        function R(iid, name, val, isGlobal) {
+        function R(iid, name, val) {
 
             if(J$.analyzer && J$.analyzer.pre_R){
                 J$.analyzer.pre_R(iid, name, val);
@@ -586,13 +585,13 @@
 
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
-                sEngine.readPre(iid, name, val, isGlobal);
+                sEngine.readPre(iid, name, val);
             }
             if (rrEngine) {
                 val = rrEngine.RR_R(iid, name, val);
             }
             if (sEngine && sEngine.read) {
-                val = sEngine.read(iid, name, val, isGlobal);
+                val = sEngine.read(iid, name, val);
                 if (rrEngine) {
                     rrEngine.RR_updateRecordedObject(val);
                 }
@@ -1523,21 +1522,22 @@
                     }
                 }
 
-                                setLiteralId = function(val) {
+                setLiteralId = function(val) {
                     var id;
                     var oldVal = val;
                     val = getConcrete(oldVal);
                     if (!HOP(val,SPECIAL_PROP)) {
                         val[SPECIAL_PROP] = {};
-                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                        if(typeof val[SPECIAL_PROP] != 'undefined'){
+                            val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                        }
                         literalId = literalId + 2;
 //                        console.log("id:"+id); // uncomment for divergence
-                        // the following for loop could call unexpected getter or setter method
-//                        for (var offset in val) {
-//                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset)) {
-//                                val[SPECIAL_PROP][offset] = val[offset];
-//                            }
-//                        }
+                        for (var offset in val) {
+                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset) && typeof val[SPECIAL_PROP] != 'undefined') {
+                                val[SPECIAL_PROP][offset] = val[offset];
+                            }
+                        }
                     }
                     if (mode === MODE_REPLAY) {
                         objectMap[id] = oldVal;
@@ -2055,7 +2055,11 @@ J$.printCache = function() {
         // function called before W
         // val is the value to write
         pre_W: function (iid, name, val, lhs) {
-
+            if(typeof val == 'number' && isNaN(val) == true){
+                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
+            } else if (typeof val == 'undefined') {
+                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + typeof val);
+            }
             //return val;
         },
         // W: write
@@ -2063,8 +2067,8 @@ J$.printCache = function() {
         // val is the value to write
         // return value will be the new written value
         post_W: function (iid, name, val, lhs) {
-            if(typeof val == 'number' && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+            if((typeof val == 'undefined') || (typeof val == 'number' && isNaN(val) == true)){
+                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
                 this.info();
             }
             return val;
@@ -2138,7 +2142,10 @@ J$.printCache = function() {
         // return value will affect the retrieved value in the instrumented code
         post_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
+                this.info(base);
+            } else if (typeof base != 'undefined' && base != null && (typeof val == 'undefined')) {
+                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + typeof val);
                 this.info(base);
             }
             return val;
