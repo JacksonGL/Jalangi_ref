@@ -129,6 +129,7 @@ if(((typeof console) == 'undefined')){
             return ret;
         }
 
+        sandbox.getNextSymbol = getNextSymbol;
         sandbox.inputs = inputs;
         sandbox.setSolutionPoint = setSolutionPoint;
         sandbox.setInput = setInput;
