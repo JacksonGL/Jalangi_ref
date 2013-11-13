@@ -491,7 +491,7 @@
 
         function Rt(iid, val) {
             if(J$.analyzer && J$.analyzer.Rt){
-                J$.analyzer.Rt(iid, val);
+                val = J$.analyzer.Rt(iid, val);
             }
 
             return returnVal = val;
@@ -2008,6 +2008,14 @@ J$.printCache = function() {
 
         },
         Rt: function (iid, val) {
+            if(typeof val == 'number' && isNaN(val) == true){
+                console.warn('[NaN iid: ' + iid +'] [value return] ' + ' <= ' + val);
+                this.info();
+            } else if (typeof val == 'undefined') {
+                console.warn('[undefined iid: ' + iid +'] [value return] ' + ' <= ' + typeof val);
+                this.info();
+            }
+            return val;
             //return returnVal = val;
         },
         Ra: function () {
@@ -2065,8 +2073,10 @@ J$.printCache = function() {
         post_W: function (iid, name, val, lhs) {
             if(typeof val == 'number' && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
+                this.info();
             } else if (typeof val == 'undefined') {
                 console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + typeof val);
+                this.info();
             }
             return val;
         },
@@ -2080,6 +2090,9 @@ J$.printCache = function() {
             if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
                 this.info(base);
+            } else if (typeof base != 'undefined' && base != null && (typeof base[offset] == 'undefined') ) {
+                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + typeof val);
+                this.info();
             }
         },
         // G: get field
