@@ -2055,11 +2055,7 @@ J$.printCache = function() {
         // function called before W
         // val is the value to write
         pre_W: function (iid, name, val, lhs) {
-            if(typeof val == 'number' && isNaN(val) == true){
-                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
-            } else if (typeof val == 'undefined') {
-                console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + typeof val);
-            }
+            
             //return val;
         },
         // W: write
@@ -2067,9 +2063,10 @@ J$.printCache = function() {
         // val is the value to write
         // return value will be the new written value
         post_W: function (iid, name, val, lhs) {
-            if((typeof val == 'undefined') || (typeof val == 'number' && isNaN(val) == true)){
+            if(typeof val == 'number' && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
-                this.info();
+            } else if (typeof val == 'undefined') {
+                console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + typeof val);
             }
             return val;
         },
@@ -2093,14 +2090,6 @@ J$.printCache = function() {
             //if((iid == 306509 || iid == 306517)  && (isNaN(base[offset]))) {
             //    console.log('pre get [iid: ' + iid +']:' + base[offset] + ':' + (typeof base[offset]));
             //}
-            try{
-                if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                    console.log('pre get: [NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                    this.info(base);
-                }
-            }catch(e){
-                console.log(e);
-            }
         },
         // G: get field
         // function called after G
@@ -2128,10 +2117,6 @@ J$.printCache = function() {
         // offset is either a number or a string indexing the field to get
         // val is the value puts to base.[offset]
         pre_P: function (iid, base, offset, val) {
-            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                this.info(base);
-            }
             //return val;
         },
         // P: put field
