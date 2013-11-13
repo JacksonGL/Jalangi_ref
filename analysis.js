@@ -2058,7 +2058,7 @@ J$.printCache = function() {
             if(typeof val == 'number' && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
             } else if (typeof val == 'undefined') {
-                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + typeof val);
+                console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + typeof val);
             }
             //return val;
         },
@@ -2145,7 +2145,7 @@ J$.printCache = function() {
                 console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
                 this.info(base);
             } else if (typeof base != 'undefined' && base != null && (typeof val == 'undefined')) {
-                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + typeof val);
+                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + typeof val);
                 this.info(base);
             }
             return val;
