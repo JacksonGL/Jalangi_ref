@@ -577,7 +577,7 @@
             return val;
         }
 
-        function R(iid, name, val) {
+        function R(iid, name, val, isGlobal) {
 
             if(J$.analyzer && J$.analyzer.pre_R){
                 J$.analyzer.pre_R(iid, name, val);
@@ -585,13 +585,13 @@
 
             //console.log('[read]  iid: ' + iid + ', name: ' + name + ', val: ' + val);
             if (sEngine && sEngine.readPre) {
-                sEngine.readPre(iid, name, val);
+                sEngine.readPre(iid, name, val, isGlobal);
             }
             if (rrEngine) {
                 val = rrEngine.RR_R(iid, name, val);
             }
             if (sEngine && sEngine.read) {
-                val = sEngine.read(iid, name, val);
+                val = sEngine.read(iid, name, val, isGlobal);
                 if (rrEngine) {
                     rrEngine.RR_updateRecordedObject(val);
                 }
@@ -1522,22 +1522,21 @@
                     }
                 }
 
-                setLiteralId = function(val) {
+                                setLiteralId = function(val) {
                     var id;
                     var oldVal = val;
                     val = getConcrete(oldVal);
                     if (!HOP(val,SPECIAL_PROP)) {
                         val[SPECIAL_PROP] = {};
-                        if(typeof val[SPECIAL_PROP] != 'undefined'){
-                            val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
-                        }
+                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
                         literalId = literalId + 2;
 //                        console.log("id:"+id); // uncomment for divergence
-                        for (var offset in val) {
-                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset) && typeof val[SPECIAL_PROP] != 'undefined') {
-                                val[SPECIAL_PROP][offset] = val[offset];
-                            }
-                        }
+                        // the following for loop could call unexpected getter or setter method
+//                        for (var offset in val) {
+//                            if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset)) {
+//                                val[SPECIAL_PROP][offset] = val[offset];
+//                            }
+//                        }
                     }
                     if (mode === MODE_REPLAY) {
                         objectMap[id] = oldVal;
