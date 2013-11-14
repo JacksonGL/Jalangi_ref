@@ -1973,9 +1973,6 @@
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
                 this.info(base);
-            } else if (typeof base != 'undefined' && base != null && (typeof val == 'undefined')) {
-                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + typeof val);
-                this.info(base);
             }
             return val;
         },
