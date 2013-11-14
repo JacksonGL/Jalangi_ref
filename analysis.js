@@ -2086,6 +2086,22 @@
                 console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + typeof val);
                 this.info();
             }
+        },
+        info: function (obj) {
+            console.groupCollapsed();
+            console.info(console.trace());
+            if(obj){
+                //console.dir(obj);
+            }
+            console.groupEnd();
+        },
+        isMeaningless: function (val) {
+            if(typeof val == 'undefined'){
+                return true;
+            } else if(typeof val == 'number' && isNaN(val)){
+                return true;
+            }
+            return false;   
         }
     };
 
