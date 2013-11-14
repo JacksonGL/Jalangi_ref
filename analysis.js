@@ -1972,7 +1972,7 @@
         post_P: function (iid, base, offset, val) {
             if (typeof base != 'undefined' && base != null && (typeof val == 'undefined')) {
                 console.warn('[undefined iid: ' + iid +'] [] .' + offset + ' <= ' + typeof val);
-                this.info(base);
+                //this.info(base);
             }
             return val;
         },
