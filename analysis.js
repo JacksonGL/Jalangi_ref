@@ -2079,13 +2079,7 @@
             //return val;
         },
         A: function (iid, base, offset, op) {
-            if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                this.info(base);
-            } else if (typeof base != 'undefined' && base != null && (typeof base[offset] == 'undefined') ) {
-                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + typeof val);
-                this.info();
-            }
+            
         },
         // G: get field
         // function called before G
