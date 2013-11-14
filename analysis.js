@@ -365,6 +365,10 @@
 
             var f_c = getConcrete(f);
 
+            if(J$.analyzer && J$.analyzer.invokeFun_pre) {
+                J$.analyzer.pre_InvokeFun(iid, f, base, args, isConstructor);
+            }
+
             tmpIsConstructorCall = isConstructorCall;
             isConstructorCall = isConstructor;
 
@@ -447,7 +451,7 @@
 
             return ret
         }
-        
+
         function M(iid, base, offset, isConstructor) {
             if(J$.analyzer && J$.analyzer.pre_M){
                 J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
