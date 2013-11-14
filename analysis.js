@@ -1969,20 +1969,6 @@
 
 // check NaN
     J$.analyzer = { 
-        // P: put field
-        // function called before P
-        // base is the object to which the field will put
-        // offset is either a number or a string indexing the field to get
-        // val is the value puts to base.[offset]
-        pre_P: function (iid, base, offset, val) {
-            //return val;
-        },
-        // P: put field
-        // function called after P
-        // base is the object to which the field will put
-        // offset is either a number or a string indexing the field to get
-        // val is the value puts to base.[offset]
-        // return value will affect the retrieved value in the instrumented code
         post_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
