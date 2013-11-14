@@ -2258,10 +2258,17 @@
                     }
                 }
                 this.stack.push(this.func_name);
+                var result = '';
                 if(this.stack.length==1){
-                    console.log('[top level] -> ' + this.stack[this.stack.length-1]);
+                    result = '[top level] -> ' + this.stack[this.stack.length-1];
                 } else {
-                    console.log(this.stack[this.stack.length-2] + ' -> ' + this.stack[this.stack.length-1]);
+                    result = this.stack[this.stack.length-2] + ' -> ' + this.stack[this.stack.length-1];
+                }
+
+                var oldSize2 = J$.resultSet.size();
+                J$.resultSet.add(result);
+                if(J$.resultSet.size() > oldSize2){
+                    J$.resultList.push(result);
                 }
             } else {
                 console.log('!!!!!!!!!!!!!! Fe');
@@ -2493,6 +2500,8 @@
     J$.functionSet = new J$.HashSet();
     J$.functionTable = new J$.Hashtable();
     J$.literal_func_index = 1;
+    J$.resultSet = new J$.HashSet();
+    J$.resultList = [];
 
 
 
