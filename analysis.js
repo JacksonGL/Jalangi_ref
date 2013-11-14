@@ -2150,7 +2150,7 @@
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 this.info();
                 console.groupEnd();
-            }
+            } 
             return val;
             //return result_c;
         },
