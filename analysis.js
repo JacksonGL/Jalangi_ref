@@ -1970,8 +1970,8 @@
 // check NaN
     J$.analyzer = { 
         post_P: function (iid, base, offset, val) {
-            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
+            if (typeof base != 'undefined' && base != null && (typeof val == 'undefined')) {
+                console.warn('[undefined iid: ' + iid +'] [].' + offset + ' <= ' + typeof val);
                 this.info(base);
             }
             return val;
