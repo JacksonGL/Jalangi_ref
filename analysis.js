@@ -365,10 +365,6 @@
 
             var f_c = getConcrete(f);
 
-            if(J$.analyzer && J$.analyzer.pre_InvokeFun) {
-                J$.analyzer.pre_InvokeFun(iid, f, base, args, isConstructor);
-            }
-
             tmpIsConstructorCall = isConstructorCall;
             isConstructorCall = isConstructor;
 
@@ -437,7 +433,7 @@
 
         function F(iid, f, isConstructor) {
             if(J$.analyzer && J$.analyzer.pre_F){
-                J$.analyzer.pre_F(iid, f, arguments, isConstructor);
+                J$.analyzer.pre_F(iid, f, isConstructor);
             }
 
             var ret = function() {
@@ -446,7 +442,7 @@
             }
 
             if(J$.analyzer && J$.analyzer.post_F){
-                ret = J$.analyzer.post_F(iid, f, arguments, isConstructor, ret);
+                ret = J$.analyzer.post_F(iid, f, isConstructor, ret);
             }
 
             return ret
@@ -454,7 +450,7 @@
 
         function M(iid, base, offset, isConstructor) {
             if(J$.analyzer && J$.analyzer.pre_M){
-                J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
+                J$.analyzer.pre_M(iid, base, offset, isConstructor);
             }
 
             var ret = function() {
@@ -463,7 +459,7 @@
             };
 
             if(J$.analyzer && J$.analyzer.post_M){
-                ret = J$.analyzer.post_M(iid, base, offset, arguments, isConstructor, ret);
+                ret = J$.analyzer.post_M(iid, base, offset, isConstructor, ret);
             }
 
             return ret
@@ -713,7 +709,7 @@
             var base_c = getConcrete(base);
             if (sEngine && sEngine.putFieldPre) {
                 sEngine.putFieldPre(iid, base, offset, val);
-            } 
+            }
 
             if (typeof base_c==='function' && getConcrete(offset)==='prototype') {
                 base_c[getConcrete(offset)] = getConcrete(val);
@@ -1966,7 +1962,6 @@
 
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
-
 J$.cache = [];
 J$.printCache = function() {
     var tmp = [];
@@ -1985,25 +1980,25 @@ J$.printCache = function() {
         // F: function call
         // function called before F
         // modify retFunction will modify the concret return value
-        pre_F: function (iid, f, origArguments, isConstructor) {
+        pre_F: function (iid, f, isConstructor) {
         },
         // F: function call
         // function called after F
         // modify retFunction will modify the concret return value
-        post_F: function (iid, f, origArguments, isConstructor, retFunction) {
+        post_F: function (iid, f, isConstructor, retFunction) {
 
-            return retFunction;
+        return retFunction;
         },
         // M: method call
         // function called before M
-        pre_M: function (iid, base, offset, origArguments, isConstructor) {
+        pre_M: function (iid, base, offset, isConstructor) {
          
         },
         // M: method call
         // function called after M
         // modify retFunction will modify the concret return value
-        post_M: function (iid, base, offset, origArguments, isConstructor, retFunction) {
-            return retFunction;
+        post_M: function (iid, base, offset, isConstructor, retFunction) {
+        return retFunction;
         },
         Fe: function (iid, val, dis) {
 
@@ -2096,7 +2091,7 @@ J$.printCache = function() {
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
                 this.info(base);
             } else if (typeof base != 'undefined' && base != null && (typeof base[offset] == 'undefined') ) {
-                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + typeof val);
+                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + typeof val);
                 this.info();
             }
         },
@@ -2120,10 +2115,10 @@ J$.printCache = function() {
             //    console.log('[iid: ' + iid +']:' + val + ':' + (typeof val));
             //}
             try{
-                if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                    console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                    this.info(base);
-                }
+            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
+                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
+            }
             }catch(e){
                 console.log(e);
             }
