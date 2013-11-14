@@ -1975,7 +1975,7 @@
                 //this.info(base);
             }
             return val;
-        },
+        }, 
         info: function (obj) {
             console.groupCollapsed();
             console.info(console.trace());
