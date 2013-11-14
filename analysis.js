@@ -2014,7 +2014,7 @@
             } else if(typeof val == 'number' && isNaN(val)){
                 return true;
             }
-            return false;   
+            return false;    
         }
     };
 
