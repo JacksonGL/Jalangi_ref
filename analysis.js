@@ -2246,7 +2246,7 @@
         // dis is the 'this' context
         Fe: function (iid, val, dis) {
             if(this.func_name) {
-                if(this.func_name.indexOf('{')>=0) {
+                if(this.func_name.indexOf('{')>=0 || this.func_name.indexOf('*')>=0 || this.func_name.indexOf('\\')>=0 || this.func_name.indexOf('/')>=0) {
                     var oldSize = J$.functionSet.size();
                     J$.functionSet.add(this.func_name);
                     if(J$.functionSet.size() > oldSize){
@@ -2260,9 +2260,9 @@
                 this.stack.push(this.func_name);
                 var result = '';
                 if(this.stack.length==1){
-                    result = '[top level] -> ' + this.stack[this.stack.length-1];
+                    result = '\"[top level]\" -> \"' + this.stack[this.stack.length-1] + '\"';
                 } else {
-                    result = this.stack[this.stack.length-2] + ' -> ' + this.stack[this.stack.length-1];
+                    result = '\"' + this.stack[this.stack.length-2] + '\" -> \"' + this.stack[this.stack.length-1] + '\"';
                 }
 
                 var oldSize2 = J$.resultSet.size();
