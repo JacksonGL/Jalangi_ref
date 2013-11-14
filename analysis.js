@@ -2077,7 +2077,7 @@
                 console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
             }
             //return val;
-        },
+        }, 
         A: function (iid, base, offset, op) {
             if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
                 console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
