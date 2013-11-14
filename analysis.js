@@ -2189,4 +2189,7 @@
     };
 
 
+    J$.analyzer = undefined;
+
+
 
