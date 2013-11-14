@@ -713,7 +713,7 @@
             var base_c = getConcrete(base);
             if (sEngine && sEngine.putFieldPre) {
                 sEngine.putFieldPre(iid, base, offset, val);
-            }
+            } 
 
             if (typeof base_c==='function' && getConcrete(offset)==='prototype') {
                 base_c[getConcrete(offset)] = getConcrete(val);
