@@ -1968,7 +1968,7 @@
 
 
 // check NaN
-    J$.analyzer = {
+    J$.analyzer = { 
         // P: put field
         // function called before P
         // base is the object to which the field will put
