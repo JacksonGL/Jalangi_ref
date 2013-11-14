@@ -2033,20 +2033,6 @@
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 this.info();
                 console.groupEnd();
-            } else if (op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||'){
-                var sig = (typeof left + op + typeof right);
-                outter:
-                if(J$.cache[iid]){
-                    for (var i=0;i<J$.cache[iid].length;i++){
-                        if (J$.cache[iid][i].sig == sig) {
-                            J$.cache[iid][i].count += 1;
-                            break outter;
-                        }
-                    }
-                    J$.cache[iid].push({sig: sig,count: 1});
-                } else {
-                    J$.cache[iid] = [{sig: sig,count: 1}];
-                }
             }
             return val;
             //return result_c;
