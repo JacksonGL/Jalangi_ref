@@ -365,7 +365,7 @@
 
             var f_c = getConcrete(f);
 
-            if(J$.analyzer && J$.analyzer.invokeFun_pre) {
+            if(J$.analyzer && J$.analyzer.pre_InvokeFun) {
                 J$.analyzer.pre_InvokeFun(iid, f, base, args, isConstructor);
             }
 
