@@ -39,6 +39,8 @@ var isWorker = false;
         };
     }
 
+    window.JALANGI_MODE = 'concrete';
+
 if (typeof J$ === 'undefined') J$ = {};
 
 (function (sandbox) {
