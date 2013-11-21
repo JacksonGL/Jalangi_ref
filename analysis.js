@@ -30,7 +30,7 @@ var isWorker = false;
         if ((typeof navigator) != 'undefined') {
             isWorker = true
         }
-    }
+    } 
 
     if(((typeof console) == 'undefined')){
         console = {};
