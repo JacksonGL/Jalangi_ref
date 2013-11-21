@@ -16,6 +16,23 @@
 
 // Author: Koushik Sen
 
+
+var isWorker = false;
+if(((typeof window) == 'undefined')){
+    window = {};
+    if ((typeof navigator) != 'undefined') {
+        isWorker = true
+    }
+}
+
+if(((typeof console) == 'undefined')){
+    console = {};
+    console.log = function(str) {
+        // do nothing
+    };
+}
+
+
 if (typeof J$ === 'undefined') {
     J$ = {};
 }

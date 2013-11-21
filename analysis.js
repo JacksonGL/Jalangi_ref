@@ -23,6 +23,22 @@
 
  */
 
+var isWorker = false;
+    var disable_RR = true; // temporarily disable record replay engine;
+    if(((typeof window) == 'undefined')){
+        window = {};
+        if ((typeof navigator) != 'undefined') {
+            isWorker = true
+        }
+    }
+
+    if(((typeof console) == 'undefined')){
+        console = {};
+        console.log = function(str) {
+            // do nothing
+        };
+    }
+
 if (typeof J$ === 'undefined') J$ = {};
 
 (function (sandbox) {
@@ -708,6 +724,16 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function W(iid, name, val, lhs) {
+
+            // just in case in front end some code like: window = {};
+            // this will make J$ unavailable in the global namespace
+            if (window && name == 'window' && !isWorker) {
+                if (val != window) {
+                    console.log('this piece of code is trying to change the window object with ' + val);
+                    val.J$ = J$;
+                }
+            }
+
             if (sandbox.analysis && sandbox.analysis.writePre) {
                 sandbox.analysis.writePre(iid, name, val, lhs);
             }
