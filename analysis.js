@@ -39,7 +39,7 @@ var isWorker = false;
         };
     }
 
-    window.JALANGI_MODE = 'concrete';
+    window.JALANGI_MODE = 'inbrowser';
 
 if (typeof J$ === 'undefined') J$ = {};
 
