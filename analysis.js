@@ -474,6 +474,10 @@ if (typeof J$ === 'undefined') J$ = {};
 
             var f_c = getConcrete(f);
 
+            if(J$.analyzer && J$.analyzer.pre_InvokeFun) {
+                J$.analyzer.pre_InvokeFun(iid, f, base, args, isConstructor);
+            }
+
             tmpIsConstructorCall = isConstructorCall;
             isConstructorCall = isConstructor;
 
@@ -541,6 +545,11 @@ if (typeof J$ === 'undefined') J$ = {};
         //var globalInstrumentationInfo;
 
         function G(iid, base, offset, norr) {
+
+            if(J$.analyzer && J$.analyzer.pre_G){
+                J$.analyzer.pre_G(iid, base, offset, norr);
+            }
+
             if (offset === SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
                 return undefined;
             }
@@ -565,10 +574,19 @@ if (typeof J$ === 'undefined') J$ = {};
                 }
             }
             printValueForTesting(1, iid, val);
+
+            if(J$.analyzer && J$.analyzer.post_G){
+                val = J$.analyzer.post_G(iid, base, offset, val, norr);
+            }
             return val;
         }
 
+
         function P(iid, base, offset, val) {
+            if(J$.analyzer && J$.analyzer.pre_P){
+                J$.analyzer.pre_P(iid, base, offset, val);
+            }
+
             if (offset === SPECIAL_PROP || offset === SPECIAL_PROP2 || offset === SPECIAL_PROP3) {
                 return undefined;
             }
@@ -591,24 +609,48 @@ if (typeof J$ === 'undefined') J$ = {};
                 val = sandbox.analysis.putField(iid, base, offset, val);
             }
 
+            if(J$.analyzer && J$.analyzer.post_P){
+                val = J$.analyzer.post_P(iid, base, offset, val);
+            }
             return val;
         }
 
+
         function F(iid, f, isConstructor) {
+            if(J$.analyzer && J$.analyzer.pre_F){
+                J$.analyzer.pre_F(iid, f, arguments, isConstructor);
+            }
+
             return function () {
                 var base = this;
                 return invokeFun(iid, base, f, arguments, isConstructor);
             }
+
+            if(J$.analyzer && J$.analyzer.post_F){
+                ret = J$.analyzer.post_F(iid, f, arguments, isConstructor, ret);
+            }
         }
 
         function M(iid, base, offset, isConstructor) {
+            if(J$.analyzer && J$.analyzer.pre_M){
+                J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
+            }
+
             return function () {
                 var f = G(iid, base, offset);
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
+
+            if(J$.analyzer && J$.analyzer.post_M){
+                ret = J$.analyzer.post_M(iid, base, offset, arguments, isConstructor, ret);
+            }
         }
 
         function Fe(iid, val, dis /* this */) {
+            if(J$.analyzer && J$.analyzer.Fe){
+                J$.analyzer.Fe(iid, val, dis);
+            }
+
             executionIndex.executionIndexCall();
             if (rrEngine) {
                 rrEngine.RR_Fe(iid, val, dis);
@@ -620,6 +662,11 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function Fr(iid) {
+
+            if(J$.analyzer && J$.analyzer.Fr){
+                J$.analyzer.Fr(iid);
+            }
+
             var ret = false;
             executionIndex.executionIndexReturn();
             if (rrEngine) {
@@ -631,12 +678,23 @@ if (typeof J$ === 'undefined') J$ = {};
             return ret;
         }
 
-
         function Rt(iid, val) {
+
+            if(J$.analyzer && J$.analyzer.Rt){
+                val = J$.analyzer.Rt(iid, val);
+            }
+
+            if (sandbox.analysis && sandbox.analysis.return_Rt) {
+                val = sandbox.analysis.return_Rt(iid, val);
+            }
             return returnVal = val;
         }
 
         function Ra() {
+            if(J$.analyzer && J$.analyzer.Ra){
+                J$.analyzer.Ra();
+            }
+
             var ret = returnVal;
             returnVal = undefined;
             if (sandbox.analysis && sandbox.analysis.return_) {
@@ -645,8 +703,12 @@ if (typeof J$ === 'undefined') J$ = {};
             return ret;
         }
 
-
         function Se(iid, val) {
+
+            if(J$.analyzer && J$.analyzer.Se){
+                J$.analyzer.Se(iid,val);
+            }
+
             scriptCount++;
             if (rrEngine) {
                 rrEngine.RR_Se(iid, val);
@@ -657,6 +719,10 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function Sr(iid) {
+            if(J$.analyzer && J$.analyzer.Sr){
+                J$.analyzer.Sr(iid);
+            }
+
             scriptCount--;
             if (rrEngine) {
                 rrEngine.RR_Sr(iid);
@@ -670,10 +736,18 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function I(val) {
+            if(J$.analyzer && J$.analyzer.I){
+                J$.analyzer.I(val);
+            }
+
             return val;
         }
 
         function T(iid, val, type) {
+            if(J$.analyzer && J$.analyzer.T){
+                J$.analyzer.T(iid, val, type);
+            }
+
             if (sandbox.analysis && sandbox.analysis.literalPre) {
                 sandbox.analysis.literalPre(iid, val);
             }
@@ -701,6 +775,11 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function H(iid, val) {
+
+            if(J$.analyzer && J$.analyzer.H){
+                J$.analyzer.H(iid, val);
+            }
+
             if (rrEngine) {
                 val = rrEngine.RR_H(iid, val);
             }
@@ -709,6 +788,11 @@ if (typeof J$ === 'undefined') J$ = {};
 
 
         function R(iid, name, val, isGlobal) {
+
+            if(J$.analyzer && J$.analyzer.pre_R){
+                J$.analyzer.pre_R(iid, name, val);
+            }
+
             if (sandbox.analysis && sandbox.analysis.readPre) {
                 sandbox.analysis.readPre(iid, name, val, isGlobal);
             }
@@ -722,10 +806,19 @@ if (typeof J$ === 'undefined') J$ = {};
                 }
             }
             printValueForTesting(3, iid, val);
+
+            if(J$.analyzer && J$.analyzer.post_R){
+                val = J$.analyzer.post_R(iid, name, val);
+            }
+
             return val;
         }
 
         function W(iid, name, val, lhs) {
+
+            if(J$.analyzer && J$.analyzer.pre_W){
+                J$.analyzer.pre_W(iid, name, val, lhs);
+            }
 
             // just in case in front end some code like: window = {};
             // this will make J$ unavailable in the global namespace
@@ -745,10 +838,19 @@ if (typeof J$ === 'undefined') J$ = {};
             if (sandbox.analysis && sandbox.analysis.write) {
                 val = sandbox.analysis.write(iid, name, val, lhs);
             }
+
+            if(J$.analyzer && J$.analyzer.post_W){
+                val = J$.analyzer.post_W(iid, name, val, lhs);
+            }
+
             return val;
         }
 
         function N(iid, name, val, isArgumentSync) {
+            if(J$.analyzer && J$.analyzer.N){
+                J$.analyzer.N(iid, name, val, isArgumentSync);
+            }
+
             if (rrEngine) {
                 rrEngine.RR_N(iid, name, val, isArgumentSync);
             }
@@ -760,6 +862,10 @@ if (typeof J$ === 'undefined') J$ = {};
 
 
         function A(iid, base, offset, op) {
+            if(J$.analyzer && J$.analyzer.A){
+                J$.analyzer.A(iid,base,offset,op);
+            }
+
             var oprnd1 = G(iid, base, offset);
             return function (oprnd2) {
                 var val = B(iid, op, oprnd1, oprnd2);
@@ -768,6 +874,11 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function B(iid, op, left, right) {
+
+            if(J$.analyzer && J$.analyzer.pre_B){
+                J$.analyzer.pre_B(iid, op, left, right);
+            }
+
             var left_c, right_c, result_c;
 
             if (sandbox.analysis && sandbox.analysis.binaryPre) {
@@ -864,11 +975,20 @@ if (typeof J$ === 'undefined') J$ = {};
                     rrEngine.RR_updateRecordedObject(result_c);
                 }
             }
+
+            if(J$.analyzer && J$.analyzer.post_B){
+                J$.analyzer.post_B(iid, op, left, right, result_c);
+            }
+
             return result_c;
         }
 
-
         function U(iid, op, left) {
+
+            if(J$.analyzer && J$.analyzer.U){
+                J$.analyzer.U(iid, op, left);
+            }
+
             var left_c, result_c;
 
             if (sandbox.analysis && sandbox.analysis.unaryPre) {
@@ -920,6 +1040,10 @@ if (typeof J$ === 'undefined') J$ = {};
         };
 
         function C1(iid, left) {
+            if(J$.analyzer && J$.analyzer.C1){
+                J$.analyzer.C1(iid, left);
+            }
+
             var left_c;
 
             left_c = getConcrete(left);
@@ -928,6 +1052,10 @@ if (typeof J$ === 'undefined') J$ = {};
         };
 
         function C2(iid, left) {
+            if(J$.analyzer && J$.analyzer.C2){
+                J$.analyzer.C2(iid, left);
+            }
+
             var left_c, ret;
             executionIndex.executionIndexInc(iid);
 
@@ -953,6 +1081,10 @@ if (typeof J$ === 'undefined') J$ = {};
         };
 
         function C(iid, left) {
+            if(J$.analyzer && J$.analyzer.C){
+                J$.analyzer.C(iid, left);
+            }
+            
             var left_c, ret;
             executionIndex.executionIndexInc(iid);
             if (sandbox.analysis && sandbox.analysis.conditionalPre) {
@@ -1818,3 +1950,254 @@ if (typeof J$ === 'undefined') J$ = {};
 
 
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
+
+
+/* // new frontend API
+            sandbox.analysis.installAxiom(c)
+            sandbox.analysis.invokeFun(iid, f, base, args, val, isConstructor);
+            sandbox.analysis.getFieldPre(iid, base, offset);
+            val = sandbox.analysis.getField(iid, base, offset, val);
+            val = sandbox.analysis.putFieldPre(iid, base, offset, val);
+            val = sandbox.analysis.putField(iid, base, offset, val);
+            ret = sandbox.analysis.functionExit(iid);
+            ret = sandbox.analysis.return_(ret);
+            val = sandbox.analysis.return_Rt(iid, val);
+            sandbox.analysis.scriptEnter(iid, val);
+            sandbox.analysis.scriptExit(iid);
+            sandbox.analysis.literalPre(iid, val);
+            val = sandbox.analysis.literal(iid, val);
+            sandbox.analysis.readPre(iid, name, val, isGlobal);
+            val = sandbox.analysis.read(iid, name, val, isGlobal);
+            sandbox.analysis.writePre(iid, name, val, lhs);
+            val = sandbox.analysis.write(iid, name, val, lhs);
+            sandbox.analysis.declare(iid, name, val, isArgumentSync);
+            sandbox.analysis.binaryPre(iid, op, left, right);
+            result_c = sandbox.analysis.binary(iid, op, left, right, result_c);
+            sandbox.analysis.unaryPre(iid, op, left);
+            result_c = sandbox.analysis.unary(iid, op, left, result_c);
+            sandbox.analysis.conditionalPre(iid, left);
+            sandbox.analysis.conditional(iid, left, ret);
+            sandbox.analysis.endExecution();
+*/ 
+
+// check NaN
+    J$.analyzer = {
+        // F: function call
+        // function called before F
+        // modify retFunction will modify the concret return value
+        pre_F: function (iid, f, origArguments, isConstructor) {
+        },
+        // F: function call
+        // function called after F
+        // modify retFunction will modify the concret return value
+        post_F: function (iid, f, origArguments, isConstructor, retFunction) {
+
+            return retFunction;
+        },
+        // M: method call
+        // function called before M
+        pre_M: function (iid, base, offset, origArguments, isConstructor) {
+         
+        },
+        // M: method call
+        // function called after M
+        // modify retFunction will modify the concret return value
+        post_M: function (iid, base, offset, origArguments, isConstructor, retFunction) {
+            return retFunction;
+        },
+        Fe: function (iid, val, dis) {
+
+            //returnVal = undefined;
+        },
+        Fr: function (iid) {
+
+        },
+        Rt: function (iid, val) {
+            if((typeof val) == 'number' && isNaN(val) == true){
+                console.warn('[NaN iid: ' + iid +'] [value return] ' + ' <= ' + val);
+                this.info();
+            } else if ((typeof val) == 'undefined') {
+                console.warn('[undefined iid: ' + iid +'] [value return] ' + ' <= ' + (typeof val));
+                this.info();
+            }
+            return val;
+            //return returnVal = val;
+        },
+        Ra: function () {
+            //var ret = returnVal;
+            //returnVal = undefined;
+            //return ret;
+        },
+        Se: function (iid, val) {
+
+        },
+        Sr: function (iid) {
+
+        },
+        I: function (val) {
+            //return val;
+        },
+        T: function (iid, val, type) {
+
+
+            //return val;
+        },
+        H: function (iid, val) {
+
+            //return val;
+        },
+        // R: read
+        // function called before R
+        // val is the read value
+        pre_R: function (iid, name, val) {
+
+        },
+        // R: read
+        // function called after R
+        // val is the read value
+        // return value will be the new read value
+        post_R: function (iid, name, val) {
+            if((typeof val) == 'number' && isNaN(val) == true){
+                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+                this.info();
+            }
+            return val;
+
+        },
+        // W: write
+        // function called before W
+        // val is the value to write
+        pre_W: function (iid, name, val, lhs) {
+            
+            //return val;
+        },
+        // W: write
+        // function called after W
+        // val is the value to write
+        // return value will be the new written value
+        post_W: function (iid, name, val, lhs) {
+            if((typeof val) == 'number' && isNaN(val) == true){
+                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
+                this.info();
+            } else if ((typeof val) == 'undefined') {
+                console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + (typeof val));
+                this.info();
+            }
+            return val;
+        },
+        N: function (iid, name, val, isArgumentSync) {
+            if((typeof val) == 'number' && isNaN(val) == true){
+                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+            }
+            //return val;
+        },
+        A: function (iid, base, offset, op) {
+            if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
+                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
+            } else if (typeof base != 'undefined' && base != null && (typeof base[offset] == 'undefined') ) {
+                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + (typeof val));
+                this.info();
+            }
+        },
+        // G: get field
+        // function called before G
+        // base is the object from which the field will get
+        // offset is either a number or a string indexing the field to get
+        pre_G: function (iid, base, offset, norr) {
+            //if((iid == 306509 || iid == 306517)  && (isNaN(base[offset]))) {
+            //    console.log('pre get [iid: ' + iid +']:' + base[offset] + ':' + (typeof base[offset]));
+            //}
+        },
+        // G: get field
+        // function called after G
+        // base is the object from which the field will get
+        // offset is either a number or a string indexing the field to get
+        // val is the value gets from base.[offset]
+        // return value will affect the retrieved value in the instrumented code
+        post_G: function (iid, base, offset, val, norr) {
+            //if((iid == 306509 || iid == 306517)  && (isNaN(val))) {
+            //    console.log('[iid: ' + iid +']:' + val + ':' + ((typeof val)));
+            //}
+            try{
+                if(typeof base != 'undefined' && base != null && ((typeof val) == 'number') && isNaN(val) == true){
+                    console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                    this.info(base);
+                }
+            }catch(e){
+                console.log(e);
+            }
+            return val;
+        },
+        // P: put field
+        // function called before P
+        // base is the object to which the field will put
+        // offset is either a number or a string indexing the field to get
+        // val is the value puts to base.[offset]
+        pre_P: function (iid, base, offset, val) {
+            //return val;
+        },
+        // P: put field
+        // function called after P
+        // base is the object to which the field will put
+        // offset is either a number or a string indexing the field to get
+        // val is the value puts to base.[offset]
+        // return value will affect the retrieved value in the instrumented code
+        post_P: function (iid, base, offset, val) {
+            if(typeof base != 'undefined' && base != null && ((typeof val) == 'number') && isNaN(val) == true){
+                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
+                this.info(base);
+            } else if (typeof base != 'undefined' && base != null && ((typeof val) == 'undefined')) {
+                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + (typeof val));
+                this.info(base);
+            }
+            return val;
+        },
+        pre_B: function (iid, op, left, right) {
+            //return result_c;
+        },
+        post_B: function (iid, op, left, right, val) {
+            if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
+                || (typeof val) == 'undefined' ||  (((typeof val) == 'number') && isNaN(val) == true)) {
+                console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
+                console.group();
+                console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
+                this.info();
+                console.groupEnd();
+            } 
+            return val;
+            //return result_c;
+        },
+        U: function (iid, op, left) {
+
+            //return result_c;
+        },
+        C1: function (iid, left) {
+            //var left_c;
+            //return left_c;
+        },
+        C2: function (iid, left) {
+            //var left_c, ret;;
+            //return left_c;
+        },
+        C: function (iid, left) {
+            //var left_c, ret;
+            //return left_c;
+        },
+        info: function (obj) {
+            console.groupCollapsed();
+            console.info(console.trace());
+            if(obj){
+                //console.dir(obj);
+            }
+            console.groupEnd();
+        },
+        isMeaningless: function (val) {
+            if((typeof val) == 'undefined'){
+                return true;
+            } else if((typeof val) == 'number' && isNaN(val)){
+                return true;
+            }
+            return false;   
+        }
+    };
