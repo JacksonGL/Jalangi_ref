@@ -1979,7 +1979,7 @@ if (typeof J$ === 'undefined') J$ = {};
             sandbox.analysis.conditional(iid, left, ret);
             sandbox.analysis.endExecution();
 */ 
-/*
+/**/
 // check NaN
     J$.analyzer = {
         // F: function call
@@ -2026,7 +2026,7 @@ if (typeof J$ === 'undefined') J$ = {};
         Ra: function () {
             //var ret = returnVal;
             //returnVal = undefined;
-            //return ret;
+            return ret;
         },
         Se: function (iid, val) {
 
@@ -2202,4 +2202,3 @@ if (typeof J$ === 'undefined') J$ = {};
         }
     };
 
-*/
