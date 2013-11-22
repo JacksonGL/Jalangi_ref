@@ -1981,7 +1981,7 @@ J$.listAPI = function () {
             "sandbox.analysis.conditional(iid, left, ret); \r\n" +
             "sandbox.analysis.endExecution(); ";
             );
-}
+};
 /*
 // check NaN
     J$.analyzer = {
