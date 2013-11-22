@@ -1952,33 +1952,36 @@ if (typeof J$ === 'undefined') J$ = {};
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
 
-/* // new frontend API
-            sandbox.analysis.installAxiom(c)
-            sandbox.analysis.invokeFun(iid, f, base, args, val, isConstructor);
-            sandbox.analysis.getFieldPre(iid, base, offset);
-            val = sandbox.analysis.getField(iid, base, offset, val);
-            val = sandbox.analysis.putFieldPre(iid, base, offset, val);
-            val = sandbox.analysis.putField(iid, base, offset, val);
-            ret = sandbox.analysis.functionExit(iid);
-            ret = sandbox.analysis.return_(ret);
-            val = sandbox.analysis.return_Rt(iid, val);
-            sandbox.analysis.scriptEnter(iid, val);
-            sandbox.analysis.scriptExit(iid);
-            sandbox.analysis.literalPre(iid, val);
-            val = sandbox.analysis.literal(iid, val);
-            sandbox.analysis.readPre(iid, name, val, isGlobal);
-            val = sandbox.analysis.read(iid, name, val, isGlobal);
-            sandbox.analysis.writePre(iid, name, val, lhs);
-            val = sandbox.analysis.write(iid, name, val, lhs);
-            sandbox.analysis.declare(iid, name, val, isArgumentSync);
-            sandbox.analysis.binaryPre(iid, op, left, right);
-            result_c = sandbox.analysis.binary(iid, op, left, right, result_c);
-            sandbox.analysis.unaryPre(iid, op, left);
-            result_c = sandbox.analysis.unary(iid, op, left, result_c);
-            sandbox.analysis.conditionalPre(iid, left);
-            sandbox.analysis.conditional(iid, left, ret);
-            sandbox.analysis.endExecution();
-*/ 
+// new frontend API
+J$.listAPI = function () {
+    console.log(
+            "sandbox.analysis.installAxiom(c); \r\n" +
+            "sandbox.analysis.invokeFun(iid, f, base, args, val, isConstructor); \r\n" +
+            "sandbox.analysis.getFieldPre(iid, base, offset); \r\n" +
+            "val = sandbox.analysis.getField(iid, base, offset, val); \r\n" +
+            "val = sandbox.analysis.putFieldPre(iid, base, offset, val); \r\n" +
+            "val = sandbox.analysis.putField(iid, base, offset, val); \r\n" +
+            "ret = sandbox.analysis.functionExit(iid); \r\n" +
+            "ret = sandbox.analysis.return_(ret); \r\n" +
+            "val = sandbox.analysis.return_Rt(iid, val); \r\n" +
+            "sandbox.analysis.scriptEnter(iid, val); \r\n" +
+            "sandbox.analysis.scriptExit(iid); \r\n" +
+            "sandbox.analysis.literalPre(iid, val); \r\n" +
+            "val = sandbox.analysis.literal(iid, val); \r\n" +
+            "sandbox.analysis.readPre(iid, name, val, isGlobal); \r\n" +
+            "val = sandbox.analysis.read(iid, name, val, isGlobal); \r\n" +
+            "sandbox.analysis.writePre(iid, name, val, lhs); \r\n" +
+            "val = sandbox.analysis.write(iid, name, val, lhs); \r\n" +
+            "sandbox.analysis.declare(iid, name, val, isArgumentSync); \r\n" +
+            "sandbox.analysis.binaryPre(iid, op, left, right); \r\n" +
+            "result_c = sandbox.analysis.binary(iid, op, left, right, result_c); \r\n" +
+            "sandbox.analysis.unaryPre(iid, op, left); \r\n" +
+            "result_c = sandbox.analysis.unary(iid, op, left, result_c); \r\n" +
+            "sandbox.analysis.conditionalPre(iid, left); \r\n" +
+            "sandbox.analysis.conditional(iid, left, ret); \r\n" +
+            "sandbox.analysis.endExecution(); ";
+            );
+}
 /*
 // check NaN
     J$.analyzer = {
