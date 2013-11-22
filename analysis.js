@@ -2199,6 +2199,6 @@ if (typeof J$ === 'undefined') J$ = {};
                 return true;
             }
             return false;   
-        }
+        } 
     };
 */
