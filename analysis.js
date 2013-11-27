@@ -510,6 +510,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     if (isConstructor) {
                         val = callAsConstructor(g, args);
                     } else {
+                        var result;
                         try{
                             var result = g.apply(base, args);
                         val = result
