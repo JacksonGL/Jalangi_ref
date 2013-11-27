@@ -521,7 +521,7 @@ if (typeof J$ === 'undefined') J$ = {};
                             console.log(result);
                             console.log(g);
                             console.log(base);
-                            console.log(args);
+                            console.log(args); 
                         }
                     }
                 } else {
