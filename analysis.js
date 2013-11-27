@@ -2211,11 +2211,12 @@ J$.listAPI = function () {
             //return left_c;
         },
         record: function(){
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             var result = [];
             for(var i=0;i<arguments.length;i++){
                 result.push(arguments[i]);
             }
-            if(typeof this.recordList =='undefined'){
+            if(typeof this.recordList == 'undefined'){
                 this.recordList = [];
             }
             this.recordList.push(result);
@@ -2236,7 +2237,8 @@ J$.listAPI = function () {
             }
             return false;   
         },
-        errorInfo: function(){   
+        errorInfo: function(){
+            console.dir(this.recordList);
             if(this.recordList){
                 for(var i=0;i<this.recordList.length;i++){
                     var record = this.recordList[i];
