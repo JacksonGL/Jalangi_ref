@@ -513,12 +513,15 @@ if (typeof J$ === 'undefined') J$ = {};
                         var result;
                         try{
                             var result = g.apply(base, args);
-                        val = result
+                        val = result;
                         }catch(e){
                             console.log(e);
                             console.dir(val);
                             console.log(val);
                             console.log(result);
+                            console.log(g);
+                            console.log(base);
+                            console.log(args);
                         }
                     }
                 } else {
