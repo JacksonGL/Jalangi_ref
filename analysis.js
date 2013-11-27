@@ -2218,7 +2218,7 @@ J$.listAPI = function () {
             if(typeof this.recordList =='undefined'){
                 this.recordList = [];
             }
-            this.recordList.push();
+            this.recordList.push(result);
         },
         info: function (obj) {
             console.groupCollapsed();
