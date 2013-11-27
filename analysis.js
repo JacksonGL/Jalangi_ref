@@ -650,11 +650,13 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             if(offset=='querySelectorAll'){
                 console.log('arguments outter: ' + arguments);
+                console.log(arguments);
             }
             return function () {
                 var f = G(iid, base, offset);
                 if(offset=='querySelectorAll'){
-                    console.log('arguments inner: ' + arguments);
+                    console.log('arguments inner: ');
+                    console.log(arguments);
                 }
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
