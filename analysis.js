@@ -1981,7 +1981,7 @@ J$.listAPI = function () {
             "sandbox.analysis.endExecution(); "
             );
 };
-/*
+/**/
 // check NaN
     J$.analyzer = {
         // F: function call
@@ -2064,7 +2064,6 @@ J$.listAPI = function () {
                 this.info();
             }
             return val;
-
         },
         // W: write
         // function called before W
@@ -2203,4 +2202,4 @@ J$.listAPI = function () {
             return false;   
         } 
     };
-*/
+
