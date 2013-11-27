@@ -647,7 +647,7 @@ if (typeof J$ === 'undefined') J$ = {};
             if(J$.analyzer && J$.analyzer.pre_M){
                 J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
             }
-
+            console.log(offset);
             return function () {
                 var f = G(iid, base, offset);
                 return invokeFun(iid, base, f, arguments, isConstructor);
