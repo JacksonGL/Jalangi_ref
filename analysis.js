@@ -2236,7 +2236,7 @@ J$.listAPI = function () {
             }
             return false;   
         },
-        errorInfo: function(){
+        errorInfo: function(){ 
             if(this.recordList){
                 for(var i=0;i<this.recordList.length;i++){
                     var record = this.recordList[i];
