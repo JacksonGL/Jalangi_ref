@@ -2016,11 +2016,15 @@ J$.listAPI = function () {
         },
         Rt: function (iid, val) {
             if((typeof val) == 'number' && isNaN(val) == true){
-                console.warn('[NaN iid: ' + iid +'] [value return] ' + ' <= ' + val);
-                this.info();
+                //console.warn('[NaN iid: ' + iid +'] [value return] ' + ' <= ' + val);
+                var str1 = '[NaN iid: ' + iid +'] [value return] ' + ' <= ' + val;
+                //this.info();
+                this.record(str1);
             } else if ((typeof val) == 'undefined') {
-                console.warn('[undefined iid: ' + iid +'] [value return] ' + ' <= ' + (typeof val));
-                this.info();
+                //console.warn('[undefined iid: ' + iid +'] [value return] ' + ' <= ' + (typeof val));
+                //this.info();
+                var str1 = '[undefined iid: ' + iid +'] [value return] ' + ' <= ' + (typeof val);
+                this.record(str1);
             }
             return val;
             //return returnVal = val;
@@ -2060,8 +2064,10 @@ J$.listAPI = function () {
         // return value will be the new read value
         post_R: function (iid, name, val) {
             if((typeof val) == 'number' && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
-                this.info();
+                //console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+                var str1 = '[NaN iid: ' + iid +'] ' + name + ":" + val;
+                //this.info();
+                this.record(str1);
             }
             return val;
         },
@@ -2078,27 +2084,37 @@ J$.listAPI = function () {
         // return value will be the new written value
         post_W: function (iid, name, val, lhs) {
             if((typeof val) == 'number' && isNaN(val) == true){
-                console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
-                this.info();
+                //console.warn('[NaN iid: ' + iid +'] ' + name + ' <= ' + val);
+                var str1 = '[NaN iid: ' + iid +'] ' + name + ' <= ' + val;
+                //this.info();
+                this.record(str1);
             } else if ((typeof val) == 'undefined') {
-                console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + (typeof val));
-                this.info();
+                //console.warn('[undefined iid: ' + iid +'] ' + name + ' <= ' + (typeof val));
+                var str1 = '[undefined iid: ' + iid +'] ' + name + ' <= ' + (typeof val);
+                this.record(str1);
+                //this.info();
             }
             return val;
         },
         N: function (iid, name, val, isArgumentSync) {
             if((typeof val) == 'number' && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+                //console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
+                var str1 = '[NaN iid: ' + iid +'] ' + name + ":" + val;
+                this.record(str1);
             }
             //return val;
         },
         A: function (iid, base, offset, op) {
             if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                this.info(base);
+                //console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                var str1 = '[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val;
+                //this.info(base);
+                this.record(str1);
             } else if (typeof base != 'undefined' && base != null && (typeof base[offset] == 'undefined') ) {
-                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + (typeof val));
-                this.info();
+                //console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + (typeof val));
+                var str1 = '[undefined iid: ' + iid +'] ' + base + '.' + offset + ' ' + op + ' ' + (typeof val);
+                //this.info();
+                this.record(str1);
             }
         },
         // G: get field
@@ -2122,8 +2138,10 @@ J$.listAPI = function () {
             //}
             try{
                 if(typeof base != 'undefined' && base != null && ((typeof val) == 'number') && isNaN(val) == true){
-                    console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                    this.info(base);
+                    //console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                    var str1 = '[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val;
+                    //this.info(base);
+                    this.record(str1);
                 }
             }catch(e){
                 console.log(e);
@@ -2146,11 +2164,15 @@ J$.listAPI = function () {
         // return value will affect the retrieved value in the instrumented code
         post_P: function (iid, base, offset, val) {
             if(typeof base != 'undefined' && base != null && ((typeof val) == 'number') && isNaN(val) == true){
-                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
-                this.info(base);
+                //console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val);
+                var str1 = '[NaN iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + val;
+                //this.info(base);
+                this.record(str1);
             } else if (typeof base != 'undefined' && base != null && ((typeof val) == 'undefined')) {
-                console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + (typeof val));
-                this.info(base);
+                //console.warn('[undefined iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + (typeof val));
+                var str1 = '[undefined iid: ' + iid +'] ' + base + '.' + offset + ' <= ' + (typeof val);
+                this.record(str1);
+                //this.info(base);
             }
             return val;
         },
@@ -2160,11 +2182,14 @@ J$.listAPI = function () {
         post_B: function (iid, op, left, right, val) {
             if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
                 || (typeof val) == 'undefined' ||  (((typeof val) == 'number') && isNaN(val) == true)) {
-                console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
-                console.group();
-                console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
-                this.info();
-                console.groupEnd();
+                //console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
+                var str1 = '[strange binary operation: | iid: ' + iid +']:' + val;
+                //console.group();
+                //console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
+                var str2 = 'left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']';
+                this.record(str1, str2);
+                //this.info();
+                //console.groupEnd();
             } 
             return val;
             //return result_c;
@@ -2185,6 +2210,16 @@ J$.listAPI = function () {
             //var left_c, ret;
             //return left_c;
         },
+        record: function(){
+            var result = [];
+            for(var i=0;i<arguments.length;i++){
+                result.push(arguments[i]);
+            }
+            if(typeof this.recordList =='undefined'){
+                this.recordList = [];
+            }
+            this.recordList.push();
+        },
         info: function (obj) {
             console.groupCollapsed();
             console.info(console.trace());
@@ -2200,6 +2235,22 @@ J$.listAPI = function () {
                 return true;
             }
             return false;   
-        } 
+        },
+        errorInfo(){
+            if(this.recordList){
+                for(var i=0;i<this.recordList.length;i++){
+                    var record = this.recordList[i];
+                    for(var j=0;j<record.length;j++){
+                        if(j==1){
+                            console.group();
+                        }
+                        console.log(record[j]);
+                        if(j>0 && j==record.length-1){
+                            console.groupEnd();
+                        }
+                    }
+                }
+            }
+        }
     };
 
