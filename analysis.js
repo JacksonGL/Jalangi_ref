@@ -508,7 +508,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     val = invokeEval(base, g, args);
                 } else if (invoke) {
                     if (isConstructor) {
-                        val = callAsConstructor(g, args);
+                        val = callAsConstructor(g, args); 
                     } else {
                         var result;
                         try{
