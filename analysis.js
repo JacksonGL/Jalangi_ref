@@ -522,6 +522,7 @@ if (typeof J$ === 'undefined') J$ = {};
                             console.log(g);
                             console.log(base);
                             console.log(args); 
+                            console.log(new Error('').stack);
                         }
                     }
                 } else {
@@ -648,10 +649,13 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
             }
             if(offset=='querySelectorAll'){
-                console.log(arguments);   
+                console.log('arguments outter: ' + arguments);
             }
             return function () {
                 var f = G(iid, base, offset);
+                if(offset=='querySelectorAll'){
+                    console.log('arguments inner: ' + arguments);
+                }
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
 
