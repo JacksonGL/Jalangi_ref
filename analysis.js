@@ -648,7 +648,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
             }
             if(offset=='querySelectorAll'){
-                console.log(arguments);
+                console.log(arguments); 
             }
             return function () {
                 var f = G(iid, base, offset);
