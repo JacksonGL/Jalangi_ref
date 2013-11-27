@@ -649,7 +649,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
             }
             if(offset=='querySelectorAll'){
-                console.log('arguments outter: ' + arguments);
+                console.log('arguments outter: ' + arguments); 
                 console.log(arguments);
             }
             return function () {
