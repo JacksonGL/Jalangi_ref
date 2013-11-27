@@ -510,20 +510,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     if (isConstructor) {
                         val = callAsConstructor(g, args); 
                     } else {
-                        var result;
-                        try{
-                            var result = g.apply(base, args);
-                        val = result;
-                        }catch(e){
-                            console.log(e);
-                            console.dir(val);
-                            console.log(val);
-                            console.log(result);
-                            console.log(g);
-                            console.log(base);
-                            console.log(args); 
-                            console.log(new Error('').stack);
-                        }
+                        val = g.apply(base, args);
                     }
                 } else {
                     if (rrEngine) {
@@ -648,16 +635,8 @@ if (typeof J$ === 'undefined') J$ = {};
             if(J$.analyzer && J$.analyzer.pre_M){
                 J$.analyzer.pre_M(iid, base, offset, arguments, isConstructor);
             }
-            if(offset=='querySelectorAll'){
-                console.log('arguments outter: ' + arguments); 
-                console.log(arguments);
-            }
             return function () {
                 var f = G(iid, base, offset);
-                if(offset=='querySelectorAll'){
-                    console.log('arguments inner: ');
-                    console.log(arguments);
-                }
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
 
