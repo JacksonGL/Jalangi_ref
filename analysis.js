@@ -2211,7 +2211,6 @@ J$.listAPI = function () {
             //return left_c;
         },
         record: function(){
-            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             var result = [];
             for(var i=0;i<arguments.length;i++){
                 result.push(arguments[i]);
