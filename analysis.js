@@ -510,7 +510,15 @@ if (typeof J$ === 'undefined') J$ = {};
                     if (isConstructor) {
                         val = callAsConstructor(g, args);
                     } else {
-                        val = g.apply(base, args);
+                        try{
+                            var result = g.apply(base, args);
+                        val = result
+                        }catch(e){
+                            console.log(e);
+                            console.dir(val);
+                            console.log(val);
+                            console.log(result);
+                        }
                     }
                 } else {
                     if (rrEngine) {
