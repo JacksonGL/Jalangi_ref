@@ -2259,7 +2259,7 @@ J$.listAPI = function () {
         }
     };
 
-J$.analyzer = undefined;
+//J$.analyzer = undefined;
 
 
 
