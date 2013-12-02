@@ -2344,11 +2344,6 @@ J$.typeInfo = function() {
 
 // try to find x === NaN or x == NaN operation
 J$.analysis = {
-    getFieldPre: function (iid, base, offset, val) {
-        if(offset === 'refcount'){
-            console.log(val + '[type: ' + typeof val + ']');
-        }
-    },
     binaryPre: function (iid, op, left, right) {
         if(op === '==' || op == '===') {
             if(left !== left || right !== right) {
