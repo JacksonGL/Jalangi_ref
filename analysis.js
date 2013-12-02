@@ -232,7 +232,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     f === console.log ||
                     f === RegExp.prototype.test ||
                     f === String.prototype.indexOf ||
-                    f === String.prototype.lastIndexOf ||
+                    f === String.prototype.lastindexOf ||
                     f === String.prototype.substring ||
                     f === String.prototype.substr ||
                     f === String.prototype.charCodeAt ||
@@ -266,7 +266,7 @@ if (typeof J$ === 'undefined') J$ = {};
             if (f === console.log ||
                 f === RegExp.prototype.test ||
                 f === String.prototype.indexOf ||
-                f === String.prototype.lastIndexOf ||
+                f === String.prototype.lastindexOf ||
                 f === String.prototype.substring ||
                 f === Math.abs ||
                 f === Math.acos ||
@@ -2351,7 +2351,7 @@ J$.analysis = {
             }
         }
 
-        if(typeof left !== typeof right && typeof left !== typeof result_c &&  typeof right !== typeof result_c && op !== 'in' && op !== 'instanceof' && op !== '==' && op !== '===' && op !== '!==' && op !== '!===' && op.indexof('<')<0  && op.indexof('>')<0) {
+        if(typeof left !== typeof right && typeof left !== typeof result_c &&  typeof right !== typeof result_c && op !== 'in' && op !== 'instanceof' && op !== '==' && op !== '===' && op !== '!==' && op !== '!===' && op.indexOf('<')<0  && op.indexOf('>')<0) {
             console.warn('hidden conversion: [iid: ' + iid + ']' + left + ' [type: ' + typeof left + ']'  + op + right + ' [type: ' + typeof right + '] -> ' + result_c + ' [type: ' + typeof result_c + ']');
         }
 
