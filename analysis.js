@@ -1986,6 +1986,9 @@ J$.listAPI = function () {
             );
 };
 /**/
+
+
+/*
 // check NaN
     J$.analyzer = {
         // F: function call
@@ -2336,3 +2339,21 @@ J$.typeInfo = function() {
             J$.type_memo = [];
         }
     }
+*/
+
+
+// try to find x === NaN or x == NaN operation
+J$.analysis = {
+    binaryPre: function (iid, op, left, right) {
+        if(op === '==' || op == '===') {
+            if(left !== left || right !== right) {
+                console.warn('[iid: ' + iid + ']' + typeof left  + op + typeof right);
+            }
+        }
+    },
+    literalPre: function (iid, val) {
+        if(val !== val) {
+            console.warn('[iid: ' + iid + ']' + 'use of literal NaN');
+        }
+    }
+};
