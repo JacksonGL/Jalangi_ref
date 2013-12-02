@@ -2351,7 +2351,7 @@ J$.analysis = {
             }
         }
 
-        if(typeof left !== typeof right && typeof left !== typeof result_c &&  typeof right !== typeof result_c) {
+        if(typeof left !== typeof right && typeof left !== typeof result_c &&  typeof right !== typeof result_c && op !== 'in' && op !== 'instanceof' && op !== '==' && op !== '===' && op !== '!==' && op !== '!===' && op.indexof('<')<0  && op.indexof('>')<0) {
             console.warn('hidden conversion: [iid: ' + iid + ']' + left + ' [type: ' + typeof left + ']'  + op + right + ' [type: ' + typeof right + '] -> ' + result_c + ' [type: ' + typeof result_c + ']');
         }
 
