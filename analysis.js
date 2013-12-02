@@ -2347,7 +2347,7 @@ J$.analysis = {
     binaryPre: function (iid, op, left, right) {
         if(op === '==' || op == '===') {
             if(left !== left || right !== right) {
-                console.warn('[iid: ' + iid + ']' + typeof left  + op + typeof right);
+                console.warn('[iid: ' + iid + ']' + left + ' [type: ' + typeof left + ']'  + op + right + ' [type: ' + typeof right + ']');
             }
         }
     },
