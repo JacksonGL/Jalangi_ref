@@ -2355,7 +2355,7 @@ J$.analysis = {
             console.warn('hidden conversion: [iid: ' + iid + ']' + left + ' [type: ' + typeof left + ']'  + op + right + ' [type: ' + typeof right + '] -> ' + result_c + ' [type: ' + typeof result_c + ']');
         }
 
-        if(op==='+' || op==='-' || op==='*' || op==='/'  || op==='%') {
+        if(op==='-' || op==='*' || op==='/'  || op==='%') {
             if(typeof left != typeof right){
                 console.warn('hidden conversion: [iid: ' + iid + ']' + left + ' [type: ' + typeof left + ']'  + op + right + ' [type: ' + typeof right + '] -> ' + result_c + ' [type: ' + typeof result_c + ']');
             }
