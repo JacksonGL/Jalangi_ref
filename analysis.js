@@ -428,6 +428,8 @@ if (typeof J$ === 'undefined') J$ = {};
                 return new Constructor();
             }
             if (args.length === 1) {
+                console.dir(Constructor);
+                console.log(Constructor);
                 return new Constructor(args[0]);
             }
             if (args.length === 2) {
