@@ -2016,7 +2016,7 @@ J$.analyzer= {
         }    
         //return val;
     },
-    pre_R: function (iid, name, val) {
+    pre_R: function (iid, name, val) { 
         if(iid === 20105) {
             console.log('reading ' + name){
                 console.dir(val);
