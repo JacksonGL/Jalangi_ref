@@ -328,7 +328,11 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function isNative(f) {
-            return f.toString().indexOf('[native code]') > -1 || f.toString().indexOf('[object ') === 0;
+            if(f && f.toString){
+                return f.toString().indexOf('[native code]') > -1 || f.toString().indexOf('[object ') === 0;
+            } else {
+                return false;
+            }
         }
 
 
@@ -522,8 +526,6 @@ if (typeof J$ === 'undefined') J$ = {};
                     }
                     val = undefined;
                 }
-            } catch(e) {
-                //throw e; 
             } finally {
                 popSwitchKey();
                 isInstrumentedCaller = tmpIsInstrumentedCaller;
