@@ -1988,7 +1988,7 @@ J$.listAPI = function () {
 /**/
 
 
-/*
+/**/
 // check NaN
     J$.analyzer = {
         // F: function call
@@ -2339,10 +2339,11 @@ J$.typeInfo = function() {
             J$.type_memo = [];
         }
     }
-*/
+
 
 
 // try to find x === NaN or x == NaN operation
+/*
 J$.analysis = {
     binary: function (iid, op, left, right, result_c) {
         if(op === '==' || op == '===') {
@@ -2369,3 +2370,4 @@ J$.analysis = {
         }
     }
 };
+*/
