@@ -2015,6 +2015,15 @@ J$.analyzer= {
             console.dir(val);
         }    
         //return val;
+    },
+    pre_R: function (iid, name, val) {
+        if(iid === 20105) {
+            console.log('reading ' + name){
+                console.dir(val);
+                console.log(val);
+                console.log(val.toString());
+            }
+        }
     }
 }
 
