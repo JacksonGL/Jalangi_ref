@@ -1993,6 +1993,11 @@ J$.analyzer= {
             console.log('[obj].' + offset);
             console.dir(base);
         }
+
+        if(typeof base[offset] == undefined){
+            console.log('2 [obj].' + offset);
+            console.dir(base);
+        }
     }
 }
 
