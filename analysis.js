@@ -2008,6 +2008,13 @@ J$.analyzer= {
             console.log('4 [obj].' + offset);
             console.dir(base);
         }
+    },
+    pre_W: function (iid, name, val, lhs) {
+        if(iid===20145) {
+            console.log('write value into ' + name);
+            console.dir(val);
+        }    
+        //return val;
     }
 }
 
