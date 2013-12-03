@@ -641,6 +641,10 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             return function () {
                 var f = G(iid, base, offset);
+                if(typeof f == 'undefined'){
+                    console.log('3 [obj].' + offset);
+                    console.dir(base);
+                }
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
 
