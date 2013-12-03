@@ -522,6 +522,8 @@ if (typeof J$ === 'undefined') J$ = {};
                     }
                     val = undefined;
                 }
+            } catch(e) {
+                throw e;
             } finally {
                 popSwitchKey();
                 isInstrumentedCaller = tmpIsInstrumentedCaller;
