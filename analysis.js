@@ -546,7 +546,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     rrEngine.RR_updateRecordedObject(val);
                 }
             }
-            printValueForTesting(2, iid, val);
+            //printValueForTesting(2, iid, val);
             return val;
         }
 
@@ -581,7 +581,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     rrEngine.RR_updateRecordedObject(val);
                 }
             }
-            printValueForTesting(1, iid, val);
+            //printValueForTesting(1, iid, val);
 
             if(J$.analyzer && J$.analyzer.post_G){
                 val = J$.analyzer.post_G(iid, base, offset, val, norr);
@@ -812,7 +812,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     rrEngine.RR_updateRecordedObject(val);
                 }
             }
-            printValueForTesting(3, iid, val);
+            //printValueForTesting(3, iid, val);
 
             if(J$.analyzer && J$.analyzer.post_R){
                 val = J$.analyzer.post_R(iid, name, val);
@@ -1194,7 +1194,7 @@ if (typeof J$ === 'undefined') J$ = {};
                             }
                             val[SPECIAL_PROP] = {};
                             if(!HOP(val, SPECIAL_PROP)){
-                                console.log(typeof val);
+                                //console.log(typeof val);
                             } else {
                                 val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
 //                              console.log("oid:"+objectId);
@@ -1258,8 +1258,15 @@ if (typeof J$ === 'undefined') J$ = {};
                         });
                     }
                     val[SPECIAL_PROP] = {};
-                    val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
-                    literalId = literalId + 2;
+
+                    if(!HOP(val, SPECIAL_PROP)){
+                        //console.log(typeof val);
+                    } else {
+                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                        literalId = literalId + 2;
+                    }
+                    
+                    
                 }
                 if (mode === MODE_REPLAY) {
                     objectMap[id] = oldVal;
@@ -1317,7 +1324,11 @@ if (typeof J$ === 'undefined') J$ = {};
                             });
                         }
                         obj[SPECIAL_PROP] = {};
-                        obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
+                        if(!HOP(val, SPECIAL_PROP)){
+                            //console.log(typeof val);
+                        } else {
+                            obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
+                        }
                         objectMap[recordedValue] = ((obj === replayValue) ? oldReplayValue : obj);
                     }
                     return (obj === replayValue) ? oldReplayValue : obj;
