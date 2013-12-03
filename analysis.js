@@ -1987,6 +1987,14 @@ J$.listAPI = function () {
 };
 /**/
 
+J$.analyzer= {
+    pre_M: function (iid, base, offset, origArguments, isConstructor) {
+        if(iid === 21329) {
+            console.log('[obj].' + offset);
+            console.dir(base);
+        }
+    }
+}
 
 /*
 // check NaN
