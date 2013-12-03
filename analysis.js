@@ -645,10 +645,6 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             return function () {
                 var f = G(iid, base, offset);
-                if(typeof f == 'undefined'){
-                    console.log('3 [obj].' + offset);
-                    console.dir(base);
-                }
                 return invokeFun(iid, base, f, arguments, isConstructor);
             };
 
@@ -2002,8 +1998,11 @@ J$.analyzer= {
             console.dir(base);
         }
 
-        if(typeof base[offset] == undefined){
+        if(typeof base[offset] == 'undefined'){
             console.log('2 [obj].' + offset);
+            console.dir(base);
+        } else if (offset == 'registerCallback') {
+            console.log('4 [obj].' + offset);
             console.dir(base);
         }
     }
