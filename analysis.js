@@ -1200,6 +1200,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         if (HOP(val, SPECIAL_PROP) && typeof val[SPECIAL_PROP][SPECIAL_PROP] === 'number') {
                             value = val[SPECIAL_PROP][SPECIAL_PROP];
                         } else {
+                            console.log(typeof val);
                             value = undefined;
                         }
                     }
