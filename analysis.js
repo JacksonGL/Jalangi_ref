@@ -428,8 +428,6 @@ if (typeof J$ === 'undefined') J$ = {};
                 return new Constructor();
             }
             if (args.length === 1) {
-                console.dir(args);
-                console.log(Constructor);
                 return new Constructor(args[0]);
             }
             if (args.length === 2) {
@@ -1993,40 +1991,6 @@ J$.listAPI = function () {
 };
 /**/
 
-J$.analyzer= {
-    pre_M: function (iid, base, offset, origArguments, isConstructor) {
-        if(iid === 21329) {
-            console.log('[iid]: ' + iid);
-            console.log('[obj].' + offset);
-            console.dir(base);
-        }
-
-        if(typeof base== 'undefined' || typeof base[offset] == 'undefined'){
-            console.log('[iid]: ' + iid);
-            console.log('2 [obj].' + offset);
-            console.dir(base);
-        } else if (offset == 'registerCallback') {
-            console.log('[iid]: ' + iid);
-            console.log('4 [obj].' + offset);
-            console.dir(base);
-        }
-    },
-    pre_W: function (iid, name, val, lhs) {
-        if(iid===20145) {
-            console.log('write value into ' + name);
-            console.dir(val);
-        }    
-        //return val;
-    },
-    pre_R: function (iid, name, val) { 
-        if(iid === 20105) {
-            console.log('reading ' + name);
-                console.dir(val);
-                console.log(val);
-                console.log(val.toString());
-        }
-    }
-}
 
 /*
 // check NaN
