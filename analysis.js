@@ -1193,14 +1193,17 @@ if (typeof J$ === 'undefined') J$ = {};
                                 });
                             }
                             val[SPECIAL_PROP] = {};
-                            val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
-//                            console.log("oid:"+objectId);
-                            objectId = objectId + 2;
+                            if(!HOP(val, SPECIAL_PROP)){
+                                console.log(typeof val);
+                            } else {
+                                val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
+//                              console.log("oid:"+objectId);
+                                objectId = objectId + 2;
+                            }
                         }
                         if (HOP(val, SPECIAL_PROP) && typeof val[SPECIAL_PROP][SPECIAL_PROP] === 'number') {
                             value = val[SPECIAL_PROP][SPECIAL_PROP];
                         } else {
-                            console.log(typeof val);
                             value = undefined;
                         }
                     }
