@@ -1994,14 +1994,17 @@ J$.listAPI = function () {
 J$.analyzer= {
     pre_M: function (iid, base, offset, origArguments, isConstructor) {
         if(iid === 21329) {
+            console.log('[iid]: ' + iid);
             console.log('[obj].' + offset);
             console.dir(base);
         }
 
-        if(typeof base[offset] == 'undefined'){
+        if(typeof base== 'undefined' || typeof base[offset] == 'undefined'){
+            console.log('[iid]: ' + iid);
             console.log('2 [obj].' + offset);
             console.dir(base);
         } else if (offset == 'registerCallback') {
+            console.log('[iid]: ' + iid);
             console.log('4 [obj].' + offset);
             console.dir(base);
         }
