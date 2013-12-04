@@ -2394,29 +2394,6 @@ J$.analysis = {
 
 
 // check migration issues
- // current check targets:
-/*
-
-    document.getElementsByClassName
-    document.getElementsByTagName
-    document.querySelector
-    document.querySelectorAll
-    x.childNodes[1]
-    x.firstChild
-    x.nextSibling
-    x.previousSibling
-    x.childElementCount
-    x.children[1]
-    x.firstElementChild
-    x.lastElementChild
-    x.nextElementSibling
-    x.previousElementSibling
-    x.remove()
-    x.removeAttribute()
-
-*/
-
-// check migration issues
     J$.analyzer = {
         // F: function call
         // function called before F
@@ -2446,24 +2423,28 @@ J$.analysis = {
         // M: method call
         // function called before M
         pre_M: function (iid, base, offset, isConstructor) {
-            if(f && f === document.getElementsByClassName) {
-                console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByClassName()');
-                this.groupInfo('Not supported by IE 5.5,6,7,8');
-            } else if (f && f === document.getElementsByTagName) {
-                console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByTagName()');
-                this.groupInfo('Not supported by IE 5.5');
-            } else if (f && f === document.querySelector) {
-                console.warn('[iid: ' + iid + ']' + 'use of document.querySelector()');
-                this.groupInfo('Not supported by IE 5.5,6,7,8');
-            } else if (f && f === document.querySelectorAll) {
-                console.warn('[iid: ' + iid + ']' + 'use of document.querySelectorAll()');
-                this.groupInfo('Not supported by IE 5.5,6,7,8');
-            }
+            
         },
         // M: method call
         // function called after M
         // modify retFunction will modify the concret return value
         post_M: function (iid, base, offset, isConstructor, retFunction) {
+            if(base && base[offset]){
+                var f = base[offset];
+                if(f && f === document.getElementsByClassName) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByClassName()');
+                    this.groupInfo('Not supported by IE 5.5,6,7,8');
+                } else if (f && f === document.getElementsByTagName) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByTagName()');
+                    this.groupInfo('Not supported by IE 5.5');
+                } else if (f && f === document.querySelector) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.querySelector()');
+                    this.groupInfo('Not supported by IE 5.5,6,7,8');
+                } else if (f && f === document.querySelectorAll) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.querySelectorAll()');
+                    this.groupInfo('Not supported by IE 5.5,6,7,8');
+                }
+            }
             return retFunction;
         },
         // R: read
