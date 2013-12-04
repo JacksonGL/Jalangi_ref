@@ -2492,11 +2492,11 @@ J$.analysis = {
         // val is the value gets from base.[offset]
         // return value will affect the retrieved value in the instrumented code
         post_G: function (iid, base, offset, val, norr) {
-            if(offset=='querySelector' && typeof val == 'function') {
-                console.warn('[iid: ' + iid + ']' + 'use of document.querySelector()');
+             if(base && base !== document && offset=='querySelector' && typeof val == 'function') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.querySelector()');
                 this.groupInfo('Not supported by IE 5.5,6,7,8');
-            } else if (offset=='querySelectorAll' && typeof val == 'function') {
-                console.warn('[iid: ' + iid + ']' + 'use of document.querySelectorAll()');
+            } else if (base && base !== document && offset=='querySelectorAll' && typeof val == 'function') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.querySelectorAll()');
                 this.groupInfo('Not supported by IE 5.5,6,7,8');
             } else if (base && base.tagName && base.innerHTML && offset == 'childNodes') {
                 console.warn('[iid: ' + iid + ']' + 'use of element.childNodes[]');
