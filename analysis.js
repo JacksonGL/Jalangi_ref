@@ -18,10 +18,13 @@
 
 
 /*
- To perform analysis in browser without recording, set window.JALANGI_MODE to 'concrete' and J$.analysis to a suitable analysis file.
+ To perform analysis in browser without recording, set window.JALANGI_MODE to 'inbrowser' and J$.analysis to a suitable analysis file.
  To redefine all instrumentation functions, set JALANGI_MODE to 'symbolic' and J$.analysis to a suitable library containing redefinitions of W, R, etc.
 
  */
+
+/*jslint node: true browser: true */
+/*global J$ alert */
 
 var isWorker = false;
     var disable_RR = true; // temporarily disable record replay engine;
@@ -130,8 +133,13 @@ if (typeof J$ === 'undefined') J$ = {};
         var DEBUG = false;
         var WARN = false;
         var SERIOUS_WARN = false;
-        var MAX_BUF_SIZE = 4096;
+        // make MAX_BUF_SIZE slightly less than 2^16, to allow over low-level overheads
+        var MAX_BUF_SIZE = 64000;
         var TRACE_FILE_NAME = 'jalangi_trace';
+        // should we keep the trace in memory in the browser?
+        // TODO somehow make this a parameter
+		var IN_MEMORY_BROWSER_LOG = false;
+		//var IN_MEMORY_BROWSER_LOG = isBrowser;
 
         var T_NULL = 0,
             T_NUMBER = 1,
@@ -232,7 +240,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     f === console.log ||
                     f === RegExp.prototype.test ||
                     f === String.prototype.indexOf ||
-                    f === String.prototype.lastindexOf ||
+                    f === String.prototype.lastIndexOf ||
                     f === String.prototype.substring ||
                     f === String.prototype.substr ||
                     f === String.prototype.charCodeAt ||
@@ -465,9 +473,9 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             try {
                 return f(
-                    //sandbox.instrumentCode( 
+                    //sandbox.instrumentCode(
                         getConcrete(args[0])
-                    //, true)
+                    //, false)
                 );
             } finally {
                 if (rrEngine) {
@@ -516,7 +524,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     val = invokeEval(base, g, args);
                 } else if (invoke) {
                     if (isConstructor) {
-                        val = callAsConstructor(g, args); 
+                        val = callAsConstructor(g, args);
                     } else {
                         val = g.apply(base, args);
                     }
@@ -588,7 +596,6 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             return val;
         }
-
 
         function P(iid, base, offset, val) {
             if(J$.analyzer && J$.analyzer.pre_P){
@@ -685,6 +692,7 @@ if (typeof J$ === 'undefined') J$ = {};
             return ret;
         }
 
+
         function Rt(iid, val) {
 
             if(J$.analyzer && J$.analyzer.Rt){
@@ -709,6 +717,7 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             return ret;
         }
+
 
         function Se(iid, val) {
 
@@ -990,6 +999,7 @@ if (typeof J$ === 'undefined') J$ = {};
             return result_c;
         }
 
+
         function U(iid, op, left) {
 
             if(J$.analyzer && J$.analyzer.U){
@@ -1175,6 +1185,30 @@ if (typeof J$ === 'undefined') J$ = {};
                 head.appendChild(script);
             }
 
+            function isSafeToCallGetOrSet(obj, prop, isGetter) {
+                if (typeof Object.getOwnPropertyDescriptor !== 'function') {
+                    return false;
+                }
+                while (obj !== null) {
+                    if (typeof obj !== 'object' && typeof obj !== 'function') {
+                        return true;
+                    }
+                    var desc = Object.getOwnPropertyDescriptor(obj, prop);
+                    if (desc !== undefined) {
+                        if (isGetter && typeof desc.get === 'function') {
+                            return false;
+                        }
+                        if (!isGetter && typeof desc.set === 'function') {
+                            return false;
+                        }
+                    } else if (HOP(obj, prop)) {
+                        return true;
+                    }
+                    obj = obj.__proto__;
+                }
+                return true;
+            }
+
             function printableValue(val) {
                 var value, typen = getNumericType(val), ret = [];
                 if (typen === T_NUMBER || typen === T_BOOLEAN || typen === T_STRING) {
@@ -1189,17 +1223,13 @@ if (typeof J$ === 'undefined') J$ = {};
                             if (Object && Object.defineProperty && typeof Object.defineProperty === 'function') {
                                 Object.defineProperty(val, SPECIAL_PROP, {
                                     enumerable:false,
-                                    writable:true,
+                                    writable:true
                                 });
                             }
                             val[SPECIAL_PROP] = {};
-                            if(!HOP(val, SPECIAL_PROP)){
-                                //console.log(typeof val);
-                            } else {
-                                val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
-//                              console.log("oid:"+objectId);
-                                objectId = objectId + 2;
-                            }
+                            val[SPECIAL_PROP][SPECIAL_PROP] = objectId;
+//                            console.log("oid:"+objectId);
+                            objectId = objectId + 2;
                         }
                         if (HOP(val, SPECIAL_PROP) && typeof val[SPECIAL_PROP][SPECIAL_PROP] === 'number') {
                             value = val[SPECIAL_PROP][SPECIAL_PROP];
@@ -1258,15 +1288,15 @@ if (typeof J$ === 'undefined') J$ = {};
                         });
                     }
                     val[SPECIAL_PROP] = {};
-
-                    if(!HOP(val, SPECIAL_PROP)){
-                        //console.log(typeof val);
-                    } else {
-                        val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
-                        literalId = literalId + 2;
+                    val[SPECIAL_PROP][SPECIAL_PROP] = id = literalId;
+                    literalId = literalId + 2;
+                    // changes due to getter or setter method
+                    for (var offset in val) {
+                        if (offset !== SPECIAL_PROP && offset !== SPECIAL_PROP2 && HOP(val, offset)) {
+                            if (isSafeToCallGetOrSet(val, offset, true))
+                                val[SPECIAL_PROP][offset] = val[offset];
+                        }
                     }
-                    
-                    
                 }
                 if (mode === MODE_REPLAY) {
                     objectMap[id] = oldVal;
@@ -1324,11 +1354,7 @@ if (typeof J$ === 'undefined') J$ = {};
                             });
                         }
                         obj[SPECIAL_PROP] = {};
-                        if(!HOP(val, SPECIAL_PROP)){
-                            //console.log(typeof val);
-                        } else {
-                            obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
-                        }
+                        obj[SPECIAL_PROP][SPECIAL_PROP] = recordedValue;
                         objectMap[recordedValue] = ((obj === replayValue) ? oldReplayValue : obj);
                     }
                     return (obj === replayValue) ? oldReplayValue : obj;
@@ -1381,17 +1407,17 @@ if (typeof J$ === 'undefined') J$ = {};
                     var id = val[SPECIAL_PROP][SPECIAL_PROP];
                     objectMap[id] = obj;
                 }
-            }
+            };
 
 
             this.RR_evalBegin = function () {
                 evalFrames.push(frame);
                 frame = frameStack[0];
-            }
+            };
 
             this.RR_evalEnd = function () {
                 frame = evalFrames.pop();
-            }
+            };
 
             this.RR_G = function (iid, base, offset, val) {
                 var base_c, type;
@@ -1411,7 +1437,9 @@ if (typeof J$ === 'undefined') J$ = {};
                         seqNo++;
                         return val;
                     } else {
-//                        base_c[SPECIAL_PROP][offset] = val;
+                        if (isSafeToCallGetOrSet(base_c, offset, false)) {
+                            base_c[SPECIAL_PROP][offset] = val;
+                        }
                         return this.RR_L(iid, val, N_LOG_GETFIELD);
                     }
                 } else if (mode === MODE_REPLAY) {
@@ -1421,14 +1449,16 @@ if (typeof J$ === 'undefined') J$ = {};
                         return val;
                     } else {
                         val = this.RR_L(iid, val, N_LOG_GETFIELD);
-//                        base_c = getConcrete(base);
-//                        base_c[offset] = val;
+                        base_c = getConcrete(base);
+                        if (isSafeToCallGetOrSet(base_c, offset, false)) {
+                            base_c[offset] = val;
+                        }
                         return val;
                     }
                 } else {
                     return val;
                 }
-            }
+            };
 
 
             this.RR_P = function (iid, base, offset, val) {
@@ -1438,13 +1468,13 @@ if (typeof J$ === 'undefined') J$ = {};
                         base_c[SPECIAL_PROP][getConcrete(offset)] = val;
                     }
                 }
-            }
+            };
 
             this.RR_W = function (iid, name, val) {
                 if (mode === MODE_RECORD || mode === MODE_REPLAY) {
                     getFrameContainingVar(name)[name] = val;
                 }
-            }
+            };
 
             this.RR_N = function (iid, name, val, isArgumentSync) {
                 if (mode === MODE_RECORD || mode === MODE_REPLAY) {
@@ -1454,7 +1484,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         frame[name] = undefined;
                     }
                 }
-            }
+            };
 
             this.RR_R = function (iid, name, val) {
                 var ret, trackedVal, trackedFrame, tmp;
@@ -1488,7 +1518,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     ret = val;
                 }
                 return ret;
-            }
+            };
 
             this.RR_Fe = function (iid, val, dis) {
                 var ret;
@@ -1510,17 +1540,17 @@ if (typeof J$ === 'undefined') J$ = {};
                         }
                     }
                 }
-            }
+            };
 
             this.RR_Fr = function (iid) {
                 if (mode === MODE_RECORD || mode === MODE_REPLAY) {
                     frameStack.pop();
                     frame = frameStack[frameStack.length - 1];
-                    if (mode === MODE_RECORD) {
-                        traceWriter.flush();
+                    if (mode === MODE_RECORD && frameStack.length <= 1) {
+                    	traceWriter.flush();
                     }
                 }
-            }
+            };
 
             this.RR_Se = function (iid, val) {
                 var ret;
@@ -1536,21 +1566,20 @@ if (typeof J$ === 'undefined') J$ = {};
                         debugPrint("Index:" + traceInfo.getPreviousIndex());
                     }
                 }
-            }
+            };
 
             this.RR_Sr = function (iid) {
                 if (mode === MODE_RECORD || mode === MODE_REPLAY) {
                     frameStack.pop();
                     frame = frameStack[frameStack.length - 1];
-                    if (mode === MODE_RECORD) {
-                        traceWriter.flush();
+                    if (mode === MODE_RECORD && frameStack.length <= 1) {
+                    	traceWriter.flush();
                     }
                 }
                 if (isBrowserReplay) {
                     this.RR_replay();
                 }
-            }
-
+            };
 
             this.RR_H = function (iid, val) {
                 var ret;
@@ -1580,7 +1609,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     val = ret;
                 }
                 return val;
-            }
+            };
 
 
             this.RR_L = function (iid, val, fun) {
@@ -1596,7 +1625,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     val = syncValue(ret, val, iid);
                 }
                 return val;
-            }
+            };
 
             this.RR_T = function (iid, val, fun) {
                 if ((mode === MODE_RECORD || mode === MODE_REPLAY) &&
@@ -1613,7 +1642,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         val[SPECIAL_PROP3] = frame;
                     }
                 }
-            }
+            };
 
             this.RR_replay = function () {
                 if (mode === MODE_REPLAY) {
@@ -1638,7 +1667,7 @@ if (typeof J$ === 'undefined') J$ = {};
                             f = getConcrete(syncValue(ret, undefined, 0));
                             ret = traceInfo.getNext();
                             var dis = syncValue(ret, undefined, 0);
-                            f.call(dis);
+                            f(dis);
                         } else if (ret[F_FUNNAME] === N_LOG_SCRIPT_ENTER) {
                             var path = getConcrete(syncValue(ret, undefined, 0));
                             if (isBrowserReplay) {
@@ -1655,7 +1684,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         }
                     }
                 }
-            }
+            };
 
 
             function TraceWriter() {
@@ -1667,7 +1696,14 @@ if (typeof J$ === 'undefined') J$ = {};
                 var cb;
                 var remoteBuffer = [];
                 var socket, isOpen = false;
+                // if true, in the process of doing final trace dump,
+                // so don't record any more events
+                var tracingDone = false;
 
+				if (IN_MEMORY_BROWSER_LOG) {
+					// attach the buffer to the sandbox
+					sandbox.trace_output = buffer;
+				}
 
                 function getFileHanlde() {
                     if (traceWfh === undefined) {
@@ -1676,15 +1712,36 @@ if (typeof J$ === 'undefined') J$ = {};
                     return traceWfh;
                 }
 
+				/**
+				 * @param {string} line
+				 */
                 this.logToFile = function (line) {
-                    buffer.push(line);
-                    bufferSize += line.length;
-                    if (bufferSize > MAX_BUF_SIZE) {
-                        this.flush();
-                    }
-                }
+                	if (tracingDone) {
+                		// do nothing
+                		return;
+                	}
+                	var len = line.length;
+                	// we need this loop because it's possible that len >= MAX_BUF_SIZE
+                	// TODO fast path for case where len < MAX_BUF_SIZE?
+                	var start = 0, end = len < MAX_BUF_SIZE ? len : MAX_BUF_SIZE;
+                	while (start < len) {
+                		var chunk = line.substring(start, end);
+                		var curLen = end - start;
+                		if (bufferSize + curLen > MAX_BUF_SIZE) {
+                			this.flush();
+                		}
+                		buffer.push(chunk);
+                		bufferSize += curLen;
+                		start = end;
+                		end = (end + MAX_BUF_SIZE < len) ? end + MAX_BUF_SIZE : len;
+                	}
+                };
 
                 this.flush = function () {
+                	if (IN_MEMORY_BROWSER_LOG) {
+                		// no need to flush anything
+                		return;
+                	}
                     var msg;
                     if (!isBrowser) {
                         var length = buffer.length;
@@ -1699,7 +1756,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     }
                     bufferSize = 0;
                     buffer = [];
-                }
+                };
 
 
                 function openSocketIfNotOpen() {
@@ -1711,6 +1768,11 @@ if (typeof J$ === 'undefined') J$ = {};
                     }
                 }
 
+				/**
+				 * invoked when we receive a message over the websocket,
+				 * indicating that the last trace chunk in the remoteBuffer
+				 * has been received
+				 */
                 function tryRemoteLog2() {
                     trying = false;
                     remoteBuffer.shift();
@@ -1732,7 +1794,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         cb = callback;
                         tryRemoteLog();
                     }
-                }
+                };
 
                 function tryRemoteLog() {
                     isOpen = true;
@@ -1743,12 +1805,25 @@ if (typeof J$ === 'undefined') J$ = {};
                 }
 
                 this.remoteLog = function (message) {
+                    if (message.length > MAX_BUF_SIZE) {
+                    	throw new Error("message too big!!!");
+                    }
                     remoteBuffer.push(message);
                     openSocketIfNotOpen();
                     if (isOpen) {
                         tryRemoteLog();
                     }
-                }
+                };
+                
+                /**
+                 * stop recording the trace and flush everything
+                 */
+                this.stopTracing = function () {
+                	tracingDone = true;
+                	if (!IN_MEMORY_BROWSER_LOG) {
+                		this.flush();                		
+                	}
+                };
             }
 
 
@@ -1772,7 +1847,12 @@ if (typeof J$ === 'undefined') J$ = {};
                     if (currentIndex >= frontierIndex) {
                         if (!traceFh) {
                             var FileLineReader = require('./utils/FileLineReader');
-                            traceFh = new FileLineReader(process.argv[2] ? process.argv[2] : TRACE_FILE_NAME);
+                            var traceFileName = process.argv[2] ? process.argv[2] : TRACE_FILE_NAME;
+                            traceFh = new FileLineReader(traceFileName);
+                        	// change working directory to wherever trace file resides
+                        	var pth = require('path');
+                        	var traceFileDir = pth.dirname(pth.resolve(process.cwd(),traceFileName));
+                        	process.chdir(traceFileDir);
                         }
                         traceArray = [];
                         while (!done && (flag = traceFh.hasNextLine()) && i < MAX_SIZE) {
@@ -1837,7 +1917,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         record = undefined;
                     }
                     return record;
-                }
+                };
 
                 this.next = function () {
                     if (curRecord !== null) {
@@ -1860,7 +1940,7 @@ if (typeof J$ === 'undefined') J$ = {};
                         return traceIndex - 2;
                     }
                     return traceIndex - 1;
-                }
+                };
 
             }
 
@@ -1872,7 +1952,19 @@ if (typeof J$ === 'undefined') J$ = {};
                 traceWriter = new TraceWriter();
                 this.onflush = traceWriter.onflush;
                 if (isBrowser) {
-                    this.command('reset');
+                	if (!IN_MEMORY_BROWSER_LOG) {
+                    	this.command('reset');
+                    }
+                    // enable keyboard shortcut to stop tracing
+                    window.addEventListener('keydown', function (e) {
+                    	// keyboard shortcut is Alt-Shift-T for now
+                    	if (e.altKey && e.shiftKey && e.keyCode === 84) {
+                    		traceWriter.stopTracing();
+                    		traceWriter.onflush(function () {
+                    			alert("trace flush complete");
+                    		});
+                    	}
+                    });
                 }
             }
         }
