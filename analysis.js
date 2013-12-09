@@ -110,7 +110,6 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = sandbox.analysis.Sr; // Script return
         sandbox.Rt = sandbox.analysis.Rt; // Value return
         sandbox.Ra = sandbox.analysis.Ra;
-        //sandbox.Te = Te; // throw exception across function
 
         sandbox.makeSymbolic = sandbox.analysis.makeSymbolic;
         sandbox.addAxiom = sandbox.analysis.addAxiom;
@@ -1127,11 +1126,7 @@ if (typeof J$ === 'undefined') J$ = {};
 
             log.log("B" + iid + ":" + (left_c ? 1 : 0));
             return left_c;
-        };
-
-        function Te(val) {
-
-        };
+        }
 
         function endExecution() {
             if (branchCoverageInfo)
@@ -2036,7 +2031,6 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = Sr; // Script return
         sandbox.Rt = Rt; // returned value
         sandbox.Ra = Ra;
-        sandbox.Te = Te; // throw exception across function
 
         sandbox.replay = rrEngine ? rrEngine.RR_replay : undefined;
         sandbox.onflush = rrEngine ? rrEngine.onflush : function () {
