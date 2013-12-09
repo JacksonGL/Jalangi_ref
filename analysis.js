@@ -1128,6 +1128,10 @@ if (typeof J$ === 'undefined') J$ = {};
             return left_c;
         }
 
+        function Te(val) {
+            
+        }
+
         function endExecution() {
             if (branchCoverageInfo)
                 branchCoverageInfo.storeBranchInfo();
