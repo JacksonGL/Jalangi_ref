@@ -107,7 +107,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Fe = sandbox.analysis.Fe; // Function enter
         sandbox.Fr = sandbox.analysis.Fr; // Function return
         sandbox.Se = sandbox.analysis.Se; // Script enter
-        sandbox.Sr = sandbox.analysis.Sr; // Script return
+        sandbox.Sr = sandbox.analysis.Sr; // Script return 
         sandbox.Rt = sandbox.analysis.Rt; // Value return
         sandbox.Ra = sandbox.analysis.Ra;
         //sandbox.checkDeclared = sandbox.analysis.checkDeclared;
