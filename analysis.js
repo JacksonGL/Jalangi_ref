@@ -2056,7 +2056,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = Sr; // Script return
         sandbox.Rt = Rt; // returned value
         sandbox.Ra = Ra;
-        sandbox.checkDeclared = checkDeclared;
+        sandbox.Ru = Ru; // read undeclared
 
         sandbox.replay = rrEngine ? rrEngine.RR_replay : undefined;
         sandbox.onflush = rrEngine ? rrEngine.onflush : function () {
