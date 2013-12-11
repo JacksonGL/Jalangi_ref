@@ -709,7 +709,7 @@ if (typeof J$ === 'undefined') J$ = {};
             return ret;
         }
 
-        function Ru(iid, val) {
+        function Ru(iid, val) { 
             x123123123;
         }
 
