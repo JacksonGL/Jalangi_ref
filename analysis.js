@@ -175,6 +175,23 @@ if (typeof J$ === 'undefined') J$ = {};
 
         //-------------------------------- End constants ---------------------------------
 
+        var GET_OWN_PROPERTY_NAMES = Object.getOwnPropertyNames;
+        Object.getOwnPropertyNames = function() {
+            var val = GET_OWN_PROPERTY_NAMES.apply(Object, arguments);
+            var idx = val.indexOf(SPECIAL_PROP);
+            if (idx > -1) {
+                val.splice(idx, 1);
+            }
+            idx = val.indexOf(SPECIAL_PROP2);
+            if (idx > -1) {
+                val.splice(idx, 1);
+            }
+            idx = val.indexOf(SPECIAL_PROP3);
+            if (idx > -1) {
+                val.splice(idx, 1);
+            }
+            return val;
+        }
 
         //-------------------------------------- Symbolic functions -----------------------------------------------------------
 
