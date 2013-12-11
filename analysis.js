@@ -715,7 +715,7 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function checkDeclared(s) {
-            try{ eval(s + ';'); }catch(e) { Ru();}
+            try{ eval(s + ';'); }catch(e) { console.log(e); Ru();}
         }
 
         function Rt(iid, val) {
