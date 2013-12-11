@@ -110,6 +110,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = sandbox.analysis.Sr; // Script return
         sandbox.Rt = sandbox.analysis.Rt; // Value return
         sandbox.Ra = sandbox.analysis.Ra;
+        //sandbox.checkDeclared = sandbox.analysis.checkDeclared;
 
         sandbox.makeSymbolic = sandbox.analysis.makeSymbolic;
         sandbox.addAxiom = sandbox.analysis.addAxiom;
@@ -2055,6 +2056,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = Sr; // Script return
         sandbox.Rt = Rt; // returned value
         sandbox.Ra = Ra;
+        sandbox.checkDeclared = checkDeclared;
 
         sandbox.replay = rrEngine ? rrEngine.RR_replay : undefined;
         sandbox.onflush = rrEngine ? rrEngine.onflush : function () {
