@@ -710,7 +710,8 @@ if (typeof J$ === 'undefined') J$ = {};
             return ret;
         }
 
-        function Ru(iid, val) { 
+        function Ru() { 
+            console.log('read undeclared!');
             x123123123;
         }
 
