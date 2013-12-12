@@ -2702,7 +2702,7 @@ J$.analysis = {
             if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
                 console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
                 this.info(base);
-            }
+            } 
             return val;
         },
         info: function (obj) {
