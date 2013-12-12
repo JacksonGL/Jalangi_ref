@@ -2477,7 +2477,7 @@ J$.analysis = {
 };
 */
 
-
+/*
 
 // check migration issues
     J$.analyzer = {
@@ -2735,3 +2735,5 @@ J$.analysis = {
             console.groupEnd();
         }
     };
+
+    */
