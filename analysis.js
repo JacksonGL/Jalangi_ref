@@ -2092,121 +2092,6 @@ if (typeof J$ === 'undefined') J$ = {};
 
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
-// check NaN
-    J$.analyzer = {
-        // R: read
-        // function called after R
-        // val is the read value
-        // return value will be the new read value
-        post_R: function (iid, name, val) {
-            if(typeof val == 'number' && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
-            }
-            return val;
-
-        },
-        // W: write
-        // function called before W
-        // val is the value to write
-        pre_W: function (iid, name, val, lhs) {
-
-            //return val;
-        },
-        // W: write
-        // function called after W
-        // val is the value to write
-        // return value will be the new written value
-        post_W: function (iid, name, val, lhs) {
-            if(typeof val == 'number' && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
-            }
-            return val;
-        },
-        N: function (iid, name, val, isArgumentSync) {
-            if(typeof val == 'number' && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + name + ":" + val);
-            }
-            //return val;
-        },
-        A: function (iid, base, offset, op) {
-            if(typeof base != 'undefined' && base != null && (typeof base[offset] == 'number') && isNaN(base[offset]) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-            }
-        },
-        // G: get field
-        // function called before G
-        // base is the object from which the field will get
-        // offset is either a number or a string indexing the field to get
-        pre_G: function (iid, base, offset, norr) {
-            if((iid == 306509 || iid == 306517)  && (isNaN(base[offset]))) {
-                console.log('pre get [iid: ' + iid +']:' + base[offset] + ':' + (typeof base[offset]));
-            }
-            try{
-                if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                    console.log('pre get: [NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-                }
-            }catch(e){
-                console.log(e);
-            }
-        },
-        // G: get field
-        // function called after G
-        // base is the object from which the field will get
-        // offset is either a number or a string indexing the field to get
-        // val is the value gets from base.[offset]
-        // return value will affect the retrieved value in the instrumented code
-        post_G: function (iid, base, offset, val, norr) {
-            //if((iid == 306509 || iid == 306517)  && (isNaN(val))) {
-            //    console.log('[iid: ' + iid +']:' + val + ':' + (typeof val));
-            //}
-            try{
-            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-            }
-            }catch(e){
-                console.log(e);
-            }
-            return val;
-        },
-        // P: put field
-        // function called before P
-        // base is the object to which the field will put
-        // offset is either a number or a string indexing the field to get
-        // val is the value puts to base.[offset]
-        pre_P: function (iid, base, offset, val) {
-            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-            }
-            //return val;
-        },
-        // P: put field
-        // function called after P
-        // base is the object to which the field will put
-        // offset is either a number or a string indexing the field to get
-        // val is the value puts to base.[offset]
-        // return value will affect the retrieved value in the instrumented code
-        post_P: function (iid, base, offset, val) {
-            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
-                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
-            }
-            return val;
-        },
-        pre_B: function (iid, op, left, right) {
-            //return result_c;
-        },
-        post_B: function (iid, op, left, right, val) {
-            //if((iid==28094 || iid==28090 || iid== 28086) && isNaN(val) == true){
-            //    console.log('[NaN B iid: ' + iid +']:' + val);
-            //}
-            
-            //if((typeof val == 'number') && isNaN(val) == true){
-            //    console.log('[NaN B iid: ' + iid +']:' + val);
-            //    console.log('left: ' + left + ' | right: ' + right);
-            //}
-            return val;
-            //return result_c;
-        }
-    };
 
 /*
 // check NaN
@@ -2591,3 +2476,262 @@ J$.analysis = {
     }
 };
 */
+
+
+
+// check migration issues
+    J$.analyzer = {
+        // F: function call
+        // function called before F
+        // modify retFunction will modify the concret return value
+        pre_F: function (iid, f, isConstructor) {
+            if(f && f === document.getElementsByClassName) {
+                console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByClassName()');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (f && f === document.getElementsByTagName) {
+                console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByTagName()');
+                this.groupInfo('Not supported by IE 5.5');
+            } else if (f && f === document.querySelector) {
+                console.warn('[iid: ' + iid + ']' + 'use of document.querySelector()');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (f && f === document.querySelectorAll) {
+                console.warn('[iid: ' + iid + ']' + 'use of document.querySelectorAll()');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }
+        },
+        // F: function call
+        // function called after F
+        // modify retFunction will modify the concret return value
+        post_F: function (iid, f, isConstructor, retFunction) {
+
+            return retFunction;
+        },
+        // M: method call
+        // function called before M
+        pre_M: function (iid, base, offset, isConstructor) {
+            
+        },
+        // M: method call
+        // function called after M
+        // modify retFunction will modify the concret return value
+        post_M: function (iid, base, offset, isConstructor, retFunction) {
+            if(base && base[offset]){
+                var f = base[offset];
+                if(f && f === document.getElementsByClassName) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByClassName()');
+                    this.groupInfo('Not supported by IE 5.5,6,7,8');
+                } else if (f && f === document.getElementsByTagName) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.getElementsByTagName()');
+                    this.groupInfo('Not supported by IE 5.5');
+                } else if (f && f === document.querySelector) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.querySelector()');
+                    this.groupInfo('Not supported by IE 5.5,6,7,8');
+                } else if (f && f === document.querySelectorAll) {
+                    console.warn('[iid: ' + iid + ']' + 'use of document.querySelectorAll()');
+                    this.groupInfo('Not supported by IE 5.5,6,7,8');
+                }
+            }
+            return retFunction;
+        },
+        // R: read
+        // function called before R
+        // val is the read value
+        pre_R: function (iid, name, val) {
+
+        },
+        // R: read
+        // function called after R
+        // val is the read value
+        // return value will be the new read value
+        post_R: function (iid, name, val) {
+
+            return val;
+
+        },
+        // W: write
+        // function called before W
+        // val is the value to write
+        pre_W: function (iid, name, val, lhs) {
+
+            //return val;
+        },
+        // W: write
+        // function called after W
+        // val is the value to write
+        // return value will be the new written value
+        post_W: function (iid, name, val, lhs) {
+
+            return val;
+        },
+        // G: get field
+        // function called before G
+        // base is the object from which the field will get
+        // offset is either a number or a string indexing the field to get
+        pre_G: function (iid, base, offset, norr) {
+
+
+        },
+        // G: get field
+        // function called after G
+        // base is the object from which the field will get
+        // offset is either a number or a string indexing the field to get
+        // val is the value gets from base.[offset]
+        // return value will affect the retrieved value in the instrumented code
+        post_G: function (iid, base, offset, val, norr) {
+             if(base && base !== document && offset=='querySelector' && typeof val == 'function') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.querySelector()');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base !== document && offset=='querySelectorAll' && typeof val == 'function') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.querySelectorAll()');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base.tagName && base.innerHTML && offset == 'childNodes') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.childNodes[]');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base.tagName && base.innerHTML && offset == 'firstChild') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.firstChild');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base.tagName && base.innerHTML && offset == 'lastChild') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.lastChild');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base.tagName && base.innerHTML && offset == 'nextSibling') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.nextSibling');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base.tagName && base.innerHTML && offset == 'previousSibling') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.previousSibling');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            } else if (base && base.tagName && base.innerHTML && offset == 'childElementCount') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.childElementCount');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'children') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.children[]');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'firstElementChild') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.firstElementChild');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'lastElementChild') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.lastElementChild');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'nextElementSibling') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.nextElementSibling');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'previousElementSibling') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.previousElementSibling');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'removeAttribute') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.removeAttribute()');
+                this.groupInfo('Not supported by IE 5.5,6,7,8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'remove') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.remove()');
+                this.groupInfo('Not supported by IE, Safari and Opera (Win 12, Mac 12 and Linux 12)');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'appendData') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.appendData()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'deleteData') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.deleteData()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'insertData') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.insertData()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'normalize') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.normalize()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'replaceData') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.replaceData()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'splitText') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.splitText()');
+                this.groupInfo('Not supported by IE 5.5, 6, 7, 8, 9');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'substringData') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.substringData()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'wholeText') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.wholeText()');
+                this.groupInfo('Not supported by IE 5.5, 6, 7, 8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'attributes') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.attributes[]');
+                this.groupInfo('Not supported by IE and Firefox');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'createAttribute') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.createAttribute()');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'getAttribute') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.getAttribute()');
+                this.groupInfo('Not supported by IE 5.5, 6, 7');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'getAttributeNode') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.getAttributeNode()');
+                this.groupInfo('Not supported by IE 5.5, 6, 7');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'hasAttribute') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.hasAttribute()');
+                this.groupInfo('Not supported by IE 5.5, 6, 7');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'name') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.name');
+                this.groupInfo('Not supported by IE 5.5');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'compareDocumentPosition') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.compareDocumentPosition()');
+                this.groupInfo('Not supported by IE 5.5, 6, 7');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'getElementsByName') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.getElementsByName()');
+                this.groupInfo('Incorrect and Incomplete in IE 5.5, 6, 7, 8, 9');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'isEqualNode') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.isEqualNode()');
+                this.groupInfo('Incorrect and Incomplete in IE 5.5, 6, 7, 8');
+            }  else if (base && base.tagName && base.innerHTML && offset == 'ownerDocument') {
+                console.warn('[iid: ' + iid + ']' + 'use of element.ownerDocument');
+                this.groupInfo('Incorrect and Incomplete in IE 5.5');
+            }
+            return val;
+        },
+        // P: put field
+        // function called before P
+        // base is the object to which the field will put
+        // offset is either a number or a string indexing the field to get
+        // val is the value puts to base.[offset]
+        pre_P: function (iid, base, offset, val) {
+            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
+                console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
+            }
+            //return val;
+        },
+        // P: put field
+        // function called after P
+        // base is the object to which the field will put
+        // offset is either a number or a string indexing the field to get
+        // val is the value puts to base.[offset]
+        // return value will affect the retrieved value in the instrumented code
+        post_P: function (iid, base, offset, val) {
+            if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
+                console.warn('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+                this.info(base);
+            }
+            return val;
+        },
+        info: function (obj) {
+            console.groupCollapsed();
+            console.info(console.trace());
+            if(obj){
+                //console.dir(obj);
+            }
+            console.groupEnd();
+        },
+        isMeaningless: function (val) {
+            if(typeof val == 'undefined'){
+                return true;
+            } else if(typeof val == 'number' && isNaN(val)){
+                return true;
+            }
+            return false;   
+        },
+        isDocument: function (doc) {
+            //[18:10:00.673] "[object HTMLDocument]"
+            if(doc && doc.toString && doc.toString() == '[object HTMLDocument]'){
+                return true;
+            } else {
+                return false;
+            }
+        },
+        groupInfo: function (message) {
+            console.group();
+            console.log(message);
+            console.groupEnd();
+        }
+    };
