@@ -710,14 +710,12 @@ if (typeof J$ === 'undefined') J$ = {};
             return ret;
         }
 
+        /*
         function Ru(name) { 
             console.log('read undeclared! ' + name);
             x123123123;
         }
-
-        function checkDeclared(s) {
-            try{ eval(s + ';'); }catch(e) { console.log(e); Ru();}
-        }
+        */
 
         function Rt(iid, val) {
 
@@ -2057,7 +2055,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = Sr; // Script return
         sandbox.Rt = Rt; // returned value
         sandbox.Ra = Ra;
-        sandbox.Ru = Ru; // read undeclared
+        //sandbox.Ru = Ru; // read undeclared
 
         sandbox.replay = rrEngine ? rrEngine.RR_replay : undefined;
         sandbox.onflush = rrEngine ? rrEngine.onflush : function () {
