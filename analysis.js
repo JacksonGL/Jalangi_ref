@@ -2046,7 +2046,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.P = P; // putField
         sandbox.R = R; // Read
         sandbox.W = W; // Write
-        sandbox.N = N; // Init
+        sandbox.N = N; // Init 
         sandbox.T = T; // object/function/regexp/array Literal
         sandbox.F = F; // Function call
         sandbox.M = M; // Method call
