@@ -711,8 +711,8 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function Ru(name) {  
-            console.log('read undeclared! ' + name);
-            x123123123;
+            //console.log('read undeclared! ' + name);
+            throw new ReferenceError();
         }
 
         function checkDeclared(s) {
