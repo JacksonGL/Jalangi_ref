@@ -110,6 +110,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = sandbox.analysis.Sr; // Script return 
         sandbox.Rt = sandbox.analysis.Rt; // Value return
         sandbox.Ra = sandbox.analysis.Ra;
+        sandbox.Ex = sandbox.analysis.Ex; // try-catch exception
         //sandbox.checkDeclared = sandbox.analysis.checkDeclared;
 
         sandbox.makeSymbolic = sandbox.analysis.makeSymbolic;
@@ -126,6 +127,8 @@ if (typeof J$ === 'undefined') J$ = {};
 //-------------------------------- Constants ---------------------------------
 
         var EVAL_ORG = eval;
+        var HAS_OWN_PROPERTY = Object.prototype.hasOwnProperty;
+        var HAS_OWN_PROPERTY_CALL = Object.prototype.hasOwnProperty.call;
 
         var PREFIX1 = "J$";
         var SPECIAL_PROP = "*" + PREFIX1 + "*";
@@ -140,7 +143,7 @@ if (typeof J$ === 'undefined') J$ = {};
         // should we keep the trace in memory in the browser?
         // TODO somehow make this a parameter
 		var IN_MEMORY_BROWSER_LOG = false;
-		//var IN_MEMORY_BROWSER_LOG = isBrowser;
+        //var IN_MEMORY_BROWSER_LOG = isBrowser;
 
         var T_NULL = 0,
             T_NUMBER = 1,
@@ -327,7 +330,7 @@ if (typeof J$ === 'undefined') J$ = {};
         }
 
         function HOP(obj, prop) {
-            return Object.prototype.hasOwnProperty.call(obj, prop);
+            return HAS_OWN_PROPERTY_CALL.apply(HAS_OWN_PROPERTY, [obj, prop]);
         }
 
 
@@ -435,6 +438,7 @@ if (typeof J$ === 'undefined') J$ = {};
 
         var isInstrumentedCaller = false, isConstructorCall = false;
         var returnVal;
+        var exceptionVal;
         var scriptCount = 0;
         var lastVal;
         var switchLeft;
@@ -473,7 +477,8 @@ if (typeof J$ === 'undefined') J$ = {};
 
         function callAsConstructor(Constructor, args) {
             if (isNative(Constructor)) {
-                return callAsNativeConstructor(Constructor, args);
+                var ret = callAsNativeConstructor(Constructor, args);
+                return ret;
             } else {
                 var Temp = function () {
                 }, inst, ret;
@@ -504,7 +509,7 @@ if (typeof J$ === 'undefined') J$ = {};
 
 
         function invokeFun(iid, base, f, args, isConstructor) {
-            var g, invoke, val, ic, tmp_rrEngine, tmpIsConstructorCall, tmpIsInstrumentedCaller;
+            var g, invoke, val, ic, tmp_rrEngine, tmpIsConstructorCall, tmpIsInstrumentedCaller, idx;
 
             var f_c = getConcrete(f);
 
@@ -687,6 +692,7 @@ if (typeof J$ === 'undefined') J$ = {};
             if (rrEngine) {
                 rrEngine.RR_Fe(iid, val, dis);
             }
+            exceptionVal = undefined;
             returnVal = undefined;
             if (sandbox.analysis && sandbox.analysis.functionEnter) {
                 sandbox.analysis.functionEnter(iid, val, dis);
@@ -699,7 +705,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.Fr(iid);
             }
 
-            var ret = false;
+            var ret = false, tmp;
             executionIndex.executionIndexReturn();
             if (rrEngine) {
                 rrEngine.RR_Fr(iid);
@@ -707,7 +713,16 @@ if (typeof J$ === 'undefined') J$ = {};
             if (sandbox.analysis && sandbox.analysis.functionExit) {
                 ret = sandbox.analysis.functionExit(iid);
             }
+            if (exceptionVal !== undefined) {
+                tmp = exceptionVal;
+                exceptionVal = undefined;
+                throw tmp;
+            }
             return ret;
+        }
+
+        function Ex(iid, e) {
+            exceptionVal = e;
         }
 
         function Ru(name) {  
@@ -738,6 +753,7 @@ if (typeof J$ === 'undefined') J$ = {};
 
             var ret = returnVal;
             returnVal = undefined;
+            exceptionVal = undefined;
             if (sandbox.analysis && sandbox.analysis.return_) {
                 ret = sandbox.analysis.return_(ret);
             }
@@ -764,7 +780,7 @@ if (typeof J$ === 'undefined') J$ = {};
             if(J$.analyzer && J$.analyzer.Sr){
                 J$.analyzer.Sr(iid);
             }
-
+            var tmp;
             scriptCount--;
             if (rrEngine) {
                 rrEngine.RR_Sr(iid);
@@ -774,6 +790,11 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             if (mode === MODE_NO_RR_IGNORE_UNINSTRUMENTED && scriptCount === 0) {
                 endExecution();
+            }
+            if (exceptionVal !== undefined) {
+                tmp = exceptionVal;
+                exceptionVal = undefined;
+                throw tmp;
             }
         }
 
@@ -1285,7 +1306,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     case "object":
                         if (val === null) {
                             typen = T_NULL;
-                        } else if (Object.prototype.toString.call(val) === '[object Array]') {
+                        } else if (Array.isArray(val)) {
                             typen = T_ARRAY;
                         } else {
                             typen = T_OBJECT;
@@ -1727,9 +1748,9 @@ if (typeof J$ === 'undefined') J$ = {};
                 var tracingDone = false;
 
 				if (IN_MEMORY_BROWSER_LOG) {
-					// attach the buffer to the sandbox
-					sandbox.trace_output = buffer;
-				}
+                    // attach the buffer to the sandbox
+                    sandbox.trace_output = buffer;
+                }
 
                 function getFileHanlde() {
                     if (traceWfh === undefined) {
@@ -1742,25 +1763,27 @@ if (typeof J$ === 'undefined') J$ = {};
 				 * @param {string} line
 				 */
                 this.logToFile = function (line) {
-                	if (tracingDone) {
-                		// do nothing
-                		return;
-                	}
-                	var len = line.length;
-                	// we need this loop because it's possible that len >= MAX_BUF_SIZE
-                	// TODO fast path for case where len < MAX_BUF_SIZE?
-                	var start = 0, end = len < MAX_BUF_SIZE ? len : MAX_BUF_SIZE;
-                	while (start < len) {
-                		var chunk = line.substring(start, end);
-                		var curLen = end - start;
-                		if (bufferSize + curLen > MAX_BUF_SIZE) {
-                			this.flush();
-                		}
-                		buffer.push(chunk);
-                		bufferSize += curLen;
-                		start = end;
-                		end = (end + MAX_BUF_SIZE < len) ? end + MAX_BUF_SIZE : len;
-                	}
+                    if (tracingDone) {
+                        // do nothing
+                        return;
+                    }
+
+                    var len = line.length;
+                    // we need this loop because it's possible that len >= MAX_BUF_SIZE
+                    // TODO fast path for case where len < MAX_BUF_SIZE?
+                    var start = 0, end = len < MAX_BUF_SIZE ? len : MAX_BUF_SIZE;
+                    while (start < len) {
+                        var chunk = line.substring(start, end);
+                        var curLen = end - start;
+                        if (bufferSize + curLen > MAX_BUF_SIZE) {
+                            this.flush();
+                        }
+
+                        buffer.push(chunk);
+                        bufferSize += curLen;
+                        start = end;
+                        end = (end + MAX_BUF_SIZE < len) ? end + MAX_BUF_SIZE : len;
+                    }
                 };
 
                 this.flush = function () {
@@ -2057,6 +2080,7 @@ if (typeof J$ === 'undefined') J$ = {};
         sandbox.Sr = Sr; // Script return
         sandbox.Rt = Rt; // returned value
         sandbox.Ra = Ra;
+        sandbox.Ex = Ex; // try-catch exception
         sandbox.Ru = Ru; // read undeclared
 
         sandbox.replay = rrEngine ? rrEngine.RR_replay : undefined;
