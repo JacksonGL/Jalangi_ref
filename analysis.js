@@ -2119,7 +2119,7 @@ if (typeof J$ === 'undefined') J$ = {};
 J$.analysis = {
     putField: function(iid, base, offset, val) {
         if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
-            console.log('setting property [' + val + '] of base object: ' + typeof base);
+            console.log('!!!!! setting property [' + val + '] of base object: ' + typeof base);
         }
         return val;
     }
