@@ -2771,12 +2771,11 @@ J$.analysis = {
         }
         return val;
     },
-    getFieldPre: function(iid, base, offset, val) {
+    getFieldPre: function(iid, base, offset) {
         if(typeof base === 'string'){
             if(/[\uD800-\uDFFF]/.test(base) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
                 console.log('!!!!! getting property [' + offset + '] of string containing surrogate pair: ' + base);
             }
         }
-        return val;
     }
 };
