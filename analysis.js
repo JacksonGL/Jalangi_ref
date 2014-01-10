@@ -2768,40 +2768,40 @@ J$.analysis = {
  J$.analysis = {
     putFieldPre: function (iid, base, offset, val) {
         if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
-            console.log('!!!!! setting property [' + offset + '] of base object: ' + typeof base);
+            console.log('[iid: " + iid + "] setting property [' + offset + '] of base object: ' + typeof base);
         }
 
         if (offset === '__proto__') {
-            console.log('!!!!! setting property [' + offset + '] of base object: ' + typeof base);
+            console.log('[iid: " + iid + "] setting property [' + offset + '] of base object: ' + typeof base);
         }
         return val;
     },
     getFieldPre: function (iid, base, offset) {
         if(typeof base === 'string'){
             if(/[\uD800-\uDFFF]/.test(base) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
-                console.log('!!!!! getting property [' + offset + '] of string containing surrogate pair: ' + base);
+                console.log('[iid: " + iid + "] getting property [' + offset + '] of string containing surrogate pair: ' + base);
             }
         }
     },
     invokeFunPre: function (iid, f, base, args, isConstructor) {
         if(f===J$.variables.concat && args.callee && args.length) {
-            console.log('!!!!! calling concat function with arguments');
+            console.log('[iid: " + iid + "] calling concat function with arguments');
         } 
     },
     binaryPre: function (iid, op, left, right) {
-        if(typeof left === 'string' && typeof right === 'object' && right.__proto__ === Object.prototype) {
+        if(typeof left === 'string' && typeof right === 'object' && right !== null && right.__proto__ === Object.prototype) {
             if (left == right){
-                console.log('!!!!!!! string == object (===)');
+                console.log('[iid: " + iid + "] string == object (===)');
             }
-        } else if (typeof right === 'string' && typeof left === 'object' && left.__proto__ === Object.prototype) {
+        } else if (typeof right === 'string' && typeof left === 'object' && left !== null && left.__proto__ === Object.prototype) {
             if (left == right){
-                console.log('!!!!!!! string == object (===)');
+                console.log('[iid: " + iid + "] string == object (===)');
             }
         } 
     },
     readPre: function (iid, name, val, isGlobal) {
         if(name === 'this' && val === window) {
-            console.log('!!!!! this===window');
+            console.log('[iid: " + iid + "] this===window');
         }
     }
 }; 
