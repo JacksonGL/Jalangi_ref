@@ -2773,7 +2773,7 @@ J$.analysis = {
     },
     getFieldPre: function(iid, base, offset, val) {
         if(typeof base === 'string'){
-            if(/[\uD800-\uDFFF]/.test(val) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
+            if(/[\uD800-\uDFFF]/.test(base) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
                 console.log('!!!!! getting property [' + offset + '] of string containing surrogate pair: ' + base);
             }
         }
