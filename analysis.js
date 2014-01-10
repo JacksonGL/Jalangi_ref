@@ -2763,19 +2763,45 @@ J$.analysis = {
 
     */
  
+ (function (){J$.variables.concat = String.prototype.concat;})
 
  J$.analysis = {
-    putFieldPre: function(iid, base, offset, val) {
+    putFieldPre: function (iid, base, offset, val) {
         if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
+            console.log('!!!!! setting property [' + offset + '] of base object: ' + typeof base);
+        }
+
+        if (offset === '__proto__') {
             console.log('!!!!! setting property [' + offset + '] of base object: ' + typeof base);
         }
         return val;
     },
-    getFieldPre: function(iid, base, offset) {
+    getFieldPre: function (iid, base, offset) {
         if(typeof base === 'string'){
             if(/[\uD800-\uDFFF]/.test(base) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
                 console.log('!!!!! getting property [' + offset + '] of string containing surrogate pair: ' + base);
             }
+        }
+    },
+    invokeFunPre: function (iid, f, base, args, isConstructor) {
+        if(f===J$.variables.concat && args.callee && args.length) {
+            console.log('!!!!! calling concat function with arguments');
+        } 
+    },
+    binaryPre: function (iid, op, left, right) {
+        if(typeof left === 'string' && typeof right.__proto__ === Object.prototype) {
+            if (left == right){
+                console.log('!!!!!!! string == object (===)');
+            }
+        } else if (typeof right === 'string' && typeof left.__proto__ === Object.prototype) {
+            if (left == right){
+                console.log('!!!!!!! string == object (===)');
+            }
+        } 
+    },
+    readPre: function (iid, name, val, isGlobal) {
+        if(name === 'this' && val === window) {
+            console.log('!!!!! this===window');
         }
     }
 }; 
