@@ -2789,11 +2789,11 @@ J$.analysis = {
         } 
     },
     binaryPre: function (iid, op, left, right) {
-        if(typeof left === 'string' && typeof right.__proto__ === Object.prototype) {
+        if(typeof left === 'string' && typeof right === 'object' && right.__proto__ === Object.prototype) {
             if (left == right){
                 console.log('!!!!!!! string == object (===)');
             }
-        } else if (typeof right === 'string' && typeof left.__proto__ === Object.prototype) {
+        } else if (typeof right === 'string' && typeof left === 'object' && left.__proto__ === Object.prototype) {
             if (left == right){
                 console.log('!!!!!!! string == object (===)');
             }
