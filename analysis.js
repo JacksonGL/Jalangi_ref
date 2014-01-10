@@ -2767,7 +2767,15 @@ J$.analysis = {
  J$.analysis = {
     putFieldPre: function(iid, base, offset, val) {
         if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
-            console.log('!!!!! setting property [' + val + '] of base object: ' + typeof base);
+            console.log('!!!!! setting property [' + offset + '] of base object: ' + typeof base);
+        }
+        return val;
+    },
+    getFieldPre: function(iid, base, offset, val) {
+        if(typeof base === 'string'){
+            if(/[\uD800-\uDFFF]/.test(val) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
+                console.log('!!!!! getting property [' + offset + '] of string containing surrogate pair: ' + base);
+            }
         }
         return val;
     }
