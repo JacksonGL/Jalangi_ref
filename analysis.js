@@ -2117,7 +2117,7 @@ if (typeof J$ === 'undefined') J$ = {};
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
 J$.analysis = {
-    putField: function(iid, base, offset, val) {
+    putFieldPre: function(iid, base, offset, val) {
         if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
             console.log('!!!!! setting property [' + val + '] of base object: ' + typeof base);
         }
