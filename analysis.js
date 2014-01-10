@@ -2766,7 +2766,6 @@ J$.analysis = {
 
  J$.analysis = {
     putFieldPre: function(iid, base, offset, val) {
-        console.log(typeof base);
         if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
             console.log('!!!!! setting property [' + val + '] of base object: ' + typeof base);
         }
