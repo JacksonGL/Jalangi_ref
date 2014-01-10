@@ -2763,7 +2763,7 @@ J$.analysis = {
 
     */
  
- (function (){J$.variables.concat = String.prototype.concat;})
+ (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})
 
  J$.analysis = {
     putFieldPre: function (iid, base, offset, val) {
