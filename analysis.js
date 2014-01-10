@@ -2784,7 +2784,7 @@ J$.analysis = {
         }
     },
     invokeFunPre: function (iid, f, base, args, isConstructor) {
-        if(f===J$.variables.concat && args.callee && args.length) {
+        if(f===J$.variables.concat && args[0] && args[0].callee && args[0].length) {
             console.log(args);
             console.log('[iid: ' + iid + '] calling concat function with arguments');
         } 
