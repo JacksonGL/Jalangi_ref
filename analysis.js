@@ -2801,7 +2801,7 @@ J$.analysis = {
     },
     readPre: function (iid, name, val, isGlobal) {
         if(name === 'this' && val === window) {
-            console.log('[iid: ' + iid + '] this===window');
+            console.log('[iid: ' + iid + '] this===window'); 
         }
     }
 }; 
