@@ -2768,7 +2768,7 @@ J$.analysis = {
 J$.output = function(str) {
     console.log(str); 
     console.log(window.location.href);
-    window.postMessage(str);
+    window.postMessage(str, window.location.href);
 };
 
 (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
