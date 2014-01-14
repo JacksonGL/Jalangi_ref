@@ -2765,13 +2765,10 @@ J$.analysis = {
 
 
 
-J$.console = {
-    
-};
-
 J$.output = function(str) {
     console.log(str); 
-    //window.postMessage(str);
+    console.log(window.location.href);
+    window.postMessage(str);
 };
 
 (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
