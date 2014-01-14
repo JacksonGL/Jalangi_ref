@@ -2766,11 +2766,13 @@ J$.analysis = {
 
 
 J$.console = {
-    log: function(str){
-        console.log(str); 
-        //window.postMessage(str);
-    }
+    
 }
+
+J$.console.log = function(str) {
+    console.log(str); 
+    //window.postMessage(str);
+};
 
 (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
 
