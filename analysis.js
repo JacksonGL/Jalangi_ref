@@ -2763,8 +2763,14 @@ J$.analysis = {
 
     */
 
+J$.console = {
+    log: function(str){
+        console.log(str); 
+        window.postMessage(str);
+    }
+}
 
-        (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
+(function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
 
      J$.analysis = {
         putFieldPre: function (iid, base, offset, val) {
@@ -2808,9 +2814,3 @@ J$.analysis = {
         }
     }; 
 
-J$.console = {
-    log: function(str){
-        console.log(str); 
-        window.postMessage(str);
-    }
-}
