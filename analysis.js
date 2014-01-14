@@ -2764,49 +2764,53 @@ J$.analysis = {
     */
 
 
-(
-    function (xconsole){
         (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
 
      J$.analysis = {
         putFieldPre: function (iid, base, offset, val) {
             if (typeof base === 'boolean' || typeof base === 'number' || typeof base === 'string') {
-                xconsole.log('[iid: ' + iid + '] setting property [' + offset + '] of base object: ' + typeof base);
+                J$.console.log('[iid: ' + iid + '] setting property [' + offset + '] of base object: ' + typeof base);
             }
 
             if (offset === '__proto__') {
-                xconsole.log('[iid: ' + iid + '] setting property [' + offset + '] of base object: ' + typeof base);
+                J$.console.log('[iid: ' + iid + '] setting property [' + offset + '] of base object: ' + typeof base);
             }
             return val;
         },
         getFieldPre: function (iid, base, offset) {
             if(typeof base === 'string'){
                 if(/[\uD800-\uDFFF]/.test(base) && (offset === 'length' || offset === 'charAt' || offset === 'charCodeAt')) {
-                    xconsole.log('[iid: ' + iid + '] getting property [' + offset + '] of string containing surrogate pair: ' + base);
+                    J$.console.log('[iid: ' + iid + '] getting property [' + offset + '] of string containing surrogate pair: ' + base);
                 }
             }
         },
         invokeFunPre: function (iid, f, base, args, isConstructor) {
             if(f===J$.variables.concat && args[0] && args[0].callee && args[0].length) {
-                xconsole.log(args);
-                xconsole.log('[iid: ' + iid + '] calling concat function with arguments');
+                J$.console.log(args);
+                J$.console.log('[iid: ' + iid + '] calling concat function with arguments');
             } 
         },
         binaryPre: function (iid, op, left, right) {
             if(typeof left === 'string' && typeof right === 'object' && right !== null && right.__proto__ === Object.prototype) {
                 if (left == right){
-                    xconsole.log('[iid: ' + iid + '] string == object (===)');
+                    J$.console.log('[iid: ' + iid + '] string == object (===)');
                 }
             } else if (typeof right === 'string' && typeof left === 'object' && left !== null && left.__proto__ === Object.prototype) {
                 if (left == right){
-                    xconsole.log('[iid: ' + iid + '] string == object (===)');
+                    J$.console.log('[iid: ' + iid + '] string == object (===)');
                 }
             } 
         },
         readPre: function (iid, name, val, isGlobal) { 
             if(name === 'this' && val === window) {
-                xconsole.log('[iid: ' + iid + '] this===window'); 
+                J$.console.log('[iid: ' + iid + '] this===window'); 
             }
         }
     }; 
-})({log: function(str){console.log(str); window.postMessage(str);});
+
+J$.console = {
+    log: function(str){
+        console.log(str); 
+        window.postMessage(str);
+    }
+}
