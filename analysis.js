@@ -175,7 +175,9 @@ if (typeof J$ === 'undefined') J$ = {};
             N_LOG_NUMBER_LIT = 22,
             N_LOG_BOOLEAN_LIT = 23,
             N_LOG_UNDEFINED_LIT = 24,
-            N_LOG_NULL_LIT = 25;
+            N_LOG_NULL_LIT = 25,
+            N_LOG_GETFIELD_OWN = 26,
+            N_LOG_OPERATION = 27;
 
         //-------------------------------- End constants ---------------------------------
 
@@ -437,7 +439,7 @@ if (typeof J$ === 'undefined') J$ = {};
         //----------------------------------- Begin Jalangi Library backend ---------------------------------
 
         var isInstrumentedCaller = false, isConstructorCall = false;
-        var returnVal;
+        var returnVal = [];
         var exceptionVal;
         var scriptCount = 0;
         var lastVal;
@@ -629,6 +631,12 @@ if (typeof J$ === 'undefined') J$ = {};
                 return undefined;
             }
 
+            // window.location.hash = hash calls a function out of nowhere.
+            // fix needs a call to RR_replay and setting isInstrumentedCaller to false
+            // the following patch is not elegant
+            var tmpIsInstrumentedCaller = isInstrumentedCaller;
+            isInstrumentedCaller = false;
+
             var base_c = getConcrete(base);
             if (sandbox.analysis && sandbox.analysis.putFieldPre) {
                 val = sandbox.analysis.putFieldPre(iid, base, offset, val);
@@ -650,6 +658,14 @@ if (typeof J$ === 'undefined') J$ = {};
             if(J$.analyzer && J$.analyzer.post_P){
                 val = J$.analyzer.post_P(iid, base, offset, val);
             }
+
+            // the following patch is not elegant
+            if (rrEngine && ((offset + "") === "hash")) {
+                rrEngine.RR_replay(offset);
+            }
+
+            // the following patch is not elegant
+            isInstrumentedCaller = tmpIsInstrumentedCaller;
             return val;
         }
 
@@ -693,7 +709,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 rrEngine.RR_Fe(iid, val, dis);
             }
             exceptionVal = undefined;
-            returnVal = undefined;
+            returnVal.push(undefined);
             if (sandbox.analysis && sandbox.analysis.functionEnter) {
                 sandbox.analysis.functionEnter(iid, val, dis);
             }
@@ -743,7 +759,9 @@ if (typeof J$ === 'undefined') J$ = {};
             if (sandbox.analysis && sandbox.analysis.return_Rt) {
                 val = sandbox.analysis.return_Rt(iid, val);
             }
-            return returnVal = val;
+            returnVal.pop();
+            returnVal.push(val);
+            return val;
         }
 
         function Ra() {
@@ -751,8 +769,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.Ra();
             }
 
-            var ret = returnVal;
-            returnVal = undefined;
+            var ret = returnVal.pop();
             exceptionVal = undefined;
             if (sandbox.analysis && sandbox.analysis.return_) {
                 ret = sandbox.analysis.return_(ret);
@@ -942,7 +959,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.pre_B(iid, op, left, right);
             }
 
-            var left_c, right_c, result_c;
+            var left_c, right_c, result_c, isArith = false;
 
             if (sandbox.analysis && sandbox.analysis.binaryPre) {
                 sandbox.analysis.binaryPre(iid, op, left, right);
@@ -953,39 +970,51 @@ if (typeof J$ === 'undefined') J$ = {};
 
             switch (op) {
                 case "+":
+                    isArith = true;
                     result_c = left_c + right_c;
                     break;
                 case "-":
+                    isArith = true;
                     result_c = left_c - right_c;
                     break;
                 case "*":
+                    isArith = true;
                     result_c = left_c * right_c;
                     break;
                 case "/":
+                    isArith = true;
                     result_c = left_c / right_c;
                     break;
                 case "%":
+                    isArith = true;
                     result_c = left_c % right_c;
                     break;
                 case "<<":
+                    isArith = true;
                     result_c = left_c << right_c;
                     break;
                 case ">>":
+                    isArith = true;
                     result_c = left_c >> right_c;
                     break;
                 case ">>>":
+                    isArith = true;
                     result_c = left_c >>> right_c;
                     break;
                 case "<":
+                    isArith = true;
                     result_c = left_c < right_c;
                     break;
                 case ">":
+                    isArith = true;
                     result_c = left_c > right_c;
                     break;
                 case "<=":
+                    isArith = true;
                     result_c = left_c <= right_c;
                     break;
                 case ">=":
+                    isArith = true;
                     result_c = left_c >= right_c;
                     break;
                 case "==":
@@ -1001,12 +1030,15 @@ if (typeof J$ === 'undefined') J$ = {};
                     result_c = left_c !== right_c;
                     break;
                 case "&":
+                    isArith = true;
                     result_c = left_c & right_c;
                     break;
                 case "|":
+                    isArith = true;
                     result_c = left_c | right_c;
                     break;
                 case "^":
+                    isArith = true;
                     result_c = left_c ^ right_c;
                     break;
                 case "instanceof":
@@ -1032,6 +1064,23 @@ if (typeof J$ === 'undefined') J$ = {};
                     break;
             }
 
+            if (rrEngine) {
+                var type1 = typeof left_c;
+                var type2 = typeof right_c;
+                var flag1 = (type1 === "object" || type1 === "function")
+                    && !(left_c instanceof String)
+                    && !(left_c instanceof Number)
+                    && !(left_c instanceof Boolean)
+                var flag2 = (type2 === "object" || type2 === "function")
+                    && !(right_c instanceof String)
+                    && !(right_c instanceof Number)
+                    && !(right_c instanceof Boolean)
+                if (isArith && ( flag1 || flag2)) {
+                    //console.log(" type1 "+type1+" type2 "+type2+" op "+op+ " iid "+iid);
+                    result_c = rrEngine.RR_L(iid, result_c, N_LOG_OPERATION);
+                }
+            }
+
             if (sandbox.analysis && sandbox.analysis.binary) {
                 result_c = sandbox.analysis.binary(iid, op, left, right, result_c);
                 if (rrEngine) {
@@ -1053,7 +1102,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.U(iid, op, left);
             }
 
-            var left_c, result_c;
+            var left_c, result_c, isArith = false;
 
             if (sandbox.analysis && sandbox.analysis.unaryPre) {
                 sandbox.analysis.unaryPre(iid, op, left);
@@ -1063,12 +1112,15 @@ if (typeof J$ === 'undefined') J$ = {};
 
             switch (op) {
                 case "+":
+                    isArith = true;
                     result_c = +left_c;
                     break;
                 case "-":
+                    isArith = true;
                     result_c = -left_c;
                     break;
                 case "~":
+                    isArith = true;
                     result_c = ~left_c;
                     break;
                 case "!":
@@ -1080,6 +1132,17 @@ if (typeof J$ === 'undefined') J$ = {};
                 default:
                     throw new Error(op + " at " + iid + " not found");
                     break;
+            }
+
+            if (rrEngine) {
+                var type1 = typeof left_c;
+                var flag1 = (type1 === "object" || type1 === "function")
+                    && !(left_c instanceof String)
+                    && !(left_c instanceof Number)
+                    && !(left_c instanceof Boolean)
+                if (isArith && flag1) {
+                    result_c = rrEngine.RR_L(iid, result_c, N_LOG_OPERATION);
+                }
             }
 
             if (sandbox.analysis && sandbox.analysis.unary) {
@@ -1484,20 +1547,22 @@ if (typeof J$ === 'undefined') J$ = {};
                         seqNo++;
                         return val;
                     } else {
-                        if (isSafeToCallGetOrSet(base_c, offset, false)) {
+                        if (HOP(base_c, offset) && isSafeToCallGetOrSet(base_c, offset, false)) {
                             base_c[SPECIAL_PROP][offset] = val;
+                            return this.RR_L(iid, val, N_LOG_GETFIELD_OWN);
                         }
                         return this.RR_L(iid, val, N_LOG_GETFIELD);
                     }
                 } else if (mode === MODE_REPLAY) {
-                    if (traceInfo.getCurrent() === undefined) {
+                    var rec;
+                    if ((rec = traceInfo.getCurrent()) === undefined) {
                         traceInfo.next();
                         skippedGetFields++;
                         return val;
                     } else {
                         val = this.RR_L(iid, val, N_LOG_GETFIELD);
                         base_c = getConcrete(base);
-                        if (isSafeToCallGetOrSet(base_c, offset, false)) {
+                        if (rec[F_FUNNAME] === N_LOG_GETFIELD_OWN) {
                             base_c[offset] = val;
                         }
                         return val;
@@ -1691,7 +1756,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 }
             };
 
-            this.RR_replay = function () {
+            this.RR_replay = function (isPutFieldContext) {
                 if (mode === MODE_REPLAY) {
                     while (true) {
                         var ret = traceInfo.getCurrent();
@@ -1711,6 +1776,9 @@ if (typeof J$ === 'undefined') J$ = {};
                             }
                         }
                         if (ret[F_FUNNAME] === N_LOG_FUNCTION_ENTER) {
+                            if (isPutFieldContext) {
+                                console.log("Putfield offset " + isPutFieldContext);
+                            }
                             f = getConcrete(syncValue(ret, undefined, 0));
                             ret = traceInfo.getNext();
                             var dis = syncValue(ret, undefined, 0);
@@ -2767,8 +2835,7 @@ J$.analysis = {
 
 J$.output = function(str) {
     console.log(str); 
-    console.log(window.location.href);
-    window.postMessage(str, window.location.href);
+    //window.postMessage(str, window.location.href);
 };
 
 (function (){J$.variables = {}; J$.variables.concat = String.prototype.concat;})();
