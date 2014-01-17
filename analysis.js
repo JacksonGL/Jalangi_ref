@@ -2185,6 +2185,15 @@ if (typeof J$ === 'undefined') J$ = {};
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
 
+J$.analysis = { 
+    putFieldPre: function (iid, base, offset, val) {
+        if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
+            console.log('[NaN iid: ' + iid +'] ' + base + '.' + offset + ':' + val);
+        }
+        return val;
+    }
+}
+
 
 /*
 // check NaN
@@ -2831,7 +2840,7 @@ J$.analysis = {
 
     */
 
-
+/*
 
 J$.output = function(str) {
     console.log(str); 
@@ -2881,3 +2890,5 @@ J$.output = function(str) {
             }
         }
     }; 
+
+    */
