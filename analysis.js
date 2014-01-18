@@ -2363,22 +2363,8 @@ this frontend detection plugin tries to detect binary opertion that some times t
 this might be error-prone:
 */
 
-J$.cache = [];
-J$.printCache = function() {
-    var tmp = [];
-    var num = 0;
-    for (var i=0;i<J$.cache.length;i++){
-        if(J$.cache[i]){
-            if(J$.cache[i].length>1){
-                tmp[i] = J$.cache[i];
-                num ++;
-            }
-        }
-    }
-    console.dir(tmp);
-    console.log('No.: ' + num);
-}
-
+J$.num = 0;
+J$.susp_num = 0;
 // check NaN
     J$.analyzer = {
         post_B: function (iid, op, left, right, val) {
@@ -2389,20 +2375,17 @@ J$.printCache = function() {
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 this.info();
                 console.groupEnd();
-            } else {
-                var sig = (typeof left + op + typeof right);
-                outter:
-                if(J$.cache[iid]){
-                    for (var i=0;i<J$.cache[iid].length;i++){
-                        if (J$.cache[iid][i].sig == sig) {
-                            J$.cache[iid][i].count += 1;
-                            break outter;
-                        }
-                    }
-                    J$.cache[iid].push({sig: sig,count: 1});
-                } else {
-                    J$.cache[iid] = [{sig: sig,count: 1}];
-                }
+                J$.num++;
+                
+            }
+
+            if(typeof left !== typeof right && && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
+                console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
+                console.group();
+                console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
+                this.info();
+                console.groupEnd();
+                J$.susp_num++;
             }
             return val;
             //return result_c;
