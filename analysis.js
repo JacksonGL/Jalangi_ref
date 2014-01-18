@@ -2368,7 +2368,7 @@ J$.susp_num = 0;
 // check NaN
     J$.analyzer = {
         post_B: function (iid, op, left, right, val) {
-            if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
+            if(((this.isMeaningless(left) || this.isMeaningless(right)) && op!= '>' && op!= '>=' && op!= '<' && op!= '<=' && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
                 || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
                 //console.warn('@1[strange binary operation: | iid: ' + iid +']:' + val);
                 //console.group();
@@ -2378,7 +2378,7 @@ J$.susp_num = 0;
                 J$.num++; 
             } 
 
-            if(typeof left !== typeof right && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
+            if(typeof left !== typeof right && op!= '>' && op!= '>=' && op!= '<' && op!= '<=' && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
                 if(op!== '+') {
                     console.warn('@2[strange binary operation: | iid: ' + iid +']:' + val);
                     console.group();
