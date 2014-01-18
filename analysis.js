@@ -2379,7 +2379,7 @@ J$.susp_num = 0;
                 
             }
 
-            if(typeof left !== typeof right && && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
+            if(typeof left !== typeof right && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
                 console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
                 console.group();
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
