@@ -2203,11 +2203,12 @@ J$.analysis = {
 //experiment for JIT compiler-fiendly checker
 J$.type_memo = [];
 J$.array_uninit_memo = [];
+J$.array_change_elem_type = [];
 J$.analysis = {
     getField: function(iid, base, offset, val) {
         if(base){
             if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
-                if(typeof offset == 'number' && !isNaN(offset)) {
+                if(typeof offset == 'number' && !isNaN(offset) && typeof val == 'undefined') {
                     J$.array_uninit_memo.push(iid); 
                 }
                 return val;
@@ -2259,6 +2260,17 @@ J$.analysis = {
         
         return val;
     }
+
+    putFieldPre: function(iid, base, offset, val) {
+        if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
+            if(typeof offset == 'number' && !isNaN(offset)) {
+                if(typeof base[offset] === 'number' && typeof val !== 'number'){
+                    J$.array_change_elem_type.push(iid); 
+                }
+            }
+        }
+        return val;
+    }
 };
 
 J$.typeInfo = function() {
@@ -2281,11 +2293,17 @@ J$.typeInfo = function() {
         }
 
         if(J$.array_uninit_memo){
-            var num2 = 0;
             console.log(JSON.stringify(J$.array_uninit_memo));
             console.log('Number of load of uninitialized array elements spotted: ' + J$.array_uninit_memo.length);
         } else {
             J$.array_uninit_memo = [];
+        }
+
+        if(J$.array_change_elem_type) {
+            console.log(JSON.stringify(J$.array_change_elem_type));
+            console.log('Number of putting non-numeric values in numeric array statements spotted: ' + J$.array_change_elem_type.length);
+        } else {
+            J$.array_change_elem_type = [];
         }
     }
 
