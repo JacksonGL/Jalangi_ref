@@ -2376,7 +2376,7 @@ J$.susp_num = 0;
                 //this.info();
                 console.groupEnd();
                 J$.num++; 
-            }
+            } 
 
             if(typeof left !== typeof right && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
                 if(op!== '+') {
