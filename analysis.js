@@ -2370,11 +2370,11 @@ J$.susp_num = 0;
         post_B: function (iid, op, left, right, val) {
             if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
                 || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
-                console.warn('@1[strange binary operation: | iid: ' + iid +']:' + val);
-                console.group();
+                //console.warn('@1[strange binary operation: | iid: ' + iid +']:' + val);
+                //console.group();
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 //this.info();
-                console.groupEnd();
+                //console.groupEnd();
                 J$.num++; 
             } 
 
