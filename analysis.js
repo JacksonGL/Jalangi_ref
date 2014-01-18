@@ -2204,6 +2204,7 @@ J$.analysis = {
 J$.type_memo = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
+J$.array_incont_array = [];
 J$.analysis = {
     getField: function(iid, base, offset, val) {
         if(base){
@@ -2266,6 +2267,10 @@ J$.analysis = {
                 if(typeof base[offset] === 'number' && typeof val !== 'number'){
                     J$.array_change_elem_type.push(iid); 
                 }
+
+                if(base.length < offset) {
+                    J$.array_incont_array.push(iid);
+                }
             }
         }
         return val;
@@ -2301,6 +2306,13 @@ J$.typeInfo = function() {
         if(J$.array_change_elem_type) {
             console.log(JSON.stringify(J$.array_change_elem_type));
             console.log('Number of putting non-numeric values in numeric array statements spotted: ' + J$.array_change_elem_type.length);
+        } else {
+            J$.array_change_elem_type = [];
+        }
+
+        if(J$.array_incont_array) {
+            console.log(JSON.stringify(J$.array_incont_array));
+            console.log('Number of putting incontiguous array statements: ' + J$.array_incont_array.length);
         } else {
             J$.array_change_elem_type = [];
         }
