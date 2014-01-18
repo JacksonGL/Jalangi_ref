@@ -2202,10 +2202,14 @@ J$.analysis = {
 
 //experiment for JIT compiler-fiendly checker
 J$.type_memo = [];
+J$.array_uninit_memo = [];
 J$.analysis = {
     getField: function(iid, base, offset, val) {
         if(base){
             if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
+                if(typeof offset == number && !isNaN(offset)) {
+                    array_uninit_memo.push(iid);
+                }
                 return val;
             }
 
@@ -2274,6 +2278,14 @@ J$.typeInfo = function() {
             console.log('Number of polymorphic statements spotted: ' + num);
         } else {
             J$.type_memo = [];
+        }
+
+        if(J$.array_uninit_memo){
+            var num2 = 0;
+            console.log(JSON.stringify(array_uninit_memo));
+            console.log('Number of load of uninitialized array elements spotted: ' + array_uninit_memo.length);
+        } else {
+            J$.array_uninit_memo = [];
         }
     }
 
