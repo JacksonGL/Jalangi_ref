@@ -2205,6 +2205,8 @@ J$.type_memo = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
 J$.array_incont_array = [];
+J$.stack = [];
+J$.init_obj_in_non_cons = [];
 J$.analysis = {
     getField: function(iid, base, offset, val) {
         if(base){
@@ -2273,7 +2275,33 @@ J$.analysis = {
                 }
             }
         }
+
+        // check init object members in non-consturctor functions
+        if(typeof base[offset] === 'undefined' && typeof val !== 'undefined') {
+            if(J$.stack.length > 0 && J$.stack[J$.stack.length - 1].isCon === false) {
+                J$.init_obj_in_non_cons.push(iid);
+            }
+        }
         return val;
+    },
+    invokeFun: function(iid, f, base, args, val, isConstructor) {
+        if(isConstructor === true) {
+            J$.stack.push({fun: f, isCon: isConstructor});
+        }
+        return val;
+    },
+    functionEnter: function(iid, val, dis) {
+        if(J$.stack.length === 0 || J$.stack[J$.stack.length - 1].fun !== val) {
+            J$.stack.push({fun: f, isCon: true});
+        }
+    },
+    return_Rt: function(iid, val) {
+        J$.stack.pop();
+        return val;
+    },
+    return_: function(ret) {
+        J$.stack.pop();
+        return ret;
     }
 };
 
@@ -2315,6 +2343,13 @@ J$.typeInfo = function() {
             console.log('Number of putting incontiguous array statements: ' + J$.array_incont_array.length);
         } else {
             J$.array_change_elem_type = [];
+        }
+
+        if(J$.init_obj_in_non_cons) {
+            console.log(JSON.stringify(J$.init_obj_in_non_cons));
+            console.log('Number of statements init objects in non-constructor: ' + J$.init_obj_in_non_cons.length);
+        } else {
+            J$.init_obj_in_non_cons = [];
         }
     }
 
