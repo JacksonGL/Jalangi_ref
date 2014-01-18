@@ -2282,8 +2282,8 @@ J$.typeInfo = function() {
 
         if(J$.array_uninit_memo){
             var num2 = 0;
-            console.log(JSON.stringify(array_uninit_memo));
-            console.log('Number of load of uninitialized array elements spotted: ' + array_uninit_memo.length);
+            console.log(JSON.stringify(J$.array_uninit_memo));
+            console.log('Number of load of uninitialized array elements spotted: ' + J$.array_uninit_memo.length);
         } else {
             J$.array_uninit_memo = [];
         }
