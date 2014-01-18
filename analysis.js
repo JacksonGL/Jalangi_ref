@@ -2292,7 +2292,7 @@ J$.analysis = {
     },
     functionEnter: function(iid, val, dis) {
         if(J$.stack.length === 0 || J$.stack[J$.stack.length - 1].fun !== val) {
-            J$.stack.push({fun: f, isCon: true});
+            J$.stack.push({fun: val, isCon: true});
         }
     },
     return_Rt: function(iid, val) {
