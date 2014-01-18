@@ -2373,10 +2373,9 @@ J$.susp_num = 0;
                 console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
                 console.group();
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
-                this.info();
+                //this.info();
                 console.groupEnd();
                 J$.num++;
-                
             }
 
             if(typeof left !== typeof right && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
