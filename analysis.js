@@ -2259,8 +2259,7 @@ J$.analysis = {
         }
         
         return val;
-    }
-
+    },
     putFieldPre: function(iid, base, offset, val) {
         if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
             if(typeof offset == 'number' && !isNaN(offset)) {
