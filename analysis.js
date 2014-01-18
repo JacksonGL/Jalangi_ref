@@ -2370,7 +2370,7 @@ J$.susp_num = 0;
         post_B: function (iid, op, left, right, val) {
             if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
                 || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
-                console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
+                console.warn('@1[strange binary operation: | iid: ' + iid +']:' + val);
                 console.group();
                 console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                 //this.info();
@@ -2380,7 +2380,7 @@ J$.susp_num = 0;
 
             if(typeof left !== typeof right && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') {
                 if(typeof op!== '+') {
-                    console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
+                    console.warn('@2[strange binary operation: | iid: ' + iid +']:' + val);
                     console.group();
                     console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
                     //this.info();
