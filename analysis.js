@@ -2207,7 +2207,7 @@ J$.analysis = {
     getField: function(iid, base, offset, val) {
         if(base){
             if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
-                if(typeof offset == number && !isNaN(offset)) {
+                if(typeof offset == 'number' && !isNaN(offset)) {
                     array_uninit_memo.push(iid);
                 }
                 return val;
