@@ -2197,10 +2197,10 @@ J$.analysis = {
 */
 
 
-//experiment for likely type inconsistency
-// may be should ask Koushik to refactor this piece of code to make it work for front end
+
 
 //experiment for JIT compiler-fiendly checker
+/*
 J$.type_memo = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
@@ -2352,6 +2352,78 @@ J$.typeInfo = function() {
             J$.init_obj_in_non_cons = [];
         }
     }
+*/
+
+
+//experiment for implicit type coercion check
+
+/*
+different type binary calculation check,
+this frontend detection plugin tries to detect binary opertion that some times takes different types of operand,
+this might be error-prone:
+*/
+
+J$.cache = [];
+J$.printCache = function() {
+    var tmp = [];
+    var num = 0;
+    for (var i=0;i<J$.cache.length;i++){
+        if(J$.cache[i]){
+            if(J$.cache[i].length>1){
+                tmp[i] = J$.cache[i];
+                num ++;
+            }
+        }
+    }
+    console.dir(tmp);
+    console.log('No.: ' + num);
+}
+
+// check NaN
+    J$.analyzer = {
+        post_B: function (iid, op, left, right, val) {
+            if(((this.isMeaningless(left) || this.isMeaningless(right)) && op != '==' && op != '!=' && op != '===' && op != '!==' && op != 'instanceof' && op != 'in' && op != '&&' && op != '||') 
+                || typeof val == 'undefined' ||  ((typeof val == 'number') && isNaN(val) == true)) {
+                console.warn('[strange binary operation: | iid: ' + iid +']:' + val);
+                console.group();
+                console.warn('left: ' + left + '[' + typeof left +']' + '  op:' + op + '  right: ' + right + '[' + typeof right +']');
+                this.info();
+                console.groupEnd();
+            } else {
+                var sig = (typeof left + op + typeof right);
+                outter:
+                if(J$.cache[iid]){
+                    for (var i=0;i<J$.cache[iid].length;i++){
+                        if (J$.cache[iid][i].sig == sig) {
+                            J$.cache[iid][i].count += 1;
+                            break outter;
+                        }
+                    }
+                    J$.cache[iid].push({sig: sig,count: 1});
+                } else {
+                    J$.cache[iid] = [{sig: sig,count: 1}];
+                }
+            }
+            return val;
+            //return result_c;
+        },
+        info: function (obj) {
+            console.groupCollapsed();
+            console.info(console.trace());
+            if(obj){
+                //console.dir(obj);
+            }
+            console.groupEnd();
+        },
+        isMeaningless: function (val) {
+            if(typeof val == 'undefined'){
+                return true;
+            } else if(typeof val == 'number' && isNaN(val)){
+                return true;
+            }
+            return false;   
+        }
+    };
 
 
 /*
