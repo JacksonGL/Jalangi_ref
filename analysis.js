@@ -2212,7 +2212,7 @@ J$.analysis = {
         if(base){
             if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
                 if(typeof offset == 'number' && !isNaN(offset) && typeof val == 'undefined') {
-                    J$.array_uninit_memo.push(iid); 
+                    //J$.array_uninit_memo.push(iid); 
                 }
                 return val;
             }
@@ -2267,11 +2267,11 @@ J$.analysis = {
         if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
             if(typeof offset == 'number' && !isNaN(offset)) {
                 if(typeof base[offset] === 'number' && typeof val !== 'number'){
-                    J$.array_change_elem_type.push(iid); 
+                    //J$.array_change_elem_type.push(iid); 
                 }
 
                 if(base.length < offset) {
-                    J$.array_incont_array.push(iid);
+                    //J$.array_incont_array.push(iid);
                 }
             }
         }
