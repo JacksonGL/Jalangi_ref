@@ -2185,7 +2185,7 @@ if (typeof J$ === 'undefined') J$ = {};
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
 // experiment for NaN bug checker
-/**/
+/*
 J$.analysis = { 
     putFieldPre: function (iid, base, offset, val) {
         if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
@@ -2195,12 +2195,12 @@ J$.analysis = {
     }
 }
 
-
+*/
 
 
 
 //experiment for JIT compiler-fiendly checker
-/*
+/**/
 J$.type_memo = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
@@ -2352,7 +2352,7 @@ J$.typeInfo = function() {
             J$.init_obj_in_non_cons = [];
         }
     }
-*/
+
 
 
 //experiment for implicit type coercion check
