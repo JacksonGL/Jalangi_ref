@@ -2200,7 +2200,7 @@ J$.analysis = {
 
 
 //experiment for JIT compiler-fiendly checker
-/*
+/**/
 J$.type_memo = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
@@ -2352,7 +2352,7 @@ J$.typeInfo = function() {
             J$.init_obj_in_non_cons = [];
         }
     }
-*/
+
 
 
 //experiment for implicit type coercion check
@@ -2363,7 +2363,7 @@ this frontend detection plugin tries to detect binary opertion that some times t
 this might be error-prone:
 */
 
-/**/
+/*
 J$.num = 0;
 J$.susp_num = 0;
 // check NaN
@@ -2409,7 +2409,7 @@ J$.susp_num = 0;
             return false;   
         }
     };
-
+*/
 
 /*
 // check NaN
