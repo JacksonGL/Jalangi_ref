@@ -2185,7 +2185,7 @@ if (typeof J$ === 'undefined') J$ = {};
 // change line: 1 to line: 8 in node_modules/source-map/lib/source-map/source-node.js
 
 // experiment for NaN bug checker
-/*
+/**/
 J$.analysis = { 
     putFieldPre: function (iid, base, offset, val) {
         if(typeof base != 'undefined' && base != null && (typeof val == 'number') && isNaN(val) == true){
@@ -2194,7 +2194,7 @@ J$.analysis = {
         return val;
     }
 }
-*/
+
 
 
 
