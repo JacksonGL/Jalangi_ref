@@ -2278,29 +2278,29 @@ J$.analysis = {
 
         // check init object members in non-consturctor functions
         if(typeof base[offset] === 'undefined' && typeof val !== 'undefined') {
-            if(J$.stack.length > 0 && J$.stack[J$.stack.length - 1].isCon === false) {
-                J$.init_obj_in_non_cons.push(iid);
-            }
+            //if(J$.stack.length > 0 && J$.stack[J$.stack.length - 1].isCon === false) {
+            //    J$.init_obj_in_non_cons.push(iid);
+            //}
         }
         return val;
     },
     invokeFun: function(iid, f, base, args, val, isConstructor) {
         if(isConstructor === true) {
-            J$.stack.push({fun: f, isCon: isConstructor});
+            //J$.stack.push({fun: f, isCon: isConstructor});
         }
         return val;
     },
     functionEnter: function(iid, val, dis) {
-        if(J$.stack.length === 0 || J$.stack[J$.stack.length - 1].fun !== val) {
-            J$.stack.push({fun: val, isCon: true});
-        }
+        //if(J$.stack.length === 0 || J$.stack[J$.stack.length - 1].fun !== val) {
+            //J$.stack.push({fun: val, isCon: true});
+        //}
     },
     return_Rt: function(iid, val) {
-        J$.stack.pop();
+        //J$.stack.pop();
         return val;
     },
     return_: function(ret) {
-        J$.stack.pop();
+        //J$.stack.pop();
         return ret;
     }
 };
