@@ -2250,11 +2250,11 @@ J$.analysis = {
                                 break outter;
                             }
                         }
-                        J$.type_memo[iid].push(signature);
+                        //J$.type_memo[iid].push(signature);
                     }
                 } else {
-                    J$.type_memo[iid] = [];
-                    J$.type_memo[iid].push(signature);
+                    //J$.type_memo[iid] = [];
+                    //J$.type_memo[iid].push(signature);
                 }
             } else {
                 J$.type_memo = [];
