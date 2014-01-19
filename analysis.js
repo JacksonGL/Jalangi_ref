@@ -2363,6 +2363,7 @@ this frontend detection plugin tries to detect binary opertion that some times t
 this might be error-prone:
 */
 
+/*
 J$.num = 0;
 J$.susp_num = 0;
 // check NaN
@@ -2408,7 +2409,7 @@ J$.susp_num = 0;
             return false;   
         }
     };
-
+*/
 
 /*
 // check NaN
