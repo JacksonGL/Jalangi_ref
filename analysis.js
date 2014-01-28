@@ -2200,7 +2200,7 @@ J$.analysis = {
  
 
 //experiment for JIT compiler-fiendly checker
-/*
+/**/
 J$.type_memo = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
@@ -2212,7 +2212,7 @@ J$.analysis = {
         if(base){
             if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
                 if(typeof offset == 'number' && !isNaN(offset) && typeof val == 'undefined') {
-                    //J$.array_uninit_memo.push(iid); 
+                    J$.array_uninit_memo.push(iid); 
                 }
                 return val;
             }
@@ -2250,11 +2250,11 @@ J$.analysis = {
                                 break outter;
                             }
                         }
-                        //J$.type_memo[iid].push(signature);
+                        J$.type_memo[iid].push(signature);
                     }
                 } else {
-                    //J$.type_memo[iid] = [];
-                    //J$.type_memo[iid].push(signature);
+                    J$.type_memo[iid] = [];
+                    J$.type_memo[iid].push(signature);
                 }
             } else {
                 J$.type_memo = [];
@@ -2267,40 +2267,40 @@ J$.analysis = {
         if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
             if(typeof offset == 'number' && !isNaN(offset)) {
                 if(typeof base[offset] === 'number' && typeof val !== 'number'){
-                    //J$.array_change_elem_type.push(iid); 
+                    J$.array_change_elem_type.push(iid); 
                 }
 
                 if(base.length < offset) {
-                    //J$.array_incont_array.push(iid);
+                    J$.array_incont_array.push(iid);
                 }
             }
         }
 
         // check init object members in non-consturctor functions
         if(typeof base[offset] === 'undefined' && typeof val !== 'undefined') {
-            //if(J$.stack.length > 0 && J$.stack[J$.stack.length - 1].isCon === false) {
-            //    J$.init_obj_in_non_cons.push(iid);
-            //}
+            if(J$.stack.length > 0 && J$.stack[J$.stack.length - 1].isCon === false) {
+                J$.init_obj_in_non_cons.push(iid);
+            }
         }
         return val;
     },
     invokeFun: function(iid, f, base, args, val, isConstructor) {
         if(isConstructor === true) {
-            //J$.stack.push({fun: f, isCon: isConstructor});
+            J$.stack.push({fun: f, isCon: isConstructor});
         }
         return val;
     },
     functionEnter: function(iid, val, dis) {
-        //if(J$.stack.length === 0 || J$.stack[J$.stack.length - 1].fun !== val) {
-            //J$.stack.push({fun: val, isCon: true});
-        //}
+        if(J$.stack.length === 0 || J$.stack[J$.stack.length - 1].fun !== val) {
+            J$.stack.push({fun: val, isCon: true});
+        }
     },
     return_Rt: function(iid, val) {
-        //J$.stack.pop();
+        J$.stack.pop();
         return val;
     },
     return_: function(ret) {
-        //J$.stack.pop();
+        J$.stack.pop();
         return ret;
     }
 };
@@ -2352,7 +2352,7 @@ J$.typeInfo = function() {
             J$.init_obj_in_non_cons = [];
         }
     }
-*/
+
 
 
 //experiment for implicit type coercion check
