@@ -2202,6 +2202,7 @@ J$.analysis = {
 //experiment for JIT compiler-fiendly checker
 /**/
 J$.type_memo = [];
+J$.type_count = [];
 J$.array_uninit_memo = [];
 J$.array_change_elem_type = [];
 J$.array_incont_array = [];
@@ -2244,6 +2245,7 @@ J$.analysis = {
                     }
                 }
                 if(J$.type_memo[iid]){
+                    J$.type_count[iid] ++;
                     outter:{
                         for(var i=0;i<J$.type_memo[iid].length;i++){
                             if(J$.type_memo[iid][i] == signature){
@@ -2255,6 +2257,7 @@ J$.analysis = {
                 } else {
                     J$.type_memo[iid] = [];
                     J$.type_memo[iid].push(signature);
+                    J$.type_count[iid] = 0;
                 }
             } else {
                 J$.type_memo = [];
@@ -2310,7 +2313,7 @@ J$.typeInfo = function() {
             var num = 0;
             for(var i=0;i<J$.type_memo.length;i++){
                 if(J$.type_memo[i] && J$.type_memo[i].length > 1){
-                    console.log('iid: ' + i + ':');
+                    console.log('iid: ' + i + ':' + ' times: ' + J$.type_count[iid]);
                     console.group();
                     for(var j=0;j<J$.type_memo[i].length;j++){
                         console.log('sig['+j+']:' + J$.type_memo[i][j]);
