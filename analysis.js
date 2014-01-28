@@ -2200,7 +2200,7 @@ J$.analysis = {
  
 
 //experiment for JIT compiler-fiendly checker
-/*
+/**/
 J$.type_memo = [];
 J$.type_count = [];
 J$.array_uninit_memo = [];
@@ -2355,7 +2355,7 @@ J$.typeInfo = function() {
             J$.init_obj_in_non_cons = [];
         }
     }
-*/
+
 
 
 //experiment for implicit type coercion check
