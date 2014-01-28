@@ -2313,7 +2313,7 @@ J$.typeInfo = function() {
             var num = 0;
             for(var i=0;i<J$.type_memo.length;i++){
                 if(J$.type_memo[i] && J$.type_memo[i].length > 1){
-                    console.log('iid: ' + i + ':' + ' times: ' + J$.type_count[iid]);
+                    console.log('iid: ' + i + ':' + ' times: ' + J$.type_count[i]);
                     console.group();
                     for(var j=0;j<J$.type_memo[i].length;j++){
                         console.log('sig['+j+']:' + J$.type_memo[i][j]);
