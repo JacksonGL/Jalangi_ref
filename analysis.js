@@ -2200,7 +2200,7 @@ J$.analysis = {
  
 
 //experiment for JIT compiler-fiendly checker
-/**/
+/*
 J$.type_memo = [];
 J$.type_count = [];
 J$.array_uninit_memo = [];
@@ -2212,7 +2212,7 @@ J$.analysis = {
     getField: function(iid, base, offset, val) {
         if(base){
             if(base.__proto__ && base.__proto__.constructor && base.__proto__.constructor.name && base.__proto__.constructor.name == 'Array'){
-                if(typeof offset == 'number' && !isNaN(offset) && typeof val == 'undefined') {
+                if(typeof offset === 'number' && !isNaN(offset) && typeof val === 'undefined') {
                     J$.array_uninit_memo.push(iid); 
                 }
                 return val;
@@ -2356,7 +2356,7 @@ J$.typeInfo = function() {
         }
     }
 
-
+*/
 
 //experiment for implicit type coercion check
 
