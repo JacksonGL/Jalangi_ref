@@ -514,7 +514,7 @@ var isWorker = false;
                 }
                 try {
                     //return f(sandbox.instrumentCode(getConcrete(args[0]), {wrapProgram:false}).code);
-                    return sandbox.instrumentCode(getConcrete(args[0]), {wrapProgram:false}).code;
+                    return getConcrete(args[0]);
                 } finally {
                     if (rrEngine) {
                         rrEngine.RR_evalEnd();
