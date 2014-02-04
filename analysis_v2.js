@@ -513,7 +513,8 @@ var isWorker = false;
                     rrEngine.RR_evalBegin();
                 }
                 try {
-                    return f(sandbox.instrumentCode(getConcrete(args[0]), {wrapProgram:false}).code);
+                    //return f(sandbox.instrumentCode(getConcrete(args[0]), {wrapProgram:false}).code);
+                    return sandbox.instrumentCode(getConcrete(args[0]), {wrapProgram:false}).code;
                 } finally {
                     if (rrEngine) {
                         rrEngine.RR_evalEnd();
