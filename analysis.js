@@ -493,9 +493,6 @@ if (typeof J$ === 'undefined') J$ = {};
 
 
         function invokeEval(base, f, args) {
-            if (rrEngine) {
-                rrEngine.RR_evalBegin();
-            }
             try {
                 return f(
                     //sandbox.instrumentCode(
@@ -503,15 +500,13 @@ if (typeof J$ === 'undefined') J$ = {};
                     //, false)
                 );
             } finally {
-                if (rrEngine) {
-                    rrEngine.RR_evalEnd();
-                }
+
             }
         }
 
 
         function invokeFun(iid, base, f, args, isConstructor) {
-            var g, invoke, val, ic, tmp_rrEngine, tmpIsConstructorCall, tmpIsInstrumentedCaller, idx;
+            var g, invoke, val, ic, tmpIsConstructorCall, tmpIsInstrumentedCaller, idx;
 
             var f_c = getConcrete(f);
 
@@ -523,10 +518,7 @@ if (typeof J$ === 'undefined') J$ = {};
             isConstructorCall = isConstructor;
 
             if (sandbox.analysis && sandbox.analysis.invokeFunPre) {
-                tmp_rrEngine = rrEngine;
-                rrEngine = null;
                 sandbox.analysis.invokeFunPre(iid, f, base, args, isConstructor);
-                rrEngine = tmp_rrEngine;
             }
 
             executionIndex.executionIndexInc(iid);
@@ -554,9 +546,6 @@ if (typeof J$ === 'undefined') J$ = {};
                         val = g.apply(base, args);
                     }
                 } else {
-                    if (rrEngine) {
-                        rrEngine.RR_replay();
-                    }
                     val = undefined;
                 }
             } finally {
@@ -565,19 +554,8 @@ if (typeof J$ === 'undefined') J$ = {};
                 isConstructorCall = tmpIsConstructorCall;
             }
 
-            if (!ic && arr[1]) {
-                if (rrEngine) {
-                    val = rrEngine.RR_L(iid, val, N_LOG_RETURN);
-                }
-            }
             if (sandbox.analysis && sandbox.analysis.invokeFun) {
-                tmp_rrEngine = rrEngine;
-                rrEngine = null;
                 val = sandbox.analysis.invokeFun(iid, f, base, args, val, isConstructor);
-                rrEngine = tmp_rrEngine;
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(val);
-                }
             }
             //printValueForTesting(2, iid, val);
             return val;
@@ -606,18 +584,8 @@ if (typeof J$ === 'undefined') J$ = {};
             // what would happen if base_c is undefined?
             var val = base_c[getConcrete(offset)];
 
-
-            if (rrEngine && !norr) {
-                val = rrEngine.RR_G(iid, base, offset, val);
-            }
             if (sandbox.analysis && sandbox.analysis.getField) {
-                var tmp_rrEngine = rrEngine;
-                rrEngine = null;
                 val = sandbox.analysis.getField(iid, base, offset, val);
-                rrEngine = tmp_rrEngine;
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(val);
-                }
             }
             //printValueForTesting(1, iid, val);
 
@@ -653,9 +621,6 @@ if (typeof J$ === 'undefined') J$ = {};
                 base_c[getConcrete(offset)] = val;
             }
 
-            if (rrEngine) {
-                rrEngine.RR_P(iid, base, offset, val);
-            }
             if (sandbox.analysis && sandbox.analysis.putField) {
                 val = sandbox.analysis.putField(iid, base, offset, val);
             }
@@ -664,10 +629,6 @@ if (typeof J$ === 'undefined') J$ = {};
                 val = J$.analyzer.post_P(iid, base, offset, val);
             }
 
-            // the following patch is not elegant
-            if (rrEngine && ((offset + "") === "hash")) {
-                rrEngine.RR_replay(offset);
-            }
 
             // the following patch is not elegant
             isInstrumentedCaller = tmpIsInstrumentedCaller;
@@ -710,9 +671,7 @@ if (typeof J$ === 'undefined') J$ = {};
             }
 
             executionIndex.executionIndexCall();
-            if (rrEngine) {
-                rrEngine.RR_Fe(iid, val, dis);
-            }
+
             exceptionVal = undefined;
             returnVal.push(undefined);
             if (sandbox.analysis && sandbox.analysis.functionEnter) {
@@ -728,9 +687,7 @@ if (typeof J$ === 'undefined') J$ = {};
 
             var ret = false, tmp;
             executionIndex.executionIndexReturn();
-            if (rrEngine) {
-                rrEngine.RR_Fr(iid);
-            }
+
             if (sandbox.analysis && sandbox.analysis.functionExit) {
                 ret = sandbox.analysis.functionExit(iid);
             }
@@ -790,9 +747,7 @@ if (typeof J$ === 'undefined') J$ = {};
             }
 
             scriptCount++;
-            if (rrEngine) {
-                rrEngine.RR_Se(iid, val);
-            }
+
             if (sandbox.analysis && sandbox.analysis.scriptEnter) {
                 sandbox.analysis.scriptEnter(iid, val);
             }
@@ -804,9 +759,7 @@ if (typeof J$ === 'undefined') J$ = {};
             }
             var tmp;
             scriptCount--;
-            if (rrEngine) {
-                rrEngine.RR_Sr(iid);
-            }
+
             if (sandbox.analysis && sandbox.analysis.scriptExit) {
                 sandbox.analysis.scriptExit(iid);
             }
@@ -836,9 +789,7 @@ if (typeof J$ === 'undefined') J$ = {};
             if (sandbox.analysis && sandbox.analysis.literalPre) {
                 sandbox.analysis.literalPre(iid, val);
             }
-            if (rrEngine) {
-                rrEngine.RR_T(iid, val, type);
-            }
+
             if (type === N_LOG_FUNCTION_LIT) {
                 if (Object && Object.defineProperty && typeof Object.defineProperty === 'function') {
                     Object.defineProperty(val, SPECIAL_PROP2, {
@@ -851,9 +802,6 @@ if (typeof J$ === 'undefined') J$ = {};
 
             if (sandbox.analysis && sandbox.analysis.literal) {
                 val = sandbox.analysis.literal(iid, val);
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(val);
-                }
             }
 
             return val;
@@ -865,9 +813,6 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.H(iid, val);
             }
 
-            if (rrEngine) {
-                val = rrEngine.RR_H(iid, val);
-            }
             return val;
         }
 
@@ -881,14 +826,10 @@ if (typeof J$ === 'undefined') J$ = {};
             if (sandbox.analysis && sandbox.analysis.readPre) {
                 sandbox.analysis.readPre(iid, name, val, isGlobal);
             }
-            if (rrEngine) {
-                val = rrEngine.RR_R(iid, name, val);
-            }
+
             if (sandbox.analysis && sandbox.analysis.read) {
                 val = sandbox.analysis.read(iid, name, val, isGlobal);
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(val);
-                }
+
             }
             //printValueForTesting(3, iid, val);
 
@@ -917,9 +858,7 @@ if (typeof J$ === 'undefined') J$ = {};
             if (sandbox.analysis && sandbox.analysis.writePre) {
                 sandbox.analysis.writePre(iid, name, val, lhs);
             }
-            if (rrEngine) {
-                rrEngine.RR_W(iid, name, val);
-            }
+
             if (sandbox.analysis && sandbox.analysis.write) {
                 val = sandbox.analysis.write(iid, name, val, lhs);
             }
@@ -936,9 +875,6 @@ if (typeof J$ === 'undefined') J$ = {};
                 J$.analyzer.N(iid, name, val, isArgumentSync);
             }
 
-            if (rrEngine) {
-                rrEngine.RR_N(iid, name, val, isArgumentSync);
-            }
             if (sandbox.analysis && sandbox.analysis.declare) {
                 sandbox.analysis.declare(iid, name, val, isArgumentSync);
             }
@@ -1051,9 +987,7 @@ if (typeof J$ === 'undefined') J$ = {};
                     break;
                 case "in":
                     result_c = left_c in right_c;
-                    if (rrEngine) {
-                        result_c = rrEngine.RR_L(iid, result_c, N_LOG_RETURN);
-                    }
+
                     break;
                 case "&&":
                     result_c = left_c && right_c;
@@ -1069,28 +1003,9 @@ if (typeof J$ === 'undefined') J$ = {};
                     break;
             }
 
-            if (rrEngine) {
-                var type1 = typeof left_c;
-                var type2 = typeof right_c;
-                var flag1 = (type1 === "object" || type1 === "function")
-                    && !(left_c instanceof String)
-                    && !(left_c instanceof Number)
-                    && !(left_c instanceof Boolean)
-                var flag2 = (type2 === "object" || type2 === "function")
-                    && !(right_c instanceof String)
-                    && !(right_c instanceof Number)
-                    && !(right_c instanceof Boolean)
-                if (isArith && ( flag1 || flag2)) {
-                    //console.log(" type1 "+type1+" type2 "+type2+" op "+op+ " iid "+iid);
-                    result_c = rrEngine.RR_L(iid, result_c, N_LOG_OPERATION);
-                }
-            }
 
             if (sandbox.analysis && sandbox.analysis.binary) {
                 result_c = sandbox.analysis.binary(iid, op, left, right, result_c);
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(result_c);
-                }
             }
 
             if(J$.analyzer && J$.analyzer.post_B){
@@ -1139,22 +1054,9 @@ if (typeof J$ === 'undefined') J$ = {};
                     break;
             }
 
-            if (rrEngine) {
-                var type1 = typeof left_c;
-                var flag1 = (type1 === "object" || type1 === "function")
-                    && !(left_c instanceof String)
-                    && !(left_c instanceof Number)
-                    && !(left_c instanceof Boolean)
-                if (isArith && flag1) {
-                    result_c = rrEngine.RR_L(iid, result_c, N_LOG_OPERATION);
-                }
-            }
 
             if (sandbox.analysis && sandbox.analysis.unary) {
                 result_c = sandbox.analysis.unary(iid, op, left, result_c);
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(result_c);
-                }
             }
             return result_c;
         }
@@ -1228,9 +1130,6 @@ if (typeof J$ === 'undefined') J$ = {};
 
             if (sandbox.analysis && sandbox.analysis.conditional) {
                 lastVal = sandbox.analysis.conditional(iid, left, ret);
-                if (rrEngine) {
-                    rrEngine.RR_updateRecordedObject(lastVal);
-                }
             } else {
                 lastVal = left_c;
             }
