@@ -586,7 +586,9 @@ if (typeof J$ === 'undefined') J$ = {};
         //var globalInstrumentationInfo;
 
         function G(iid, base, offset, norr) {
-
+            if (typeof offset === 'number' && isNaN(offset)) {
+                console.log('[iid]: '+iid+' offset is ' + offset);
+            }
             if(J$.analyzer && J$.analyzer.pre_G){
                 J$.analyzer.pre_G(iid, base, offset, norr);
             }
