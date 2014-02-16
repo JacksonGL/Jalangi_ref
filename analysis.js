@@ -334,7 +334,35 @@ if (typeof J$ === 'undefined') J$ = {};
         function HOP(obj, prop) {
             return HAS_OWN_PROPERTY_CALL.apply(HAS_OWN_PROPERTY, [obj, prop]);
         }
+        
+        function encodeNaNandInfForJSON(key, value) {
+            if (value === Infinity) {
+                return "Infinity";
+            } else if (value !== value) {
+                return "NaN";
+            }
+            return value;
+        }
 
+        function decodeNaNandInfForJSON(key, value) {
+            if ( value === "Infinity") {
+                return Infinity;
+            } else if (value === 'NaN') {
+                return NaN;
+            } else {
+                return value;
+            }
+        }
+        
+        function fixForStringNaN(record) {
+            if (record[F_TYPE] == T_STRING) {
+                if (record[F_VALUE] !== record[F_VALUE]) {
+                    record[F_VALUE] = 'NaN';
+                } else if (record[F_VALUE] === Infinity) {
+                    record[F_VALUE] = 'Infinity';
+                }
+            }
+        }
 
         function debugPrint(s) {
             if (DEBUG) {
@@ -718,8 +746,8 @@ if (typeof J$ === 'undefined') J$ = {};
                 val = J$.analyzer.Rt(iid, val);
             }
 
-            if (sandbox.analysis && sandbox.analysis.return_Rt) {
-                val = sandbox.analysis.return_Rt(iid, val);
+            if (sandbox.analysis && sandbox.analysis.return_) {
+                val = sandbox.analysis.return_(ret);
             }
             returnVal.pop();
             returnVal.push(val);
@@ -733,9 +761,6 @@ if (typeof J$ === 'undefined') J$ = {};
 
             var ret = returnVal.pop();
             exceptionVal = undefined;
-            if (sandbox.analysis && sandbox.analysis.return_) {
-                ret = sandbox.analysis.return_(ret);
-            }
             return ret;
         }
 
@@ -1380,7 +1405,7 @@ if (typeof J$ === 'undefined') J$ = {};
                 ret[F_IID] = iid;
                 ret[F_FUNNAME] = funName;
                 ret[F_SEQ] = seqNo++;
-                var line = JSON.stringify(ret) + "\n";
+                var line = JSON.stringify(ret, encodeNaNandInfForJSON) + "\n";
                 traceWriter.logToFile(line);
             }
 
@@ -1877,9 +1902,9 @@ if (typeof J$ === 'undefined') J$ = {};
                         }
                         traceArray = [];
                         while (!done && (flag = traceFh.hasNextLine()) && i < MAX_SIZE) {
-                            record = JSON.parse(traceFh.nextLine());
+                            record = JSON.parse(traceFh.nextLine(),decodeNaNandInfForJSON);
                             traceArray.push(record);
-                            debugPrint(i + ":" + JSON.stringify(record));
+                            debugPrint(i + ":" + JSON.stringify(record, encodeNaNandInfForJSON));
                             frontierIndex++;
                             i++;
                         }
@@ -1892,8 +1917,9 @@ if (typeof J$ === 'undefined') J$ = {};
 
                 this.addRecord = function (line) {
                     var record = JSON.parse(line);
+                    var record = JSON.parse(line, decodeNaNandInfForJSON);
                     traceArray.push(record);
-                    debugPrint(JSON.stringify(record));
+                    debugPrint(JSON.stringify(record, encodeNaNandInfForJSON));
                     frontierIndex++;
                 };
 
