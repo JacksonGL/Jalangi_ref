@@ -746,8 +746,8 @@ if (typeof J$ === 'undefined') J$ = {};
                 val = J$.analyzer.Rt(iid, val);
             }
 
-            if (sandbox.analysis && sandbox.analysis.return_) {
-                val = sandbox.analysis.return_(ret);
+            if (sandbox.analysis && sandbox.analysis.return_Rt) {
+                val = sandbox.analysis.return_Rt(iid, val);
             }
             returnVal.pop();
             returnVal.push(val);
@@ -757,6 +757,10 @@ if (typeof J$ === 'undefined') J$ = {};
         function Ra() {
             if(J$.analyzer && J$.analyzer.Ra){
                 J$.analyzer.Ra();
+            }
+
+            if (sandbox.analysis && sandbox.analysis.return_) {
+                val = sandbox.analysis.return_(ret);
             }
 
             var ret = returnVal.pop();
